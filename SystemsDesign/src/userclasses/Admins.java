@@ -25,7 +25,7 @@ Display results
 Attributes to add
 inherits from user class
 */
-public class Admins {
+public class Admins extends Users{
 
     /**
      * @param args the command line arguments

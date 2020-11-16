@@ -28,7 +28,7 @@ public class Teachers extends Users{
     protected Integer employeeNo;
     protected String departmentID;
     
-    public static void main(String[] args){
+    public static void main(String[] args)throws SQLException {
         // TODO code application logic here
         System.out.println("Testing this crap 2: Electric Boogaloo");
         Connection con = null;  // a Connection object
@@ -48,6 +48,7 @@ public class Teachers extends Users{
         }finally {
             if (stmt != null)
                 stmt.close();
+            
         }
     }
     

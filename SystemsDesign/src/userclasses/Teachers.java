@@ -25,8 +25,8 @@ Employee Number
 Department ID
 */
 public class Teachers extends Users{
-    protected Integer employeeNo;
-    protected String departmentID;
+    Integer employeeNo;
+    String departmentID;
     
     public static void main(String[] args)throws SQLException {
         // TODO code application logic here

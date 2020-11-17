@@ -30,10 +30,29 @@ public class Admins extends Users{
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args){
+    public static void main(String[] args) throws SQLException{
         // TODO code application logic here
-        System.out.println("Testing this crap");
-
+        Connection con = null;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            Statement stmt = null;
+            try {
+                stmt = con.createStatement();
+                stmt.executeUpdate("");
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
     }
 
 }

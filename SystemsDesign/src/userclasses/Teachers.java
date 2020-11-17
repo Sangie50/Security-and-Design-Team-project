@@ -28,27 +28,58 @@ public class Teachers extends Users{
     Integer employeeNo;
     String departmentID;
     
-    public static void main(String[] args)throws SQLException {
-        // TODO code application logic here
-        System.out.println("Testing this crap 2: Electric Boogaloo");
-        Connection con = null;  // a Connection object
-        try{
-            con = DriverManager.getConnection("", "", "");
-        } catch (Exception ex) {
+    public Integer getEmployeeNo() {
+        return employeeNo;
+    }
+    public String getDepartmentID() {
+        return departmentID;
+    }
+    
+    public void AddTeacher(String teacherEmail, String departmentID) throws SQLException {
+        Connection con = null;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            Statement stmt = null;
+            try {
+                stmt = con.createStatement();
+                stmt.executeUpdate("INSERT INTO teacher (email, departmentID) VALUES('"+teacherEmail+"','"+departmentID+"')");
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
             ex.printStackTrace();
-        } 
-        Statement stmt = null;
-        try{
-            stmt = con.createStatement();
-            // Examples that work
-            /*int count = stmt.executeUpdate("UPDATE borrower SET forename = 'Jenny'" 
-                    +  "WHERE memberID = 54231234"); */
-        }catch (SQLException ex) {
+        }
+        finally {
+            if (con != null) con.close();
+        }
+    }
+    
+    public void UpdateGrades(String studentEmail, Integer grade) throws SQLException {
+        Connection con = null;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            Statement stmt = null;
+            try {
+                stmt = con.createStatement();
+                stmt.executeUpdate("UPDATE module WHERE email = '" + studentEmail + "'SET grade? = '"+ grade +"'");
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
             ex.printStackTrace();
-        }finally {
-            if (stmt != null)
-                stmt.close();
-            
+        }
+        finally {
+            if (con != null) con.close();
         }
     }
     

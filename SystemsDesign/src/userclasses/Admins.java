@@ -11,7 +11,7 @@ import java.util.Hashtable;
 
 /*
 What needs doing (methods):
-[O]Add users
+[O~]Add users (need to add password protection if its done on this end)
 [X]Remove users
 [X]Change access permissions
 [X]Create departments 
@@ -43,8 +43,8 @@ public class Admins extends Users{
             Statement stmt = null;
             try {
                 stmt = con.createStatement();
-                // NEED TO CHANGE
-                stmt.executeUpdate("INSERT INTO Module VALUES ('"+moduleName+"','"+levelOfStudy+"','"+creditWorth+"','"+departmentID+"','"+passMark+"')");
+                // NEED TO CHANGE - password needs to be made more secure
+                stmt.executeUpdate("INSERT INTO User VALUES ('"+email+"','"+title+"','"+forename+"','"+lastname+"','"+accountType+"','"+password+"')");
             }
             catch (SQLException ex) {
                 ex.printStackTrace();

@@ -5,7 +5,7 @@ import java.util.*;
 
 /*
 Methods:
-Add Grades
+[~]Add Grades
 Update grades
 Options for resit grades
 calculate the weighted mean grade

@@ -64,7 +64,7 @@ public class Admins extends Users{
     
     public void updatePermissions(String email, Integer newPermission) throws SQLException {
         // 1: Admin | 2: Registrar | 3: Teacher | 4: Student 
-        Dictionary permission = new Hashtable();
+        Dictionary<Integer, String> permission = new Hashtable<Integer, String>();
         permission.put(1 ,"Admin");
         permission.put(2 ,"Registrar");
         permission.put(3 ,"Teacher");

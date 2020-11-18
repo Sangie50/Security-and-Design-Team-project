@@ -20,6 +20,7 @@ Calculate classification from final score
 View status of student
 Show outcome what student has achieved each period and level of study 
 Show outcome of whole degree
+
 Unique Attributes: 
 Employee Number
 Department ID
@@ -59,7 +60,7 @@ public class Teachers extends Users{
         }
     }
     
-    public void UpdateGrades(String studentEmail, Integer grade) throws SQLException {
+    public void AddGrades(String studentEmail, Integer grade) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");

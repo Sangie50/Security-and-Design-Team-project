@@ -11,9 +11,9 @@ import java.util.Hashtable;
 
 /*
 What needs doing (methods):
-[E]Add users
-[-]Remove users
-[O]Change access permissions
+[O]Add users
+[X]Remove users
+[X]Change access permissions
 [X]Create departments 
 [X]Add degree courses (degree)
 [-]Remove degree courses
@@ -32,11 +32,37 @@ public class Admins extends Users{
     
     // For in class testing
     public static void main(String[] args) throws Exception {
-        //Admins.UpdatePermissions("generic email", 2);
+        //Admins.updatePermissions("generic email", 2);
     }
     
     //i think these belongs here 
-    public void UpdatePermissions(String email, Integer newPermission) throws SQLException {
+    public void addUser(String email, String title, String forename, String lastname, String accountType, String password) throws SQLException {
+        Connection con = null;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            Statement stmt = null;
+            try {
+                stmt = con.createStatement();
+                // NEED TO CHANGE
+                stmt.executeUpdate("INSERT INTO Module VALUES ('"+moduleName+"','"+levelOfStudy+"','"+creditWorth+"','"+departmentID+"','"+passMark+"')");
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+    }
+    
+    
+    public void updatePermissions(String email, Integer newPermission) throws SQLException {
         // 1: Admin | 2: Registrar | 3: Teacher | 4: Student 
         Dictionary permission = new Hashtable();
         permission.put(1 ,"Admin");
@@ -67,7 +93,54 @@ public class Admins extends Users{
         }
     }
     
-    public void AddModule(String moduleName, Integer levelOfStudy, Integer creditWorth, String departmentID, Integer passMark) throws SQLException {
+    public void removeUsers(String email) throws SQLException {
+        Connection con = null;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            Statement stmt = null;
+            try {
+                stmt = con.createStatement();
+                // Checks if the amil given belongs to a user, yeacher or student and deletes if does.
+                
+                // need to check if it exists
+                ResultSet r = stmt.executeQuery("SELECT COUNT(*) AS rowcount FROM users WHERE email = '"+email+"'");
+                r.next();
+                int countUser = r.getInt("rowcount");
+                if (countUser > 0){
+                    // Deletes main user account
+                    stmt.executeUpdate("DELETE FROM User WHERE email = '"+email+"')");
+                }
+                ResultSet s = stmt.executeQuery("SELECT COUNT(*) AS rowcount FROM users WHERE email = '"+email+"'");
+                s.next();
+                int countStudent = s.getInt("rowcount");
+                if (countStudent > 0){
+                    // Deletes student user account
+                    stmt.executeUpdate("DELETE FROM Student WHERE email = '"+email+"')");
+                }
+                ResultSet t = stmt.executeQuery("SELECT COUNT(*) AS rowcount FROM users WHERE email = '"+email+"'");
+                s.next();
+                int countTeacher = t.getInt("rowcount");
+                if (countTeacher > 0){
+                    // Deletes Teacher user account
+                    stmt.executeUpdate("DELETE FROM Teacher WHERE email = '"+email+"')");
+                }
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+    }
+    
+    public void addModule(String moduleName, Integer levelOfStudy, Integer creditWorth, String departmentID, Integer passMark) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
@@ -91,7 +164,7 @@ public class Admins extends Users{
         }
     }
     
-    public void AddDepartment(String departmentID, String departmentName, String entryLevel) throws SQLException {
+    public void addDepartment(String departmentID, String departmentName, String entryLevel) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
@@ -124,7 +197,7 @@ public class Admins extends Users{
         }
     }
     
-    public void AddDegree(String degreeID, String departmentID, String entryLevel, String difficulty, String degreeName) throws SQLException {
+    public void addDegree(String degreeID, String departmentID, String entryLevel, String difficulty, String degreeName) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
@@ -158,4 +231,3 @@ public class Admins extends Users{
     }
     
 }
-

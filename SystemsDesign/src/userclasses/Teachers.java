@@ -67,7 +67,7 @@ public class Teachers extends Users{
             Statement stmt = null;
             try {
                 stmt = con.createStatement();
-                stmt.executeUpdate("UPDATE module WHERE email = '" + studentEmail + "'SET grade? = '"+ grade +"'");
+                stmt.executeUpdate("UPDATE module_grade WHERE email = '" + studentEmail + "'SET grade? = '"+ grade +"'");
             }
             catch (SQLException ex) {
                 ex.printStackTrace();

@@ -22,7 +22,7 @@ What needs doing (methods):
 [UI]Indicate lead department (part of degree) is Interdiscplinary?
 [X]Add modules.
 [X]Remove Modules
-[-]Set core modules
+[X~]Set core modules - CHECK NAME OF TABLE
 [UI]Link modules to degrees and level of study (setting core or not)
 [UI]Update the system after changes
 [NAH - UI]Display (return) results
@@ -170,7 +170,31 @@ public class Admins extends Users{
         }
     }
     
-    public void removeModule(String moduleID) throws SQLException {
+    public void setCoreModule(Integer moduleID, String departmentID) throws SQLException {
+        Connection con = null;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            Statement stmt = null;
+            try {
+                stmt = con.createStatement();
+                stmt.executeUpdate("INSERT INTO Core Module VALUES ("+moduleID+","+departmentID+"");
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+    }
+    
+    public void removeModule(Integer moduleID) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
@@ -178,12 +202,12 @@ public class Admins extends Users{
             try {
                 stmt = con.createStatement();
                 // need to check if it exists
-                ResultSet r = stmt.executeQuery("SELECT COUNT(*) AS rowcount FROM module WHERE moduleID = '"+moduleID+"'");
+                ResultSet r = stmt.executeQuery("SELECT COUNT(*) AS rowcount FROM module WHERE moduleID = "+moduleID+"");
                 r.next();
                 int countDegree = r.getInt("rowcount");
                 if (countDegree > 0){
                     // Deletes degree if the degree exists
-                    stmt.executeUpdate("DELETE FROM module WHERE moduleID = '"+moduleID+"')");
+                    stmt.executeUpdate("DELETE FROM module WHERE moduleID = "+moduleID+"");
                 }
             }
             catch (SQLException ex) {

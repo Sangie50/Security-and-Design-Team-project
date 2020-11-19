@@ -158,15 +158,16 @@ public class Registrars extends Users {
 	        }
 	 }
 	 
-	 public void addModule(int serial, String name, int levelOfStudy, int credits, String department, int passMark, String undergradOrPostgrad) throws SQLException {
+	 //Add for student
+	 public void addModule(String email, String  	moduleId) throws SQLException {
 		 Connection con = null; 
-		 String moduleId = degreeCode.get(department) + undergradOrPostgrad + serial;
+
 		 try {
 	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
 	            Statement stmt = null;
 	            try {
 	                stmt = con.createStatement();
-	                	stmt.executeQuery("INSERT INTO Modules VALUES moduleId = '" + moduleId + "' departmentId = '" + degreeCode.get(department) + "' moduleName = '" + name + "' levelOfStudy = '" + levelOfStudy + "' creditsWorth = '" + credits + "' passMark = " + passMark + "')"); 
+	                //stmt.executeQuery("INSERT INTO Modules VALUES moduleId = '" + moduleId + "' departmentId = '" + degreeCode.get(department) + "' moduleName = '" + name + "' levelOfStudy = '" + levelOfStudy + "' creditsWorth = '" + credits + "' passMark = " + passMark + "')"); 
 	                }
 
 	            catch (SQLException ex) {
@@ -209,14 +210,16 @@ public class Registrars extends Users {
 	        }		 		 
 	 }
 	 
-	 public void checkRegistration (String email) throws SQLException {
+	 public void checkRegistration (String username) throws SQLException {
 		 Connection con = null; 
 		 try {
 	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
 	            Statement stmt = null;
 	            try {
 	                stmt = con.createStatement();
-                	stmt.executeUpdate("");
+                	ResultSet studentInfo = stmt.executeQuery("SELECT * FROM Student WHERE username = '" + username + "')");
+                	
+                	
    
 	            }
 	            catch (SQLException ex) {
@@ -234,7 +237,7 @@ public class Registrars extends Users {
 	        }			 
 	 }
 	 
-	 public void checkModuleSum (int moduleId) throws SQLException{
+	 public void checkModuleSum(int moduleId, String email) throws SQLException{
 		 Connection con = null; 
 		 try {
 	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
@@ -242,6 +245,9 @@ public class Registrars extends Users {
 	            try {
 	            	int totalCredits = 0;
 	                stmt = con.createStatement();
+	                //check whether undergrad or postgrad
+	                ResultSet maxCredits = stmt.executeQuery("SELECT registrationID FROM ModuleGrade WHERE registrationID = '" + email + ";)");
+	                //gets list of 
                 	ResultSet creditsList = stmt.executeQuery("SELECT creditsWorth FROM Module WHERE moduleId = '" + moduleId + "')");
                 	while (creditsList.next()) totalCredits += creditsList.getInt(1);
                 	if (totalCredits != 120) {

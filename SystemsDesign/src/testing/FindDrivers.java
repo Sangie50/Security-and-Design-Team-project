@@ -2,11 +2,10 @@ package testing;
 import java.sql.*;
 import java.util.*;
 
-import userclasses.Users;
 
 public class FindDrivers {
   public static void main(String[] args) throws Exception {
-	System.out.println("System running...");
+	
     System.out.println("\nDrivers loaded as properties:");
     System.out.println(System.getProperty("jdbc.drivers"));
     System.out.println("\nDrivers loaded by DriverManager:");

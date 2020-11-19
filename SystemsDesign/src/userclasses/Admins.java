@@ -1,13 +1,8 @@
 package userclasses;
 //Admin class
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Dictionary;
-import java.util.Hashtable;
+import java.sql.*;
+import java.util.*;
 
 /*
 What needs doing (methods):

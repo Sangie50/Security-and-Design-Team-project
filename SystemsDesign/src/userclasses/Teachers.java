@@ -6,20 +6,19 @@ import java.util.*;
 /*
 Methods:
 [~]Add Grades
-Update grades
-Options for resit grades
-calculate the weighted mean grade
-Decide whether student passes
-Based on the calculated grade, register student for next year
-Transition to next year
-Resit a year
-Graduate
-Drop out
-Take weighted average of all years to give a final score
-Calculate classification from final score
-View status of student
-Show outcome what student has achieved each period and level of study 
-Show outcome of whole degree
+[-]Update grades
+[-]Add options for resit grades
+[-]calculate the weighted mean grade
+[-]Decide whether student passes
+[?]Based on the calculated grade, register student for next year
+[?]Transition to next year
+[?]Resit a year
+[?]Graduate or Drop out
+[?]Take weighted average of all years to give a final score
+[?]Calculate classification from final score
+[-]View status of student
+[-]Show outcome what student has achieved each period and level of study 
+[-]Show outcome of whole degree
 
 Unique Attributes: 
 Employee Number

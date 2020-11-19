@@ -13,14 +13,14 @@ What needs doing (methods):
 [X]Remove departments
 [X]Add degree courses (degree)
 [X]Remove degree courses
-[UI]Assign courses to a department (options for multiple departments)
-[UI]Indicate lead department (part of degree) is Interdiscplinary?
+[GUI]Assign courses to a department (options for multiple departments)
+[GUI]Indicate lead department (part of degree) is Interdiscplinary?
 [X]Add modules.
 [X]Remove Modules
 [X~]Set core modules - CHECK NAME OF TABLE
-[UI]Link modules to degrees and level of study (setting core or not)
-[UI]Update the system after changes
-[NAH - UI]Display (return) results
+[GUI]Link modules to degrees and level of study (setting core or not)
+[GUI]Update the system after changes
+[GUI]Display (return) results
 
 Attributes to add
 inherits from user class

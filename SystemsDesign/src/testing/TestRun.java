@@ -8,5 +8,8 @@ public class TestRun {
 		System.out.println("Hello");
 		Users nameless = new Users("name", "ms", "a", "a", "password"); // creates an unassigned user
 		System.out.println(nameless);
+		System.out.println(nameless.getPassword());
+		//check password
+		
 	}
 }

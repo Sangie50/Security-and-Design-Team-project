@@ -9,6 +9,7 @@ public class Users {
 	String forename;
 	String accountType;
 	String password;
+	String salt = PasswordGen.getSalt(30);
 	
 	public enum UserTypes {
 		ADMIN ("Admin"),
@@ -34,7 +35,7 @@ public class Users {
 		this.surname = surname;
 		this.forename = forename;
 		this.accountType = UserTypes.UNASSIGNED.toString();
-		String salt = PasswordGen.getSalt(30);
+		
 		this.password = PasswordGen.generateSecurePassword(password, salt);
 		
     	Connection con = null;
@@ -70,6 +71,10 @@ public class Users {
 	            if (con != null) con.close();
 	        }
 		
+	}
+	
+	public String getSalt() {
+		return salt;
 	}
 
 	public String toString() {

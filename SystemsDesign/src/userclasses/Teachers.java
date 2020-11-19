@@ -3,6 +3,8 @@ import java.sql.*;
 import java.util.*;
 //Teacher class
 
+import userclasses.Users.UserTypes;
+
 /*
 Methods:
 [X]Add Grades - May need to add where clause on for teachers to stop lots of changes
@@ -24,6 +26,38 @@ Department ID
 public class Teachers extends Users{
     Integer employeeNo;
     String departmentID;
+    
+    public Teachers (String username, String title, String surname, String forename, String password, Integer employeeNo, String departmentID) throws SQLException {
+    	super(username, title, surname, forename, password);
+    	this.employeeNo = employeeNo;
+    	this.departmentID = departmentID;
+    	 Connection con = null;
+       try {
+           con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+           Statement stmt = null;
+             String preparedStmt = "INSERT INTO teacher VALUES (?, ?, ?)";
+           try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
+           	con.setAutoCommit(false);
+           	
+               updateStmt.setString(1, username);
+               updateStmt.setInt(2, employeeNo);
+               updateStmt.setString(3, departmentID);
+               
+           }
+           catch (SQLException ex) {
+               ex.printStackTrace();
+           }
+           finally {
+               if (stmt != null) stmt.close();
+           }
+       }
+       catch (Exception ex) {
+           ex.printStackTrace();
+       }
+       finally {
+           if (con != null) con.close();
+       }
+    }
     
     public Integer getEmployeeNo() {
         return employeeNo;

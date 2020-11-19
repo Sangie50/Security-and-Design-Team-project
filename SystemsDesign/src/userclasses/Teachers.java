@@ -5,7 +5,7 @@ import java.util.*;
 
 /*
 Methods:
-[X]Add Grades
+[X]Add Grades - May need to add where clause on for teachers to stop lots of changes
 [X]Update grades 
 [X]Resit grades
 [-]Calculate the weighted mean grade of the module

@@ -33,7 +33,7 @@ public class Admins extends Users{
     }
     */
     
-    public void addUser(String email, String title, String forename, String lastname, Integer accountType, String password) throws SQLException {
+    public void addUser(String username, String title, String forename, String lastname, Integer accountType, String password) throws SQLException {
         Dictionary<Integer, String> permission = new Hashtable<Integer, String>();
         permission.put(1 ,"Admin");
         permission.put(2 ,"Registrar");
@@ -46,7 +46,7 @@ public class Admins extends Users{
             try {
                 stmt = con.createStatement();
                 // NEED TO CHANGE - password needs to be made more secure
-                stmt.executeUpdate("INSERT INTO User VALUES ('"+email+"','"+title+"','"+forename+"','"+lastname+"','"+permission.get(accountType)+"','"+password+"')");
+                stmt.executeUpdate("INSERT INTO User VALUES ('"+username+"','"+title+"','"+forename+"','"+lastname+"','"+permission.get(accountType)+"','"+password+"')");
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -63,13 +63,8 @@ public class Admins extends Users{
         }
     }
     
-    public void updatePermissions(String email, Integer accountType) throws SQLException {
-        // 1: Admin | 2: Registrar | 3: Teacher | 4: Student 
-        Dictionary<Integer, String> permission = new Hashtable<Integer, String>();
-        permission.put(1 ,"Admin");
-        permission.put(2 ,"Registrar");
-        permission.put(3 ,"Teacher");
-        permission.put(4 ,"Student");
+    public void updatePermissions(String username, String accountType) throws SQLException {
+        // Admin | Registrar | Teacher | Student | Null 
         Connection con = null;
         //System.out.println(permission.get(newPermission));
         try {
@@ -77,7 +72,7 @@ public class Admins extends Users{
             Statement stmt = null;
             try {
                 stmt = con.createStatement();
-                stmt.executeUpdate("UPDATE user SET accountType = '"+permission.get(accountType)+"' WHERE email = '"+email+"')");
+                stmt.executeUpdate("UPDATE user SET accountType = '"+accountType+"' WHERE username = '"+username+"')");
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -94,7 +89,7 @@ public class Admins extends Users{
         }
     }
     
-    public void removeUsers(String email) throws SQLException {
+    public void removeUsers(String username) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
@@ -104,26 +99,26 @@ public class Admins extends Users{
                 // Checks if the amil given belongs to a user, yeacher or student and deletes if does.
                 
                 // need to check if it exists
-                ResultSet r = stmt.executeQuery("SELECT COUNT(*) AS rowcount FROM users WHERE email = '"+email+"'");
+                ResultSet r = stmt.executeQuery("SELECT COUNT(*) AS rowcount FROM users WHERE username = '"+username+"'");
                 r.next();
                 int countUser = r.getInt("rowcount");
                 if (countUser > 0){
                     // Deletes main user account
-                    stmt.executeUpdate("DELETE FROM User WHERE email = '"+email+"')");
+                    stmt.executeUpdate("DELETE FROM User WHERE username = '"+username+"')");
                 }
-                ResultSet s = stmt.executeQuery("SELECT COUNT(*) AS rowcount FROM users WHERE email = '"+email+"'");
+                ResultSet s = stmt.executeQuery("SELECT COUNT(*) AS rowcount FROM users WHERE username = '"+username+"'");
                 s.next();
                 int countStudent = s.getInt("rowcount");
                 if (countStudent > 0){
                     // Deletes student user account
-                    stmt.executeUpdate("DELETE FROM Student WHERE email = '"+email+"')");
+                    stmt.executeUpdate("DELETE FROM Student WHERE username = '"+username+"')");
                 }
-                ResultSet t = stmt.executeQuery("SELECT COUNT(*) AS rowcount FROM users WHERE email = '"+email+"'");
+                ResultSet t = stmt.executeQuery("SELECT COUNT(*) AS rowcount FROM users WHERE username = '"+username+"'");
                 t.next();
                 int countTeacher = t.getInt("rowcount");
                 if (countTeacher > 0){
                     // Deletes Teacher user account
-                    stmt.executeUpdate("DELETE FROM Teacher WHERE email = '"+email+"')");
+                    stmt.executeUpdate("DELETE FROM Teacher WHERE username = '"+username+"')");
                 }
             }
             catch (SQLException ex) {

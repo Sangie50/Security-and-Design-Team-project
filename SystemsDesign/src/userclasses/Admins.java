@@ -33,12 +33,7 @@ public class Admins extends Users{
     }
     */
     
-    public void addUser(String username, String title, String forename, String lastname, Integer accountType, String password) throws SQLException {
-        Dictionary<Integer, String> permission = new Hashtable<Integer, String>();
-        permission.put(1 ,"Admin");
-        permission.put(2 ,"Registrar");
-        permission.put(3 ,"Teacher");
-        permission.put(4 ,"Student");
+    public void addUser(String username, String title, String forename, String lastname, String accountType, String password) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
@@ -46,7 +41,7 @@ public class Admins extends Users{
             try {
                 stmt = con.createStatement();
                 // NEED TO CHANGE - password needs to be made more secure
-                stmt.executeUpdate("INSERT INTO User VALUES ('"+username+"','"+title+"','"+forename+"','"+lastname+"','"+permission.get(accountType)+"','"+password+"')");
+                stmt.executeUpdate("INSERT INTO User VALUES ('"+username+"','"+title+"','"+forename+"','"+lastname+"','"+accountType+"','"+password+"')");
             }
             catch (SQLException ex) {
                 ex.printStackTrace();

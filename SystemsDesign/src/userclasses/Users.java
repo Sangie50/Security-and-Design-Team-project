@@ -37,21 +37,23 @@ public class Users {
 		String salt = PasswordGen.getSalt(30);
 		this.password = PasswordGen.generateSecurePassword(password, salt);
 		
-		 Connection con = null;
+    	Connection con = null;
 	        try {
-	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+	            con.setAutoCommit(false);
 	            Statement stmt = null;
-                String preparedStmt = "INSERT INTO users VALUES (?, ?, ?, ?, ?, ?)";
+                String preparedStmt = "INSERT INTO user VALUES (?, ?, ?, ?, ?, ?)";
 	            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
-	            	con.setAutoCommit(false);
-	            	
+	            	System.out.println("inside try");
 	                updateStmt.setString(1, username);
 	                updateStmt.setString(2, title);
 	                updateStmt.setString(3, surname);
 	                updateStmt.setString(4, forename);
 	                updateStmt.setString(5, accountType);
 	                updateStmt.setString(6, password);
-	                updateStmt.setString(7, salt);
+//	                updateStmt.setString(7, salt);
+	                updateStmt.executeUpdate();
+	                con.commit();
 	                
 	            }
 	            catch (SQLException ex) {
@@ -71,7 +73,7 @@ public class Users {
 	}
 
 	public String toString() {
-		return "new user created.";
+		return "new user created. username = " + username + " name = " + forename;
 	}
 	
 	public String getUsername() {

@@ -5,7 +5,6 @@ import java.util.*;
 
 public class FindDrivers {
   public static void main(String[] args) throws Exception {
-	
     System.out.println("\nDrivers loaded as properties:");
     System.out.println(System.getProperty("jdbc.drivers"));
     System.out.println("\nDrivers loaded by DriverManager:");

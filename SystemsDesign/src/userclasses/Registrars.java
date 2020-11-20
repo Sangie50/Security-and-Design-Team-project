@@ -40,6 +40,11 @@ public class Registrars extends Users {
 	 * @param email				- unique ID of the user
 	 * @throws SQLException
 	 */
+	 
+	 public Registrars (String username, String title, String surname, String forename, String password)throws SQLException {
+			super(username, title, surname, forename, password);
+		}
+	     
 	 public void addAccountType(String type, String email) throws SQLException {
 	        Connection con = null;
 	        //System.out.println(permission.get(newPermission));

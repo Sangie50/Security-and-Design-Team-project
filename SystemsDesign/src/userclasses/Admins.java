@@ -32,6 +32,10 @@ public class Admins extends Users{
         Admins.updatePermissions("generic email", 2);
     }
     */
+	
+	public Admins (String username, String title, String surname, String forename, String password)throws SQLException {
+		super(username, title, surname, forename, password);
+	}
     
     public void addUser(String username, String title, String forename, String lastname, String accountType, String password) throws SQLException {
         Connection con = null;

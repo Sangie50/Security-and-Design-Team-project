@@ -16,7 +16,7 @@ public class Registrars extends Users {
 	[x]Remove optional modules
 	[-]Check registration is complete
 	[GUI]Check student's modules
-	[x]Check credits of modules sum to 120
+	[-]Check credits of modules sum to 120
 	[GUI]Display results
 
 	Attributes to add

@@ -51,8 +51,7 @@ public class Users {
 	                updateStmt.setString(3, surname);
 	                updateStmt.setString(4, forename);
 	                updateStmt.setString(5, accountType);
-	                updateStmt.setString(6, password);
-//	                updateStmt.setString(7, salt);
+	                updateStmt.setString(6, salt);
 	                updateStmt.executeUpdate();
 	                con.commit();
 	                
@@ -70,7 +69,6 @@ public class Users {
 	        finally {
 	            if (con != null) con.close();
 	        }
-		
 	}
 	
 	public String getSalt() {

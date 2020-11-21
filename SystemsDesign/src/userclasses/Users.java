@@ -45,13 +45,12 @@ public class Users {
 	            Statement stmt = null;
                 String preparedStmt = "INSERT INTO user VALUES (?, ?, ?, ?, ?, ?)";
 	            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
-	            	System.out.println("inside try");
 	                updateStmt.setString(1, username);
 	                updateStmt.setString(2, title);
 	                updateStmt.setString(3, surname);
 	                updateStmt.setString(4, forename);
 	                updateStmt.setString(5, accountType);
-	                updateStmt.setString(6, salt);
+	                updateStmt.setString(6, password);
 	                updateStmt.executeUpdate();
 	                con.commit();
 	                

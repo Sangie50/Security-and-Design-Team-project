@@ -1,6 +1,7 @@
 package testing;
 import java.sql.*;
 
+import features.PasswordGen;
 import userclasses.Users;
 
 public class TestRun {
@@ -11,6 +12,9 @@ public class TestRun {
 		System.out.println(nameless.getPassword());
 		
 		//check password
+		String salt = nameless.getSalt();
+		boolean passwordMath = PasswordGen.verifyUserPassword("password", nameless.getPassword(), salt);
 		
+		System.out.println(passwordMath);
 	}
 }

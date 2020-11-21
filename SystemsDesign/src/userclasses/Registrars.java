@@ -14,9 +14,9 @@ public class Registrars extends Users {
 	[?]Link to degree
 	[x]Add optional modules
 	[x]Remove optional modules
-	[-]Check registration is complete
+	[x]Check registration is complete
 	[GUI]Check student's modules
-	[-]Check credits of modules sum to 120
+	[x]Check credits of modules sum to 120
 	[GUI]Display results
 
 	Attributes to add
@@ -45,16 +45,20 @@ public class Registrars extends Users {
 			super(username, title, surname, forename, password);
 		}
 	     
-	 public void addAccountType(String type, String email) throws SQLException {
+	 public void addAccountType(String type, String username) throws SQLException {
 	        Connection con = null;
-	        //System.out.println(permission.get(newPermission));
-	        try {
+ 	        try {
 	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+	            con.setAutoCommit(false);
 	            Statement stmt = null;
-	            try {
+	            String preparedStmt = "UPDATE user SET accoutType = ? WHERE username = ?";
+	            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
 	                stmt = con.createStatement();
-	                if (type == "student") stmt.executeUpdate("UPDATE user SET accountType = 4 WHERE email = '"+email+"')");
-	                else if (type == "teacher") stmt.executeUpdate("UPDATE user SET accountType = 3 WHERE email = '"+email+"')");
+	                if (type == "student") {
+	                	updateStmt.setString(1, type);
+	                	updateStmt.setString(2, username);
+	                	con.commit();
+	                }
 	                else System.err.println("Not an accepted accountType.");
 	            }
 	            catch (SQLException ex) {
@@ -76,15 +80,17 @@ public class Registrars extends Users {
 		 Connection con = null;
 	        try {
 	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+	            con.setAutoCommit(false);
 	            Statement stmt = null;
-	            try {
-	                stmt = con.createStatement();
-	                ResultSet checkStudent = stmt.executeQuery("SELECT accountType FROM user WHERE email = '" + email + "')");
-	                if (checkStudent.getInt(1) == 4) {
-	                	stmt.executeUpdate("DELETE FROM user WHERE email = '"+email+"')");
-	                }
+	            String preparedStmt = "SELECT accountType FROM user WHERE email = ?";
+	            String deleteStmt = "DELETE FROM user WHERE email = ?";
+	            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt);
+	            		PreparedStatement delStmt = con.prepareStatement(deleteStmt)){
+	                updateStmt.setString(1, email);
+	                ResultSet type = updateStmt.executeQuery();
+	                if (type.getString(1) == UserTypes.STUDENT.toString()) delStmt.setString(1, email);
 	                else System.err.println("Cannot delete a non-student user.");
-	                
+	                con.commit();
 	            }
 	            catch (SQLException ex) {
 	                ex.printStackTrace();
@@ -101,19 +107,21 @@ public class Registrars extends Users {
 	        }
 	 }
 	 
-	 public void registerInitialPeriodOfStudy(String email, int date) throws SQLException {
+	 public void registerInitialPeriodOfStudy(String email, java.sql.Date date) throws SQLException {
 		 Connection con = null;
 	        try {
 	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+	            con.setAutoCommit(false);
 	            Statement stmt = null;
-	            try {
-	                stmt = con.createStatement();
-	                ResultSet checkStudent = stmt.executeQuery("SELECT accountType FROM user WHERE email = '" + email + "')");
-	                if (checkStudent.getInt(1) == 4) {
-	                	stmt.executeQuery("UPDATE student SET startDate = '" + date + "' WHERE email = '" + email + "')"); 
-	                }
+	            String preparedStmt = "SELECT accountType FROM user WHERE email = ?";
+	            String dateStmt = "UPDATE student SET startDate = ? WHERE email = ?";
+	            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt);
+	            		PreparedStatement datStmt = con.prepareStatement(dateStmt)){
+	                updateStmt.setString(1, email);
+	                ResultSet type = updateStmt.executeQuery();
+	                if (type.getString(1) == UserTypes.STUDENT.toString()) datStmt.setDate(1, date);
 	                else System.err.println("Cannot add start date to a non-student user.");
-	                
+	                con.commit();
 	            }
 	            catch (SQLException ex) {
 	                ex.printStackTrace();
@@ -130,23 +138,23 @@ public class Registrars extends Users {
 	        }
 	 }
 	 
-	 public void linkDegree(String email, String degree, int levelOfStudy, String undergradOrPostgrad, int serial) throws SQLException {
+	 public void linkDegree(String email, String degreeId) throws SQLException {
 		 Connection con = null;
-	        String degreeId = "";
-	        
-	        degreeId = degreeCode.get(degree) + undergradOrPostgrad.toUpperCase() + serial;
-	      
 	        try {
 	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+	            con.setAutoCommit(false);
 	            Statement stmt = null;
-	            try {
-	                stmt = con.createStatement();
-	                ResultSet checkStudent = stmt.executeQuery("SELECT accountType FROM user WHERE email = '" + email + "')");
-	                if (checkStudent.getInt(1) == 4) {
-	                	stmt.executeQuery("UPDATE student SET degreeId = '" + degreeId + "' WHERE email = '" + email + "')"); 
-	                }
+	            String preparedStmt = "SELECT accountType FROM user WHERE email = ?";
+	            String setDegree = "UPDATE student SET degreeId = ? WHERE email = ?";
+	            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt);
+	            		PreparedStatement degreeStmt = con.prepareStatement(setDegree)){
+	            	updateStmt.setString(1, email);
+		            ResultSet type = updateStmt.executeQuery();
+		            if (type.getString(1) == UserTypes.STUDENT.toString()) {
+		            	degreeStmt.setString(1, degreeId);
+		            	degreeStmt.setString(2, email);
+		            }
 	                else System.err.println("Cannot assign degrees to a non-student user.");
-	                
 	            }
 	            catch (SQLException ex) {
 	                ex.printStackTrace();
@@ -163,18 +171,20 @@ public class Registrars extends Users {
 	        }
 	 }
 	 
-	 //Add for student
-	 public void addModule(String email, String  	moduleId) throws SQLException {
+	 //Add for module grade a new row linking a new module and student email
+	 public void addModule(String email, String moduleId) throws SQLException {
 		 Connection con = null; 
-
 		 try {
 	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+	            con.setAutoCommit(false);
 	            Statement stmt = null;
-	            try {
-	                stmt = con.createStatement();
-	                //stmt.executeQuery("INSERT INTO Modules VALUES moduleId = '" + moduleId + "' departmentId = '" + degreeCode.get(department) + "' moduleName = '" + name + "' levelOfStudy = '" + levelOfStudy + "' creditsWorth = '" + credits + "' passMark = " + passMark + "')"); 
+	            String getModuleId = "INSERT INTO module_grade (moduleId, email) VALUES (?,?)";
+	            try (PreparedStatement updateStmt = con.prepareStatement(getModuleId)){
+	                updateStmt.setString(1, moduleId);
+	                updateStmt.setString(2, email);
+	                updateStmt.executeUpdate();
+	                con.commit();
 	                }
-
 	            catch (SQLException ex) {
 	                ex.printStackTrace();
 	            }
@@ -194,11 +204,13 @@ public class Registrars extends Users {
 		 Connection con = null; 
 		 try {
 	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+	            con.setAutoCommit(false);
 	            Statement stmt = null;
-	            try {
-	                stmt = con.createStatement();
-                	stmt.executeUpdate("DELETE FROM module WHERE moduleId = '"+ moduleId+"')");
-   
+	            String preparedStmt = "DELETE FROM module_grade WHERE moduleId = ?";
+	            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
+	                updateStmt.setString(1, moduleId);
+	                updateStmt.execute();
+	                con.commit();   
 	            }
 	            catch (SQLException ex) {
 	                ex.printStackTrace();
@@ -219,14 +231,22 @@ public class Registrars extends Users {
 		 Connection con = null; 
 		 try {
 	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+	            con.setAutoCommit(false);
 	            Statement stmt = null;
-	            try {
-	                stmt = con.createStatement();
-                	ResultSet studentInfo = stmt.executeQuery("SELECT * FROM Student WHERE username = '" + username + "')");
-                	
-                	
-   
-	            }
+	            String checkStudent = "SELECT accountType FROM user WHERE username = ?";
+	            String hasRegNo = "SELECT registrationId, email FROM student WHERE username = ?";
+	            try (PreparedStatement updateStudent = con.prepareStatement(checkStudent);
+	            		PreparedStatement updateRegNo = con.prepareStatement(hasRegNo)){
+	            	updateStudent.setString(1, username);
+	            	ResultSet isStudent = updateStudent.executeQuery();
+	            	if (isStudent.getString(1) == UserTypes.STUDENT.toString()) {
+	            		updateRegNo.setString(1, username);
+	            		ResultSet registered = updateRegNo.executeQuery();
+	            		if(registered.getString(1) != null && registered.getString(2) != null) System.out.println("Student is successfully registered.");
+	            		else System.err.println("Student is missing a registration number or email");
+	            	}
+	            	else System.err.print("A non-student cannot be registered");
+	            	}          	
 	            catch (SQLException ex) {
 	                ex.printStackTrace();
 	            }
@@ -242,23 +262,27 @@ public class Registrars extends Users {
 	        }			 
 	 }
 	 
-	 public void checkModuleSum(int moduleId, String email) throws SQLException{
+	 public void checkModuleSum(String moduleId, String email, String entryLevel) throws SQLException{
 		 Connection con = null; 
 		 try {
 	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+	            con.setAutoCommit(false);
 	            Statement stmt = null;
-	            try {
+	            String credit = "SELECT creditWorth FROM module WHERE moduleId = ?";
+	            try (PreparedStatement updateCredit = con.prepareStatement(credit)){
 	            	int totalCredits = 0;
-	                stmt = con.createStatement();
+	                updateCredit.setString(1, moduleId);
 	                //check whether undergrad or postgrad
-	                ResultSet maxCredits = stmt.executeQuery("SELECT registrationID FROM ModuleGrade WHERE registrationID = '" + email + ";)");
-	                //gets list of 
-                	ResultSet creditsList = stmt.executeQuery("SELECT creditsWorth FROM Module WHERE moduleId = '" + moduleId + "')");
-                	while (creditsList.next()) totalCredits += creditsList.getInt(1);
-                	if (totalCredits != 120) {
-                		System.err.println("Credits do not sum to 120. Invalid module selections.");
+	                ResultSet maxCredits = updateCredit.executeQuery();
+                	while (maxCredits.next()) totalCredits += maxCredits.getInt(1);
+                	if (entryLevel == "U") {
+	                	if (totalCredits != 120) System.err.println("Credits do not sum to 120. Invalid module selections.");
+	                	else System.out.println("Credits sum to 120.");
                 	}
-                	else System.out.println("Credits sum to 120.");
+                	else {
+                		if(totalCredits != 180) System.err.println("Credits do not sum to 180. Invalid module selections");
+                		else System.out.println("Credits sum to 180");
+                	}
 	            }
 	            catch (SQLException ex) {
 	                ex.printStackTrace();

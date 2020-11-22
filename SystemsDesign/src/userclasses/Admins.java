@@ -6,7 +6,7 @@ import java.util.*;
 
 /*
 What needs doing (methods):
-[X~]Add users (need to add password protection if its done on this end)
+[X]Add users 
 [X]Remove users
 [X]Change access permissions
 [X]Create departments 
@@ -16,7 +16,7 @@ What needs doing (methods):
 [GUI]Assign courses to a department (options for multiple departments)
 [GUI]Indicate lead department (part of degree) is Interdiscplinary?
 [X]Add modules.
-[X]Remove Modules
+[O]Remove Modules
 [X~]Set core modules - CHECK NAME OF TABLE
 [GUI]Link modules to degrees and level of study (setting core or not)
 [GUI]Update the system after changes
@@ -32,20 +32,26 @@ public class Admins extends Users{
         Admins.updatePermissions("generic email", 2);
     }
     */
-	
-	public Admins (String username, String title, String surname, String forename, String password)throws SQLException {
-		super(username, title, surname, forename, password);
-	}
+    public Admins (String username, String title, String surname, String forename, String password)throws SQLException {
+        super(username, title, surname, forename, password);
+    }
     
     public void addUser(String username, String title, String forename, String lastname, String accountType, String password) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con.setAutoCommit(false);
             Statement stmt = null;
-            try {
+            String preparedStmt = "INSERT INTO User VALUES (?,?,?,?,?,?)";
+            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
                 stmt = con.createStatement();
-                // NEED TO CHANGE - password needs to be made more secure
-                stmt.executeUpdate("INSERT INTO User VALUES ('"+username+"','"+title+"','"+forename+"','"+lastname+"','"+accountType+"','"+password+"')");
+                updateStmt.setString(1, username);
+                updateStmt.setString(2, title);
+                updateStmt.setString(3, forename);
+                updateStmt.setString(4, lastname);
+                updateStmt.setString(5, accountType);
+                updateStmt.setString(6, password);
+                con.commit();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -68,10 +74,14 @@ public class Admins extends Users{
         //System.out.println(permission.get(newPermission));
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con.setAutoCommit(false);
             Statement stmt = null;
-            try {
+            String preparedStmt = "UPDATE user SET accountType = ? WHERE username = ?";
+            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
                 stmt = con.createStatement();
-                stmt.executeUpdate("UPDATE user SET accountType = '"+accountType+"' WHERE username = '"+username+"')");
+                updateStmt.setString(1, accountType);
+                updateStmt.setString(2, username);
+                con.commit();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -92,33 +102,21 @@ public class Admins extends Users{
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con.setAutoCommit(false);
             Statement stmt = null;
-            try {
-                stmt = con.createStatement();
-                // Checks if the amil given belongs to a user, yeacher or student and deletes if does.
-                
-                // need to check if it exists
-                ResultSet r = stmt.executeQuery("SELECT COUNT(*) AS rowcount FROM users WHERE username = '"+username+"'");
-                r.next();
-                int countUser = r.getInt("rowcount");
-                if (countUser > 0){
-                    // Deletes main user account
-                    stmt.executeUpdate("DELETE FROM User WHERE username = '"+username+"')");
+            String preparedStmt = "SELECT COUNT(*) AS rowcount FROM users WHERE username = ?";
+            String deleteStmt = "DELETE FROM User WHERE username = ?";
+            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt); PreparedStatement delStmt = con.prepareStatement(deleteStmt)){
+                updateStmt.setString(1, username);
+                ResultSet count = updateStmt.executeQuery();
+                if (count.getInt("rowcount") > 0){
+                    delStmt.setString(1, username);
+                    // Other connected rows should be deleted via cascades
                 }
-                ResultSet s = stmt.executeQuery("SELECT COUNT(*) AS rowcount FROM users WHERE username = '"+username+"'");
-                s.next();
-                int countStudent = s.getInt("rowcount");
-                if (countStudent > 0){
-                    // Deletes student user account
-                    stmt.executeUpdate("DELETE FROM Student WHERE username = '"+username+"')");
-                }
-                ResultSet t = stmt.executeQuery("SELECT COUNT(*) AS rowcount FROM users WHERE username = '"+username+"'");
-                t.next();
-                int countTeacher = t.getInt("rowcount");
-                if (countTeacher > 0){
-                    // Deletes Teacher user account
-                    stmt.executeUpdate("DELETE FROM Teacher WHERE username = '"+username+"')");
-                }
+                else{ 
+                    System.err.println("No users exist with that username");
+                } 
+                con.commit();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -139,10 +137,17 @@ public class Admins extends Users{
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con.setAutoCommit(false);
             Statement stmt = null;
-            try {
+            String preparedStmt = "INSERT INTO Module VALUES (?,?,?,?,?)";
+            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
                 stmt = con.createStatement();
-                stmt.executeUpdate("INSERT INTO Module VALUES ('"+moduleName+"',"+levelOfStudy+","+creditWorth+",'"+departmentID+"',"+passMark+")");
+                updateStmt.setString(1, moduleName);
+                updateStmt.setInt(2, levelOfStudy);
+                updateStmt.setInt(3, creditWorth);
+                updateStmt.setString(4, departmentID);
+                updateStmt.setInt(5, passMark);
+                con.commit();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -163,10 +168,14 @@ public class Admins extends Users{
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con.setAutoCommit(false);
             Statement stmt = null;
-            try {
+            String preparedStmt = "INSERT INTO Core Module VALUES (?,?)";
+            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
                 stmt = con.createStatement();
-                stmt.executeUpdate("INSERT INTO Core Module VALUES ("+moduleID+","+departmentID+"");
+                updateStmt.setInt(1, moduleID);
+                updateStmt.setString(2, departmentID);
+                con.commit();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -187,17 +196,21 @@ public class Admins extends Users{
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con.setAutoCommit(false);
             Statement stmt = null;
-            try {
-                stmt = con.createStatement();
-                // need to check if it exists
-                ResultSet r = stmt.executeQuery("SELECT COUNT(*) AS rowcount FROM module WHERE moduleID = "+moduleID+"");
-                r.next();
-                int countDegree = r.getInt("rowcount");
-                if (countDegree > 0){
-                    // Deletes degree if the degree exists
-                    stmt.executeUpdate("DELETE FROM module WHERE moduleID = "+moduleID+"");
+            String preparedStmt = "SELECT COUNT(*) AS rowcount FROM module WHERE moduleID = ?";
+            String deleteStmt = "DELETE FROM module WHERE moduleID = ?";
+            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt); PreparedStatement delStmt = con.prepareStatement(deleteStmt)){
+                updateStmt.setInt(1, moduleID);
+                ResultSet count = updateStmt.executeQuery();
+                if (count.getInt(1) > 0){
+                    delStmt.setInt(1, moduleID);
+                    // Other connected rows should be deleted via cascades
                 }
+                else{ 
+                    System.err.println("No modules exist with that moduleID.");
+                } 
+                con.commit();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -218,19 +231,24 @@ public class Admins extends Users{
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con.setAutoCommit(false);
             Statement stmt = null;
-            try {
-                stmt = con.createStatement();
-                // need to check if it already exists
-                ResultSet r = stmt.executeQuery("SELECT COUNT(*) AS rowcount FROM department WHERE departmentID = '"+departmentID+"'");
-                r.next();
-                int count = r.getInt("rowcount");
-                if (count < 1){
-                    stmt.executeUpdate("INSERT INTO department VALUES ('"+departmentID+"','"+departmentName+"','"+entryLevel+"')");
+            String preparedStmt = "SELECT COUNT(*) AS rowcount FROM department WHERE departmentID = ? OR departmentName = ?";
+            String insertStmt = "INSERT INTO department VALUES (?,?,?)";
+            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt); PreparedStatement insStmt = con.prepareStatement(insertStmt)){
+                updateStmt.setString(1, departmentID);
+                updateStmt.setString(2, departmentName);
+                ResultSet count = updateStmt.executeQuery();
+                if (count.getInt("rowcount") < 1){
+                    insStmt.setString(1, departmentID);
+                    insStmt.setString(2, departmentName);
+                    insStmt.setString(3, entryLevel);
+                    // Other connected rows should be deleted via cascades
                 }
-                else{
-                    System.out.println("DepartmentID already exists");
-                }
+                else{ 
+                    System.err.println("DepartmentID or department name already exists already exists.");
+                } 
+                con.commit();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -251,19 +269,21 @@ public class Admins extends Users{
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con.setAutoCommit(false);
             Statement stmt = null;
-            try {
-                stmt = con.createStatement();
-                // need to check if it already exists
-                ResultSet r = stmt.executeQuery("SELECT COUNT(*) AS rowcount FROM department WHERE departmentID = '"+departmentID+"'");
-                r.next();
-                int count = r.getInt("rowcount");
-                if (count > 0){
-                    stmt.executeUpdate("DELETE FROM department WHERE departmentID = '"+departmentID+"'");
+            String preparedStmt = "SELECT COUNT(*) AS rowcount FROM department WHERE departmentID = ?";
+            String deleteStmt = "DELETE FROM department WHERE departmentID = ?";
+            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt); PreparedStatement delStmt = con.prepareStatement(deleteStmt)){
+                updateStmt.setString(1, departmentID);
+                ResultSet count = updateStmt.executeQuery();
+                if (count.getInt(1) > 0){
+                    delStmt.setString(1, departmentID);
+                    // Other connected rows should be deleted via cascades
                 }
-                else{
-                    System.out.println("DepartmentID already exists");
-                }
+                else{ 
+                    System.err.println("No departments exist with that departmentID.");
+                } 
+                con.commit();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -284,19 +304,25 @@ public class Admins extends Users{
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con.setAutoCommit(false);
             Statement stmt = null;
-            try {
-                stmt = con.createStatement();
-                // need to check if it already exists
-                ResultSet r = stmt.executeQuery("SELECT COUNT(*) AS rowcount FROM degree WHERE degreeID = '"+degreeID+"'");
-                r.next();
-                int count = r.getInt("rowcount");
-                if (count < 1){
-                    stmt.executeUpdate("INSERT INTO degree VALUES ('"+degreeID+"','"+departmentID+"','"+entryLevel+"','"+difficulty+"','"+degreeName+"')");
+            String preparedStmt = "SELECT COUNT(*) AS rowcount FROM degree WHERE degreeID = ?";
+            String insertStmt = "INSERT INTO degree VALUES (?,?,?,?,?)";
+            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt); PreparedStatement insStmt = con.prepareStatement(insertStmt)){
+                updateStmt.setString(1, degreeID);
+                ResultSet count = updateStmt.executeQuery();
+                if (count.getInt("rowcount") < 1){
+                    insStmt.setString(1, degreeID);
+                    insStmt.setString(2, departmentID);
+                    insStmt.setString(3, entryLevel);
+                    insStmt.setString(4, difficulty);
+                    insStmt.setString(5, degreeName);
+                    // Other connected rows should be deleted via cascades
                 }
-                else{
-                    System.out.println("DegreeID already exists");
-                }
+                else{ 
+                    System.err.println("Degree ID already exists already exists.");
+                } 
+                con.commit();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -317,17 +343,21 @@ public class Admins extends Users{
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con.setAutoCommit(false);
             Statement stmt = null;
-            try {
-                stmt = con.createStatement();
-                // need to check if it exists
-                ResultSet r = stmt.executeQuery("SELECT COUNT(*) AS rowcount FROM degree WHERE degreeID = '"+degreeID+"'");
-                r.next();
-                int countDegree = r.getInt("rowcount");
-                if (countDegree > 0){
-                    // Deletes degree if the degree exists
-                    stmt.executeUpdate("DELETE FROM degree WHERE degreeID = '"+degreeID+"')");
+            String preparedStmt = "SELECT COUNT(*) AS rowcount FROM degree WHERE degreeID = ?";
+            String deleteStmt = "DELETE FROM degree WHERE degreeID = ?";
+            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt); PreparedStatement delStmt = con.prepareStatement(deleteStmt)){
+                updateStmt.setString(1, degreeID);
+                ResultSet count = updateStmt.executeQuery();
+                if (count.getInt(1) > 0){
+                    delStmt.setString(1, degreeID);
+                    // Other connected rows should be deleted via cascades
                 }
+                else{ 
+                    System.err.println("No departments exist with that departmentID.");
+                } 
+                con.commit();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();

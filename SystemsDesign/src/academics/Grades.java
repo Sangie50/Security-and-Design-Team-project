@@ -23,7 +23,7 @@ import userclasses.Students;
 
 public class Grades { //create a constructor
 	String email;
-	HashMap<String, Integer> gradeForModule;
+	static HashMap<String, Integer> gradeForModule;
 	
 	enum LevelsOfStudy {
 		CERTIFICATE("1"),
@@ -115,7 +115,7 @@ public class Grades { //create a constructor
 		 return moduleList; 
 	}
 	
-	public HashMap<String, Integer> gradesForEachModule(String email, String levelOfStudy) throws SQLException{
+	public static HashMap<String, Integer> gradesForEachModule(String email, String levelOfStudy) throws SQLException{
 		gradeForModule = new HashMap<String, Integer>();
 		List<String> listOfModules = getModuleList(email, levelOfStudy);
 		for(int i = 0; i < listOfModules.size(); i++) {
@@ -166,31 +166,49 @@ public class Grades { //create a constructor
 		 return gradeForModule;
 	}
 	
-	/*public HashMap<String, Boolean> passModule(String email, String levelOfStudy) throws SQLException { 
+	public HashMap<String, Boolean> passModule(String email, String levelOfStudy) throws SQLException { 
 		HashMap<String, Integer> grades_hmap = gradesForEachModule(email, levelOfStudy);
 		HashMap<String, Boolean> passOrFail = new HashMap<>();
-		for (int i = 0; i < grades_hmap.size(); i++) {
-			//passOrFail.put(grade, remappingFunction)
+		for (Map.Entry<String, Integer> entry : grades_hmap.entrySet()) {
+      String moduleId = entry.getKey();
+      Integer grade = entry.getValue();
+      if (grade >= capResitGrade(email)) {
+  			passOrFail.put(moduleId, true);
+  		}
+  		else {
+  			passOrFail.put(moduleId, false);;
+  		}
 		}
+		return passOrFail;
 		
-		if (grade >= capResitGrade(email)) {
-			return true;
+	}
+
+	
+	public static String checkForConcededPass(String email, String levelOfStudy) throws SQLException {
+		String result = null;
+		HashMap<String, Integer> grades = gradesForEachModule(email, levelOfStudy);
+		List<Integer> failedModules = new ArrayList<>();
+		for(int i = 0; i < grades.size(); i++) {
+			if (grades.get(i) <= capResitGrade(email)) {
+				failedModules.add(grades.get(i));
+			}
+		}
+		if(failedModules.size() == 0) {
+			result = "all modules passed";
+		}
+		else if (failedModules.size() == 1) {
+			if (failedModules.get(0) >= 0.9*capResitGrade(email)) {
+				result = "1 module granted conceded pass";	
+			}
 		}
 		else {
-			return false;
+			result = "cannot grant conceded pass";
 		}
+		return result;
 	}
-	*/
 	
-	/*public String checkForConcededPass(String email) {
-		Double yearGrade = getWeightedYearGrade(email, getLevelOfStudy(email));
-		if (yearGrade < 39.4) {
-			
-		}
-	}
-	*/
 	
-	public int capResitGrade(String email) throws SQLException { //update re-sit mark as 40/50 depending on the year
+	public static int capResitGrade(String email) throws SQLException { //update re-sit mark as 40/50 depending on the year
 		String levelOfStudy = getLevelOfStudy(email);
 		int cap = 100; //check, fails for passed modules
 		if (levelOfStudy ==  String.valueOf(LevelsOfStudy.MASTERS)) {
@@ -208,12 +226,16 @@ public class Grades { //create a constructor
 		HashMap<String, Integer> gradePerModule = gradesForEachModule(email, levelOfStudy);
 		Double sum = 0.0;
 		Double meanGrade = 0.0;
+		Double totalCredits = null;
+		for (int i = 0; i < creditsList.size(); i++) {
+			totalCredits += creditsList.get(i);
+		}
 		if (moduleList.size() == creditsList.size()) {
 			for(int i = 0; i < moduleList.size(); i++) {
 				Integer grade = gradePerModule.get(moduleList.get(i));
-				sum += grade * creditsList.get(i); //check if weightage is same as credit
+				sum += grade * creditsList.get(i); 
 			}
-			meanGrade = sum/moduleList.size();
+			meanGrade = sum/totalCredits;
 		}
 		
 		return meanGrade;
@@ -222,18 +244,37 @@ public class Grades { //create a constructor
 	public Boolean yearPassed(String email, String levelOfStudy) throws SQLException {
 		String currentLevelOfStudy = getLevelOfStudy(email);
 		Double yearGrade = getWeightedYearGrade(email, levelOfStudy);
+		String cpass = checkForConcededPass(email, levelOfStudy);
+		
 		if ((currentLevelOfStudy != (String.valueOf(LevelsOfStudy.MASTERS)) || currentLevelOfStudy != String.valueOf(LevelsOfStudy.PG)) 
-				&& yearGrade >= 39.5) {
+				 && yearGrade >= 39.5) {
 			return true;
+		}
+		else if ((currentLevelOfStudy != (String.valueOf(LevelsOfStudy.MASTERS)) || currentLevelOfStudy != String.valueOf(LevelsOfStudy.PG)) 
+				 && yearGrade < 39.5) {
+			if (cpass == "cannot grant conceded pass") {
+				return false;
+			}
+			else {
+				return true;
+			}
 		}
 		else if((currentLevelOfStudy == (String.valueOf(LevelsOfStudy.MASTERS)) || currentLevelOfStudy == String.valueOf(LevelsOfStudy.PG)) 
 				&& yearGrade >= 49.5) {
-			return false;
+			return true;
+		}
+		else if((currentLevelOfStudy == (String.valueOf(LevelsOfStudy.MASTERS)) || currentLevelOfStudy == String.valueOf(LevelsOfStudy.PG)) 
+				&& yearGrade < 49.5) {
+			if (cpass == "cannot grant conceded pass") {
+				return false;
+			}
+			else {
+				return true;
+			}
 		}
 		else {
 			return false;
 		}
-			
 	}
 	
 	public String getEntryLevel(String email) throws SQLException {

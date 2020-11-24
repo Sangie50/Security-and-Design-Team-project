@@ -48,7 +48,7 @@ public class Registrars extends Users {
 	 public void addAccountType(String type, String username) throws SQLException {
 	        Connection con = null;
  	        try {
-	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+ 	           con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
 	            String preparedStmt = "UPDATE user SET accoutType = ? WHERE username = ?";
@@ -79,7 +79,7 @@ public class Registrars extends Users {
 	 public void deleteStudent(String email) throws SQLException {
 		 Connection con = null;
 	        try {
-	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
 	            String preparedStmt = "SELECT accountType FROM user WHERE email = ?";
@@ -110,7 +110,7 @@ public class Registrars extends Users {
 	 public void registerInitialPeriodOfStudy(String email, java.sql.Date date) throws SQLException {
 		 Connection con = null;
 	        try {
-	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
 	            String preparedStmt = "SELECT accountType FROM user WHERE email = ?";
@@ -141,7 +141,7 @@ public class Registrars extends Users {
 	 public void linkDegree(String email, String degreeId) throws SQLException {
 		 Connection con = null;
 	        try {
-	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
 	            String preparedStmt = "SELECT accountType FROM user WHERE email = ?";
@@ -175,7 +175,7 @@ public class Registrars extends Users {
 	 public void addModule(String email, String moduleId) throws SQLException {
 		 Connection con = null; 
 		 try {
-	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
 	            String getModuleId = "INSERT INTO module_grade (moduleId, email) VALUES (?,?)";
@@ -203,7 +203,7 @@ public class Registrars extends Users {
 	 public void deleteModule(String moduleId) throws SQLException {
 		 Connection con = null; 
 		 try {
-	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
 	            String preparedStmt = "DELETE FROM module_grade WHERE moduleId = ?";
@@ -230,7 +230,7 @@ public class Registrars extends Users {
 	 public void checkRegistration (String username) throws SQLException {
 		 Connection con = null; 
 		 try {
-	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
 	            String checkStudent = "SELECT accountType FROM user WHERE username = ?";
@@ -265,7 +265,7 @@ public class Registrars extends Users {
 	 public void checkModuleSum(String moduleId, String email, String entryLevel) throws SQLException{
 		 Connection con = null; 
 		 try {
-	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
 	            String credit = "SELECT creditWorth FROM module WHERE moduleId = ?";

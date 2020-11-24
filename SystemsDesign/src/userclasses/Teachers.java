@@ -43,7 +43,7 @@ public class Teachers extends Users{
     	this.departmentID = departmentID;
         Connection con = null;
         try {
-            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
             String addUserStmt = "INSERT INTO User VALUES (?,?,?,?,?,?)";
@@ -81,7 +81,7 @@ public class Teachers extends Users{
     public void addGrade(String moduleID, Integer registrationID, Integer overallMark) throws SQLException {
         Connection con = null;
         try {
-            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
             String preparedStmt = "INSERT INTO module grade VALUES (?,?,?)";
@@ -111,7 +111,7 @@ public class Teachers extends Users{
     public Integer weightedMean(String moduleID, String email) throws SQLException {
         Connection con = null;
         try {
-            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             Statement stmt = null;
             try {
                 stmt = con.createStatement();
@@ -154,7 +154,7 @@ public class Teachers extends Users{
         Boolean status = null;
         Connection con = null;
         try {
-            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
             String preparedStmt = "SELECT progress_to_next_level FROM student AS s, year grade AS yg USING (registrationID) WHERE s.registrationID = ?";
@@ -182,7 +182,7 @@ public class Teachers extends Users{
     public void updateGrades(String moduleID, Integer registrationID, Integer overallMark) throws SQLException {
         Connection con = null;
         try {
-            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
             String preparedStmt = "UPDATE module grade SET overallMark = ? WHERE moduleID = ? AND registrationID = ?";
@@ -211,7 +211,7 @@ public class Teachers extends Users{
     public void addResitGrades(String moduleID, Integer registrationID, Integer resitMark) throws SQLException {
         Connection con = null;
         try {
-            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
             String preparedStmt = "UPDATE module grade SET resitMark = ? WHERE moduleID = ? AND registrationID = ?";

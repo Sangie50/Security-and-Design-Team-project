@@ -39,7 +39,7 @@ public class Admins extends Users{
     public void addUser(String username, String title, String forename, String lastname, String accountType, String password) throws SQLException {
         Connection con = null;
         try {
-            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
             String preparedStmt = "INSERT INTO User VALUES (?,?,?,?,?,?)";
@@ -73,7 +73,7 @@ public class Admins extends Users{
         Connection con = null;
         //System.out.println(permission.get(newPermission));
         try {
-            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
             String preparedStmt = "UPDATE user SET accountType = ? WHERE username = ?";
@@ -101,7 +101,7 @@ public class Admins extends Users{
     public void removeUsers(String username) throws SQLException {
         Connection con = null;
         try {
-            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
             String preparedStmt = "SELECT COUNT(*) AS rowcount FROM users WHERE username = ?";
@@ -136,7 +136,7 @@ public class Admins extends Users{
     public void addModule(String moduleName, Integer levelOfStudy, Integer creditWorth, String departmentID, Integer passMark) throws SQLException {
         Connection con = null;
         try {
-            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
             String preparedStmt = "INSERT INTO Module VALUES (?,?,?,?,?)";
@@ -167,7 +167,7 @@ public class Admins extends Users{
     public void setCoreModule(Integer moduleID, String departmentID) throws SQLException {
         Connection con = null;
         try {
-            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
             String preparedStmt = "INSERT INTO Core Module VALUES (?,?)";
@@ -195,7 +195,7 @@ public class Admins extends Users{
     public void removeModule(Integer moduleID) throws SQLException {
         Connection con = null;
         try {
-            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
             String preparedStmt = "SELECT COUNT(*) AS rowcount FROM module WHERE moduleID = ?";
@@ -230,7 +230,7 @@ public class Admins extends Users{
     public void addDepartment(String departmentID, String departmentName, String entryLevel) throws SQLException {
         Connection con = null;
         try {
-            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
             String preparedStmt = "SELECT COUNT(*) AS rowcount FROM department WHERE departmentID = ? OR departmentName = ?";
@@ -268,7 +268,7 @@ public class Admins extends Users{
     public void removeDepartment(String departmentID) throws SQLException {
         Connection con = null;
         try {
-            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
             String preparedStmt = "SELECT COUNT(*) AS rowcount FROM department WHERE departmentID = ?";
@@ -303,7 +303,7 @@ public class Admins extends Users{
     public void addDegree(String degreeID, String departmentID, String entryLevel, String difficulty, String degreeName) throws SQLException {
         Connection con = null;
         try {
-            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
             String preparedStmt = "SELECT COUNT(*) AS rowcount FROM degree WHERE degreeID = ?";
@@ -342,7 +342,7 @@ public class Admins extends Users{
     public void removeDegree(String degreeID) throws SQLException {
         Connection con = null;
         try {
-            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
             String preparedStmt = "SELECT COUNT(*) AS rowcount FROM degree WHERE degreeID = ?";

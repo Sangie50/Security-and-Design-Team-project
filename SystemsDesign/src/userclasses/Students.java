@@ -1,5 +1,6 @@
 package userclasses;
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.Date;
 
@@ -25,11 +26,11 @@ public class Students extends Users{
 	java.sql.Date endDate;
   String personalTutor;
   
-  public Students (String username, String title, String surname, String forename, String password, String email, 
+  public Students (String username, String title, String surname, String forename, String password, 
   		Integer registrationId, Integer resit_year, String degreeId, Integer totalCredits, String difficulty, 
   		java.sql.Date startDate, java.sql.Date endDate, String personalTutor ) throws SQLException {
   	super(username, title, surname, forename, password);
-  	this.email = email;
+  	email = emailGen(surname, forename, username);
   	this.registrationId = registrationId;
   	this.resit_year = resit_year;
   	this.degreeId = degreeId;
@@ -40,9 +41,9 @@ public class Students extends Users{
   	this.personalTutor = personalTutor;
   	 Connection con = null;
      try {
-         con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+         con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
          Statement stmt = null;
-           String preparedStmt = "INSERT INTO student VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+         String preparedStmt = "INSERT INTO student VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
          try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
          	con.setAutoCommit(false);
          	
@@ -71,8 +72,52 @@ public class Students extends Users{
      }
   }
   
+  public String emailGen(String surname, String forename, String username) throws SQLException{
+	  String[] name = forename.split(" ");
+	  String initials = "";
+	  String email = "";
+	  int a = 1;
+	  DecimalFormat formatter = new DecimalFormat("00");
+	  for (int i = 0; i < name.length; i++) {
+	      initials = name[i];
+	    }
+	  
+	  email = initials + surname + formatter.format(a); //create email from forename initials and surname and unique 2 digit number
+	  Connection con = null;
+	  
+	  try {
+          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+          con.setAutoCommit(false);
+          Statement stmt = null;
+          String allEmails = "SELECT email FROM student WHERE username = ?";
+          try (PreparedStatement preparedStmt = con.prepareStatement(allEmails)){
+        	  preparedStmt.setString(1, username);
+        	  ResultSet rs = preparedStmt.executeQuery();
+        	  con.commit();
+        	  while(rs.getString(1) == email) {
+        		  a += 1;
+        		  email = initials + surname + formatter.format(a);
+        	  }
+          }
+          catch (SQLException ex) {
+        	  ex.printStackTrace();
+          }
+          finally {
+        	  if (stmt != null) stmt.close();
+          }
+	  }
+	  catch (Exception ex) {
+		  ex.printStackTrace();
+	  }
+	  finally {
+		  if (con != null) con.close();
+	  }
+	  return email;
+  }
+  
   public String getEmail() {
   	return email;
+  	
   }
   
   
@@ -97,7 +142,7 @@ public class Students extends Users{
   	for(int i =0; i < moduleList.size(); i++) {
   		 Connection con = null; 
 	 		 try {
-	 				 	con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+		          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	 		      con.setAutoCommit(false);
 	 		      Statement stmt = null;
 	 		      String getCredits = String.format("SELECT credit_worth FROM module WHERE module_id = %s ", moduleList.get(i)) ;
@@ -105,7 +150,7 @@ public class Students extends Users{
 	 		      int credits;
 	 		      ResultSet rs;
 	 		      try (PreparedStatement pstmt = con.prepareStatement(getCredits)){
-	 				      	rs = pstmt.executeQuery();        // Get the result table from the query  3 
+	 				      rs = pstmt.executeQuery();        // Get the result table from the query  3 
 	 		      	 	  creditsString = rs.getString(4);        // Retrieve the fourth column value
 	 		      	 	  credits = Integer.parseInt(creditsString);
 	 			      	  creditsList.add(credits);

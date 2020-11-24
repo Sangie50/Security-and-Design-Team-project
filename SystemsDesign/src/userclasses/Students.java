@@ -49,10 +49,10 @@ public class Students extends Users{
          	
              updateStmt.setString(1, email);
              updateStmt.setInt(2, registrationId);
-             updateStmt.setInt(3, registrationId);
-             updateStmt.setString(4, email);
-             updateStmt.setInt(5, registrationId);
-             updateStmt.setString(6, email);
+             updateStmt.setInt(3, resit_year);
+             updateStmt.setString(4, degreeId);
+             updateStmt.setInt(5, totalCredits);
+             updateStmt.setString(6, difficulty);
              updateStmt.setDate(7, startDate);
              updateStmt.setDate(8, endDate);
              updateStmt.setString(9, personalTutor);

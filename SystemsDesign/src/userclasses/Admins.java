@@ -16,8 +16,8 @@ What needs doing (methods):
 [GUI]Assign courses to a department (options for multiple departments)
 [GUI]Indicate lead department (part of degree) is Interdiscplinary?
 [X]Add modules.
+[X]Add core module data to link to degree - Set core modules - CHECK NAME OF TABLE
 [O]Remove Modules
-[X~]Set core modules - CHECK NAME OF TABLE
 [GUI]Link modules to degrees and level of study (setting core or not)
 [GUI]Update the system after changes
 [GUI]Display (return) results
@@ -36,13 +36,13 @@ public class Admins extends Users{
         super(username, title, surname, forename, password);
     }
     
-    public void addUser(String username, String title, String forename, String lastname, String accountType, String password) throws SQLException {
+    public static void addUser(String username, String title, String forename, String lastname, String accountType, String password) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "INSERT INTO User VALUES (?,?,?,?,?,?)";
+            String preparedStmt = "INSERT INTO user VALUES (?,?,?,?,?,?)";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
                 stmt = con.createStatement();
                 updateStmt.setString(1, username);
@@ -68,7 +68,7 @@ public class Admins extends Users{
         }
     }
     
-    public void updatePermissions(String username, String accountType) throws SQLException {
+    public static void updatePermissions(String username, String accountType) throws SQLException {
         // Admin | Registrar | Teacher | Student | Null 
         Connection con = null;
         //System.out.println(permission.get(newPermission));
@@ -98,14 +98,14 @@ public class Admins extends Users{
         }
     }
     
-    public void removeUsers(String username) throws SQLException {
+    public static void removeUsers(String username) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "SELECT COUNT(*) AS rowcount FROM users WHERE username = ?";
-            String deleteStmt = "DELETE FROM User WHERE username = ?";
+            String preparedStmt = "SELECT COUNT(*) AS rowcount FROM user WHERE username = ?";
+            String deleteStmt = "DELETE FROM user WHERE username = ?";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt); PreparedStatement delStmt = con.prepareStatement(deleteStmt)){
                 updateStmt.setString(1, username);
                 ResultSet count = updateStmt.executeQuery();
@@ -133,13 +133,13 @@ public class Admins extends Users{
         }
     }
     
-    public void addModule(String moduleName, Integer levelOfStudy, Integer creditWorth, String departmentID, Integer passMark) throws SQLException {
+    public static void addModule(String moduleName, Integer levelOfStudy, Integer creditWorth, String departmentID, Integer passMark) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "INSERT INTO Module VALUES (?,?,?,?,?)";
+            String preparedStmt = "INSERT INTO module VALUES (?,?,?,?,?)";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
                 stmt = con.createStatement();
                 updateStmt.setString(1, moduleName);
@@ -164,17 +164,18 @@ public class Admins extends Users{
         }
     }
     
-    public void setCoreModule(Integer moduleID, String departmentID) throws SQLException {
+    public static void setCoreModule(Integer moduleID, String departmentID, Boolean isCore) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "INSERT INTO Core Module VALUES (?,?)";
+            String preparedStmt = "INSERT INTO core_module VALUES (?,?,?)";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
                 stmt = con.createStatement();
                 updateStmt.setInt(1, moduleID);
                 updateStmt.setString(2, departmentID);
+                updateStmt.setBoolean(3, isCore);
                 con.commit();
             }
             catch (SQLException ex) {
@@ -192,14 +193,14 @@ public class Admins extends Users{
         }
     }
     
-    public void removeModule(Integer moduleID) throws SQLException {
+    public static void removeModule(Integer moduleID) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "SELECT COUNT(*) AS rowcount FROM module WHERE moduleID = ?";
-            String deleteStmt = "DELETE FROM module WHERE moduleID = ?";
+            String preparedStmt = "SELECT COUNT(*) AS rowcount FROM module WHERE module_id = ?";
+            String deleteStmt = "DELETE FROM module WHERE module_id = ?";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt); PreparedStatement delStmt = con.prepareStatement(deleteStmt)){
                 updateStmt.setInt(1, moduleID);
                 ResultSet count = updateStmt.executeQuery();
@@ -227,13 +228,13 @@ public class Admins extends Users{
         }
     }
     
-    public void addDepartment(String departmentID, String departmentName, String entryLevel) throws SQLException {
+    public static void addDepartment(String departmentID, String departmentName, String entryLevel) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "SELECT COUNT(*) AS rowcount FROM department WHERE departmentID = ? OR departmentName = ?";
+            String preparedStmt = "SELECT COUNT(*) AS rowcount FROM department WHERE department_id = ? OR department_name = ?";
             String insertStmt = "INSERT INTO department VALUES (?,?,?)";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt); PreparedStatement insStmt = con.prepareStatement(insertStmt)){
                 updateStmt.setString(1, departmentID);
@@ -265,14 +266,14 @@ public class Admins extends Users{
         }
     }
     
-    public void removeDepartment(String departmentID) throws SQLException {
+    public static void removeDepartment(String departmentID) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "SELECT COUNT(*) AS rowcount FROM department WHERE departmentID = ?";
-            String deleteStmt = "DELETE FROM department WHERE departmentID = ?";
+            String preparedStmt = "SELECT COUNT(*) AS rowcount FROM department WHERE department_id = ?";
+            String deleteStmt = "DELETE FROM department WHERE department_id = ?";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt); PreparedStatement delStmt = con.prepareStatement(deleteStmt)){
                 updateStmt.setString(1, departmentID);
                 ResultSet count = updateStmt.executeQuery();
@@ -300,13 +301,13 @@ public class Admins extends Users{
         }
     }
     
-    public void addDegree(String degreeID, String departmentID, String entryLevel, String difficulty, String degreeName) throws SQLException {
+    public static void addDegree(String degreeID, String departmentID, String entryLevel, String difficulty, String degreeName) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "SELECT COUNT(*) AS rowcount FROM degree WHERE degreeID = ?";
+            String preparedStmt = "SELECT COUNT(*) AS rowcount FROM degree WHERE degree_id = ?";
             String insertStmt = "INSERT INTO degree VALUES (?,?,?,?,?)";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt); PreparedStatement insStmt = con.prepareStatement(insertStmt)){
                 updateStmt.setString(1, degreeID);
@@ -339,14 +340,14 @@ public class Admins extends Users{
         }
     }
     
-    public void removeDegree(String degreeID) throws SQLException {
+    public static void removeDegree(String degreeID) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "SELECT COUNT(*) AS rowcount FROM degree WHERE degreeID = ?";
-            String deleteStmt = "DELETE FROM degree WHERE degreeID = ?";
+            String preparedStmt = "SELECT COUNT(*) AS rowcount FROM degree WHERE degree_id = ?";
+            String deleteStmt = "DELETE FROM degree WHERE degree_id = ?";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt); PreparedStatement delStmt = con.prepareStatement(deleteStmt)){
                 updateStmt.setString(1, degreeID);
                 ResultSet count = updateStmt.executeQuery();

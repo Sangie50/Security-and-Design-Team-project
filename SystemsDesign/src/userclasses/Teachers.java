@@ -46,7 +46,7 @@ public class Teachers extends Users{
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String addUserStmt = "INSERT INTO User VALUES (?,?,?,?,?,?)";
+            String addUserStmt = "INSERT INTO user VALUES (?,?,?,?,?,?)";
             String addTeacherStmt = "INSERT INTO teacher VALUES (?, ?, ?)";
             // Assumes checking that username doesn't exist beforehand
             try (PreparedStatement addUStmt = con.prepareStatement(addUserStmt); PreparedStatement addTStmt = con.prepareStatement(addTeacherStmt)){
@@ -84,7 +84,7 @@ public class Teachers extends Users{
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "INSERT INTO module grade VALUES (?,?,?)";
+            String preparedStmt = "INSERT INTO module_grade VALUES (?,?,?)";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
                 stmt = con.createStatement();
                 updateStmt.setString(1, moduleID);
@@ -157,7 +157,7 @@ public class Teachers extends Users{
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "SELECT progress_to_next_level FROM student AS s, year grade AS yg USING (registrationID) WHERE s.registrationID = ?";
+            String preparedStmt = "SELECT progress_to_next_level FROM student AS s, year_grade AS yg USING (registration_id) WHERE s.registration_id = ?";
             try (PreparedStatement selectStmt = con.prepareStatement(preparedStmt)){
                 selectStmt.setInt(1, registrationID);
                 ResultSet passorfail = selectStmt.executeQuery();
@@ -185,7 +185,7 @@ public class Teachers extends Users{
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "UPDATE module grade SET overallMark = ? WHERE moduleID = ? AND registrationID = ?";
+            String preparedStmt = "UPDATE module-grade SET overall_mark = ? WHERE module_id = ? AND registration_id = ?";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
                 stmt = con.createStatement();
                 updateStmt.setInt(1, overallMark);
@@ -214,7 +214,7 @@ public class Teachers extends Users{
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "UPDATE module grade SET resitMark = ? WHERE moduleID = ? AND registrationID = ?";
+            String preparedStmt = "UPDATE module_grade SET resit_mark = ? WHERE module_id = ? AND registration_id = ?";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
                 stmt = con.createStatement();
                 updateStmt.setInt(1, resitMark);

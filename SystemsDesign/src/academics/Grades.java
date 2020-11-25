@@ -222,7 +222,7 @@ public class Grades { //create a constructor
 	
 	public Double getWeightedYearGrade(String email, String levelOfStudy) throws SQLException {
 		List<String> moduleList = getModuleList(email, levelOfStudy);
-		List<Integer> creditsList = Students.moduleCredits(email);
+		List<Integer> creditsList = Students.moduleCredits(email, levelOfStudy);
 		HashMap<String, Integer> gradePerModule = gradesForEachModule(email, levelOfStudy);
 		Double sum = 0.0;
 		Double meanGrade = 0.0;

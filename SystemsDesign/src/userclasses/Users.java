@@ -43,7 +43,7 @@ public class Users {
 	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
-                String preparedStmt = "INSERT INTO user VALUES (?, ?, ?, ?, ?, ?)";
+                String preparedStmt = "INSERT INTO user VALUES (?, ?, ?, ?, ?, ?, ?)";
 	            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
 	                updateStmt.setString(1, username);
 	                updateStmt.setString(2, title);
@@ -51,6 +51,7 @@ public class Users {
 	                updateStmt.setString(4, forename);
 	                updateStmt.setString(5, accountType);
 	                updateStmt.setString(6, password);
+	                updateStmt.setString(7, salt);
 	                updateStmt.executeUpdate();
 	                con.commit();
 	                

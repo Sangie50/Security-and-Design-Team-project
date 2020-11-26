@@ -37,6 +37,7 @@ public class Users {
 		this.accountType = UserTypes.UNASSIGNED.toString();
 		
 		this.password = PasswordGen.generateSecurePassword(password, salt);
+		System.out.println("User: " + username + "'s password: " + password);
 		
     	Connection con = null;
 	        try {
@@ -50,7 +51,7 @@ public class Users {
 	                updateStmt.setString(3, surname);
 	                updateStmt.setString(4, forename);
 	                updateStmt.setString(5, accountType);
-	                updateStmt.setString(6, password);
+	                updateStmt.setString(6, this.password);
 	                updateStmt.setString(7, salt);
 	                updateStmt.executeUpdate();
 	                con.commit();

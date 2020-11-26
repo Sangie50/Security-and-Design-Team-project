@@ -107,14 +107,19 @@ public class LoginFrame extends JFrame implements ActionListener{
 	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	          con.setAutoCommit(false);
 	          Statement stmt = null;
-	          String getusername = "SELECT password, salt FROM user WHERE username = ?";
+	          String getusername = "SELECT * FROM user WHERE username = ?";
 	          try (PreparedStatement updateStmt = con.prepareStatement(getusername)){
 	              updateStmt.setString(1, un);
 	              ResultSet checkpw = updateStmt.executeQuery();
 	              con.commit();
-	              rightpw = checkpw.getString(1);
-		          salt = checkpw.getString(2);
-	              System.out.println(rightpw + " " + salt);
+//	              System.out.println("Result set size: " + checkpw.getFetchSize());
+//	              System.out.println("username: " + un + " password: " + pw);
+	          
+		          while (checkpw.next()) {
+		        	    rightpw = checkpw.getString(6);
+				        salt = checkpw.getString(7);
+		          }
+//	              System.out.println(rightpw + " " + salt);
 
 	              boolean passwordMatch = PasswordGen.verifyUserPassword(pw, rightpw, salt);
 	              if (passwordMatch) System.out.println("Correct password. Access Granted.");

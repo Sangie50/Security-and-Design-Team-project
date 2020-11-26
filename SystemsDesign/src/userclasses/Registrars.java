@@ -172,7 +172,7 @@ public class Registrars extends Users {
 	 }
 	 
 	 //Add for module grade a new row linking a new module and student email
-	 public void addModule(String email, String moduleId) throws SQLException {
+	 public void linkModuleToStudent(String email, String moduleId) throws SQLException {
 		 Connection con = null; 
 		 try {
 	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
@@ -198,6 +198,34 @@ public class Registrars extends Users {
 	        finally {
 	            if (con != null) con.close();
 	        }		 
+	 }
+	 
+	 public void linkModuleToTeacher(String employeeNo, String moduleId) throws SQLException {
+		 Connection con = null; 
+		 try {
+	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+	            con.setAutoCommit(false);
+	            Statement stmt = null;
+	            String getModuleId = "INSERT INTO module_teacher (employeeNo, moduleId) VALUES (?,?)";
+	            try (PreparedStatement updateStmt = con.prepareStatement(getModuleId)){
+	                updateStmt.setString(1, employeeNo);
+	                updateStmt.setString(2, moduleId);
+	                updateStmt.executeUpdate();
+	                con.commit();
+	                }
+	            catch (SQLException ex) {
+	                ex.printStackTrace();
+	            }
+	            finally {
+	                if (stmt != null) stmt.close();
+	            }
+	        }
+	        catch (Exception ex) {
+	            ex.printStackTrace();
+	        }
+	        finally {
+	            if (con != null) con.close();
+	        }	
 	 }
 	 
 	 public void deleteModule(String moduleId) throws SQLException {

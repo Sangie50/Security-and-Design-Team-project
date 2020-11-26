@@ -7,18 +7,18 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class Degrees{
+    String degreeID;
     String departmentID;
-    String departmentName;
     String entryLevel;
     String difficulty;
     String degreeName;
     String lastLevel;
     
+    public String getDegreeID() {
+        return degreeID;
+    }
     public String getDepartmentID() {
         return departmentID;
-    }
-    public String getDepartmentName() {
-        return departmentName;
     }
     public String getEntryLevel() {
         return entryLevel;
@@ -33,9 +33,9 @@ public class Degrees{
         return lastLevel;
     }
     
-    public Degrees(String departmentID, String departmentName, String entryLevel, String difficulty, String degreeName, String lastLevel) throws SQLException {
+    public Degrees(String degreeID, String departmentID, String entryLevel, String difficulty, String degreeName, String lastLevel) throws SQLException {
+        this.degreeID = degreeID;
         this.departmentID = departmentID;
-        this.departmentName = departmentName;
         this.entryLevel = entryLevel;
         this.difficulty = difficulty;
         this.degreeName = degreeName;

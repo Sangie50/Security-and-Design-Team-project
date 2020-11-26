@@ -18,7 +18,7 @@ public class Modules{
     Integer levelOfStudy;
     Integer creditWorth;
     String departmentID;
-    Integer pass_grade;
+    Integer passGrade;
     
     public String getModuleID() {
         return moduleID;
@@ -36,11 +36,16 @@ public class Modules{
         return departmentID;
     }
     public Integer getPassGrade() {
-        return pass_grade;
+        return passGrade;
     }
     
-    public Modules() throws SQLException {
-    
+    public Modules(String moduleID,String moduleName,Integer levelOfStudy, Integer creditWorth, String departmentID, Integer passGrade) throws SQLException {
+        this.moduleID = moduleID;
+        this.moduleName = moduleName;
+        this.levelOfStudy = levelOfStudy;
+        this.creditWorth = creditWorth;
+        this.departmentID = departmentID;
+        this.passGrade = passGrade;
     }
     
     public void addTeacherModule (Integer employeeNo, String departmentID, String moduleID) throws SQLException {
@@ -57,7 +62,7 @@ public class Modules{
                 addTMStmt.setInt(1, employeeNo);
                 addTMStmt.setString(2, departmentID);
                 addTMStmt.setString(3, moduleID);
-                
+                addTMStmt.executeUpdate();
                 con.commit();
             }
             catch (SQLException ex) {
@@ -74,5 +79,6 @@ public class Modules{
             if (con != null) con.close();
        }
     }
+
     
 }

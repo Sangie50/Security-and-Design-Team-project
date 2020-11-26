@@ -178,7 +178,7 @@ public class Registrars extends Users {
 	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
-	            String getModuleId = "INSERT INTO module_grade (moduleId, email) VALUES (?,?)";
+	            String getModuleId = "INSERT INTO module_grade (module_id, email) VALUES (?,?)";
 	            try (PreparedStatement updateStmt = con.prepareStatement(getModuleId)){
 	                updateStmt.setString(1, moduleId);
 	                updateStmt.setString(2, email);
@@ -234,7 +234,7 @@ public class Registrars extends Users {
 	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
-	            String preparedStmt = "DELETE FROM module_grade WHERE moduleId = ?";
+	            String preparedStmt = "DELETE FROM module_grade WHERE module_id = ?";
 	            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
 	                updateStmt.setString(1, moduleId);
 	                updateStmt.execute();

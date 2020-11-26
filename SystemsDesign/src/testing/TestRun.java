@@ -1,7 +1,9 @@
 package testing;
+import academics.Modules;
 import java.sql.*;
 
 import features.PasswordGen;
+import java.util.List;
 import userclasses.Admins;
 import userclasses.Users;
 
@@ -28,9 +30,15 @@ public class TestRun {
         //Add partners for degree
         //Admins.addDegreePartner("PSYP01", "COMM");
         Admins.viewDegree();
-        Admins.addModule("Cognitive Studies Seminar", 1, 20, "PSY", 40);
-        
-        
+        //Add module works 
+        //Admins.addModule("PSY601","Cognitive Studies Seminar", 1, 20, "PSY", 40);
+        //Core modules works
+        //Admins.setCoreModule("PSY601", "PSYP01", true);
+        Admins.viewCoreModule();
+        List<Object> mod = Admins.viewAllModule();
+        for (Object m : mod) {
+            System.out.println(m.toString()); // i really don't understand what is happening
+        }
         /*
         Add the four departments Business School (BUS), Computer Science (COM), Psychology
         (PSY) and Modern Languages (LAN).
@@ -54,6 +62,6 @@ public class TestRun {
         after repeating level 2, so is prevented from progressing;
         o the MPsy student passes through three levels, but fails catastrophically at level 4, so
         is graduated with a BSc class 2/i instead.
-        */
+         */
     }
 }

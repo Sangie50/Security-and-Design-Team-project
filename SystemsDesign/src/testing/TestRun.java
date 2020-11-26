@@ -2,7 +2,7 @@ package testing;
 import java.sql.*;
 
 import features.PasswordGen;
-//import userclasses.Admins;
+import userclasses.Admins;
 import userclasses.Users;
 
 public class TestRun {
@@ -20,7 +20,17 @@ public class TestRun {
 
         //testing using data for physcology and modern language
         
-        //Admins.addDepartment("PSY","Psychology","1");
+        //-Adding department works 
+        //Admins.addDepartment("LAN","Modern Languages","1"); 
+        Admins.viewDepartment(); //works but need a way to get stuff from objects
+        // Adding degree works
+        //Admins.addDegree("PSYP01","PSY","1","MPsy","Cognitive Science","1"); //String degreeID, String departmentID, String entryLevel, String difficulty, String degreeName
+        //Add partners for degree
+        //Admins.addDegreePartner("PSYP01", "COMM");
+        Admins.viewDegree();
+        Admins.addModule("Cognitive Studies Seminar", 1, 20, "PSY", 40);
+        
+        
         /*
         Add the four departments Business School (BUS), Computer Science (COM), Psychology
         (PSY) and Modern Languages (LAN).

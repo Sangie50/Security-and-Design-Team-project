@@ -1,6 +1,8 @@
 package userclasses;
 //Admin class
 
+import academics.Degrees;
+import academics.Departments;
 import java.sql.*;
 import java.util.*;
 
@@ -51,6 +53,7 @@ public class Admins extends Users{
                 updateStmt.setString(4, lastname);
                 updateStmt.setString(5, accountType);
                 updateStmt.setString(6, password);
+                updateStmt.executeUpdate();
                 con.commit();
             }
             catch (SQLException ex) {
@@ -81,6 +84,7 @@ public class Admins extends Users{
                 stmt = con.createStatement();
                 updateStmt.setString(1, accountType);
                 updateStmt.setString(2, username);
+                updateStmt.executeUpdate();
                 con.commit();
             }
             catch (SQLException ex) {
@@ -109,9 +113,12 @@ public class Admins extends Users{
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt); PreparedStatement delStmt = con.prepareStatement(deleteStmt)){
                 updateStmt.setString(1, username);
                 ResultSet count = updateStmt.executeQuery();
+                count.next();
                 if (count.getInt("rowcount") > 0){
                     delStmt.setString(1, username);
                     // Other connected rows should be deleted via cascades
+                    delStmt.executeUpdate();
+                    con.commit();
                 }
                 else{ 
                     System.err.println("No users exist with that username");
@@ -147,6 +154,7 @@ public class Admins extends Users{
                 updateStmt.setInt(3, creditWorth);
                 updateStmt.setString(4, departmentID);
                 updateStmt.setInt(5, passMark);
+                updateStmt.executeUpdate();
                 con.commit();
             }
             catch (SQLException ex) {
@@ -176,6 +184,7 @@ public class Admins extends Users{
                 updateStmt.setInt(1, moduleID);
                 updateStmt.setString(2, departmentID);
                 updateStmt.setBoolean(3, isCore);
+                updateStmt.executeUpdate();
                 con.commit();
             }
             catch (SQLException ex) {
@@ -204,8 +213,11 @@ public class Admins extends Users{
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt); PreparedStatement delStmt = con.prepareStatement(deleteStmt)){
                 updateStmt.setInt(1, moduleID);
                 ResultSet count = updateStmt.executeQuery();
+                count.next();
                 if (count.getInt(1) > 0){
                     delStmt.setInt(1, moduleID);
+                    delStmt.executeUpdate();
+                    con.commit();
                     // Other connected rows should be deleted via cascades
                 }
                 else{ 
@@ -240,16 +252,19 @@ public class Admins extends Users{
                 updateStmt.setString(1, departmentID);
                 updateStmt.setString(2, departmentName);
                 ResultSet count = updateStmt.executeQuery();
-                if (count.getInt("rowcount") < 1){
+                con.commit();
+                count.next();
+                if (count.getInt("rowcount") == 0){
                     insStmt.setString(1, departmentID);
                     insStmt.setString(2, departmentName);
                     insStmt.setString(3, entryLevel);
-                    // Other connected rows should be deleted via cascades
+                    insStmt.executeUpdate();
+                    con.commit();
                 }
                 else{ 
-                    System.err.println("DepartmentID or department name already exists already exists.");
-                } 
-                con.commit();
+                    System.err.println("DepartmentID or department name already exists.");
+                }
+                
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -264,6 +279,43 @@ public class Admins extends Users{
         finally {
             if (con != null) con.close();
         }
+    }
+    
+    public static List viewDepartment() throws SQLException {
+        List<Object> departs = new ArrayList<Object>();
+        Connection con = null;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            Statement stmt = null;
+            String preparedStmt = "SELECT * FROM department";
+            //System.out.println(preparedStmt);
+            try (PreparedStatement selectStmt = con.prepareStatement(preparedStmt)){
+                ResultSet department = selectStmt.executeQuery();
+                while (department.next()) {
+                    String departmentID = department.getString("department_id");
+                    String departmentName = department.getString("department_name");
+                    String entryLevel = department.getString("entry_level");
+                    con.commit();
+                    Departments depart = new Departments(departmentID, departmentName, entryLevel);
+                    departs.add(depart);
+                    System.out.println(departmentID+"; "+departmentName+", Entry level; "+entryLevel);
+                }
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+        return departs;
     }
     
     public static void removeDepartment(String departmentID) throws SQLException {
@@ -277,14 +329,17 @@ public class Admins extends Users{
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt); PreparedStatement delStmt = con.prepareStatement(deleteStmt)){
                 updateStmt.setString(1, departmentID);
                 ResultSet count = updateStmt.executeQuery();
+                con.commit();
+                count.next();
                 if (count.getInt(1) > 0){
                     delStmt.setString(1, departmentID);
+                    delStmt.executeUpdate();
+                    con.commit();
                     // Other connected rows should be deleted via cascades
                 }
                 else{ 
                     System.err.println("No departments exist with that departmentID.");
                 } 
-                con.commit();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -301,29 +356,32 @@ public class Admins extends Users{
         }
     }
     
-    public static void addDegree(String degreeID, String departmentID, String entryLevel, String difficulty, String degreeName) throws SQLException {
+    public static void addDegree(String degreeID, String departmentID, String entryLevel, String difficulty, String degreeName, String lastLevel) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
             String preparedStmt = "SELECT COUNT(*) AS rowcount FROM degree WHERE degree_id = ?";
-            String insertStmt = "INSERT INTO degree VALUES (?,?,?,?,?)";
+            String insertStmt = "INSERT INTO degree(degree_id, department_id, entry_level, difficulty, degree_name, last_level) VALUES (?,?,?,?,?,?)";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt); PreparedStatement insStmt = con.prepareStatement(insertStmt)){
                 updateStmt.setString(1, degreeID);
+                con.commit();
                 ResultSet count = updateStmt.executeQuery();
-                if (count.getInt("rowcount") < 1){
+                count.next();
+                if (count.getInt(1) == 0){
                     insStmt.setString(1, degreeID);
                     insStmt.setString(2, departmentID);
                     insStmt.setString(3, entryLevel);
                     insStmt.setString(4, difficulty);
                     insStmt.setString(5, degreeName);
-                    // Other connected rows should be deleted via cascades
+                    insStmt.setString(6, lastLevel);
+                    insStmt.executeUpdate();
+                    con.commit();
                 }
                 else{ 
                     System.err.println("Degree ID already exists already exists.");
-                } 
-                con.commit();
+                }
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -339,6 +397,87 @@ public class Admins extends Users{
             if (con != null) con.close();
         }
     }
+    
+    public static void addDegreePartner(String degreeID, String otherDepartmentID) throws SQLException {
+        Connection con = null;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            Statement stmt = null;
+            String preparedStmt = "SELECT COUNT(*) AS rowcount FROM degree WHERE degree_id = ?";
+            String insertStmt = "INSERT INTO interdisciplinary_degree(degree_id, other_department) VALUES (?,?)";
+            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt); PreparedStatement insStmt = con.prepareStatement(insertStmt)){
+                updateStmt.setString(1, degreeID);
+                con.commit();
+                ResultSet count = updateStmt.executeQuery();
+                count.next();
+                if (count.getInt(1) > 0){
+                    insStmt.setString(1, degreeID);
+                    insStmt.setString(2, otherDepartmentID);
+                    insStmt.executeUpdate();
+                    con.commit();
+                }
+                else{ 
+                    System.err.println("Degree ID doesn't exist.");
+                }
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+    }
+    
+    public static List viewDegree() throws SQLException {
+        List<Object> deg = new ArrayList<Object>();
+        Connection con = null;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            Statement stmt = null;
+            String preparedStmt = "SELECT * FROM degree INNER JOIN interdisciplinary_degree ON degree.degree_id = interdisciplinary_degree.degree_id";
+            //System.out.println(preparedStmt);
+            try (PreparedStatement selectStmt = con.prepareStatement(preparedStmt)){
+                ResultSet department = selectStmt.executeQuery();
+                while (department.next()) {
+                    String degreeID = department.getString("degree_id");
+                    String departmentID = department.getString("department_id");
+                    String entryLevel = department.getString("entry_level");
+                    String difficulty = department.getString("difficulty");
+                    String degreeName = department.getString("degree_name");
+                    String lastLevel = department.getString("last_level");
+                    String partner = department.getString("other_department");
+                    
+                    con.commit();
+                    Degrees degree = new Degrees(degreeID, departmentID, entryLevel, difficulty, degreeName, lastLevel);
+                    deg.add(degree); 
+                    System.out.println(degreeID+":"+departmentID+":"+entryLevel+":"+difficulty+":"+degreeName+":"+lastLevel+":"+partner);
+                }
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+        return deg;
+    }
+    
     
     public static void removeDegree(String degreeID) throws SQLException {
         Connection con = null;
@@ -350,10 +489,13 @@ public class Admins extends Users{
             String deleteStmt = "DELETE FROM degree WHERE degree_id = ?";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt); PreparedStatement delStmt = con.prepareStatement(deleteStmt)){
                 updateStmt.setString(1, degreeID);
+                con.commit();
                 ResultSet count = updateStmt.executeQuery();
+                count.next();
                 if (count.getInt(1) > 0){
                     delStmt.setString(1, degreeID);
-                    // Other connected rows should be deleted via cascades
+                    delStmt.executeUpdate();
+                    con.commit();
                 }
                 else{ 
                     System.err.println("No departments exist with that departmentID.");

@@ -55,12 +55,11 @@ public class Teachers extends Users{
                 addUStmt.setString(3, surname);
                 addUStmt.setString(4, forename);
                 addUStmt.setString(5, password);
-                
+                con.commit();
                 //Set variables for adding to teacher
                 addTStmt.setString(1, username);
                 addTStmt.setInt(2, employeeNo);
                 addTStmt.setString(3, departmentID);
-                
                 con.commit();
             }
             catch (SQLException ex) {
@@ -86,10 +85,10 @@ public class Teachers extends Users{
             Statement stmt = null;
             String preparedStmt = "INSERT INTO module_grade VALUES (?,?,?)";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
-                stmt = con.createStatement();
                 updateStmt.setString(1, moduleID);
                 updateStmt.setInt(2, registrationID);
                 updateStmt.setInt(3, overallMark);
+                updateStmt.executeUpdate();
                 con.commit();
             }
             catch (SQLException ex) {
@@ -113,21 +112,6 @@ public class Teachers extends Users{
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             Statement stmt = null;
-            try {
-                stmt = con.createStatement();
-                // Need to get level of student/ module and module credits to calculate this
-                /*stmt.executeQuery("SELECT creditWorth, initialGrade, resistGrade FROM module AS m, "
-                        + "module grade AS mg USING (registrationID) WHERE "
-                        + "mg.email = '"+email+"' AND mg.moduleID = '"+moduleID+"'");
-                */
-                
-            }
-            catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-            finally {
-                if (stmt != null) stmt.close();
-            }
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -160,6 +144,7 @@ public class Teachers extends Users{
             String preparedStmt = "SELECT progress_to_next_level FROM student AS s, year_grade AS yg USING (registration_id) WHERE s.registration_id = ?";
             try (PreparedStatement selectStmt = con.prepareStatement(preparedStmt)){
                 selectStmt.setInt(1, registrationID);
+                con.commit();
                 ResultSet passorfail = selectStmt.executeQuery();
                 status = passorfail.getBoolean(1);
             }
@@ -191,6 +176,7 @@ public class Teachers extends Users{
                 updateStmt.setInt(1, overallMark);
                 updateStmt.setString(2, moduleID);
                 updateStmt.setInt(3, registrationID);
+                updateStmt.executeUpdate();
                 con.commit();
             }
             catch (SQLException ex) {
@@ -220,6 +206,7 @@ public class Teachers extends Users{
                 updateStmt.setInt(1, resitMark);
                 updateStmt.setString(2, moduleID);
                 updateStmt.setInt(3, registrationID);
+                updateStmt.executeUpdate();
                 con.commit();
             }
             catch (SQLException ex) {

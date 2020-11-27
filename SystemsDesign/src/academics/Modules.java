@@ -39,6 +39,8 @@ public class Modules{
         return passGrade;
     }
     
+ 
+    
     public Modules(String moduleID,String moduleName,Integer levelOfStudy, Integer creditWorth, String departmentID, Integer passGrade) throws SQLException {
         this.moduleID = moduleID;
         this.moduleName = moduleName;

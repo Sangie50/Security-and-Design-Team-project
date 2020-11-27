@@ -6,12 +6,14 @@ import features.PasswordGen;
 import java.util.List;
 import userclasses.Admins;
 import userclasses.Users;
+import userclasses.Users.UserTypes;
 
 public class TestRun {
     public static void main(String[] args) throws SQLException {
         System.out.println("Hello");
         Users nameless = new Users("name", "ms", "a", "a", "password"); // creates an unassigned user
         Users name = new Users("nameless", "ms", "a", "a", "password");
+        Admins admin = new Admins("admin", "ms", "a", "a", "password");
         System.out.println(nameless);
         System.out.println(nameless.getPassword());
 
@@ -19,6 +21,7 @@ public class TestRun {
         String salt = nameless.getSalt();
         boolean passwordMath = PasswordGen.verifyUserPassword("password", nameless.getPassword(), salt);
 
+        Admins.updatePermissions("nameless",UserTypes.STUDENT.toString());
         System.out.println(passwordMath + " saved pw: " + nameless.getPassword());
 
         //testing using data for psychology and modern language
@@ -36,9 +39,9 @@ public class TestRun {
         //Core modules works
         //Admins.setCoreModule("PSY601", "PSYP01", true);
         Admins.viewCoreModule();
-        List<Object> mod = Admins.viewAllModule();
-        for (Object m : mod) {
-            System.out.println(m.toString()); // i really don't understand what is happening
+        List<Modules> mod = Admins.viewAllModule();
+        for (Modules m : mod) {
+            System.out.println(m.getModuleName()); // i really don't understand what is happening
         }
         /*
         Add the four departments Business School (BUS), Computer Science (COM), Psychology

@@ -1,18 +1,11 @@
 package view.Frames;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
+import java.awt.event.*;
+import java.sql.*;
 import javax.swing.*;
 
-import controller.LoginButton;
 import features.PasswordGen;
+import userclasses.Users.UserTypes;
 
 public class LoginFrame extends JFrame implements ActionListener{
 	
@@ -101,6 +94,7 @@ public class LoginFrame extends JFrame implements ActionListener{
 		String pw = String.valueOf(password.getPassword());
 		String rightpw = "";
 		String salt = "";
+		String type = "";
 		
 		Connection con = null; 
 		try {
@@ -118,11 +112,25 @@ public class LoginFrame extends JFrame implements ActionListener{
 		          while (checkpw.next()) {
 		        	    rightpw = checkpw.getString(6);
 				        salt = checkpw.getString(7);
+				        type = checkpw.getString(5);
+				        
 		          }
 //	              System.out.println(rightpw + " " + salt);
 
 	              boolean passwordMatch = PasswordGen.verifyUserPassword(pw, rightpw, salt);
-	              if (passwordMatch) System.out.println("Correct password. Access Granted.");
+	              if (passwordMatch) {
+	            	  System.out.println("Correct password. Access Granted.");
+	            	  if (type == UserTypes.STUDENT.toString()) {
+	            		  java.awt.EventQueue.invokeLater(new Runnable() {
+	            	          public void run() {
+	            	        	setVisible(false);
+	            	      		JFrame studentPage = new StudentFrame();
+	            	            studentPage.setVisible(true);
+	            	          }
+	            	    });
+	            	  }
+	              }
+	              
 	              else System.out.println("Access denied.");
 	                
 	                }

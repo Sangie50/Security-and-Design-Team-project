@@ -80,7 +80,7 @@ public class Admins extends Users{
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "UPDATE user SET accountType = ? WHERE username = ?";
+            String preparedStmt = "UPDATE user SET account_type = ? WHERE username = ?";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
                 stmt = con.createStatement();
                 updateStmt.setString(1, accountType);
@@ -247,8 +247,8 @@ public class Admins extends Users{
         }
         return mod;
     }
-    public static List<Object> viewAllModule() throws SQLException {
-        List<Object> mod = new ArrayList<Object>();
+    public static List<Modules> viewAllModule() throws SQLException {
+        List<Modules> mod = new ArrayList<Modules>();
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");

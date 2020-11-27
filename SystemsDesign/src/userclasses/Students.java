@@ -129,16 +129,16 @@ public class Students extends Users{
   	return endDate;
   }
   
-  public void displayAllModules(String email) throws SQLException {
-		 List<String> moduleList = Grades.getModuleList(email);
+  public void displayAllModules(String email, String levelOfStudy) throws SQLException {
+		 List<String> moduleList = Grades.getModuleList(email, levelOfStudy);
 		 for (int i = 0; i < moduleList.size(); i++) {
 			 System.out.println("Module Id = "+ moduleList.get(i));
 		 }
 	 }
   
-  public static List<Integer> moduleCredits(String email) throws SQLException{
+  public static List<Integer> moduleCredits(String email, String levelOfStudy) throws SQLException{
   	List<Integer> creditsList = new ArrayList<>();
-  	List<String> moduleList = Grades.getModuleList(email);
+  	List<String> moduleList = Grades.getModuleList(email, levelOfStudy);
   	for(int i =0; i < moduleList.size(); i++) {
   		 Connection con = null; 
 	 		 try {
@@ -176,8 +176,8 @@ public class Students extends Users{
   	
   }
 	 
-  public void displayModuleCredits(String email) throws SQLException {
-  	List<Integer> creditsList = moduleCredits(email);
+  public void displayModuleCredits(String email, String levelOfStudy) throws SQLException {
+  	List<Integer> creditsList = moduleCredits(email, levelOfStudy);
   	for (int i = 0; i < creditsList.size(); i++) {
   		System.out.println("Credit worth = " + creditsList.get(i));
   	}
@@ -247,13 +247,12 @@ public class Students extends Users{
 		        }		
 		 return degreeId;
 	 }
-  
-  public void displayDegree(String email) throws SQLException {
-  	String degreeId = getDegreeId(email);
-  	String degreeName = null;
-  	Connection con = null; 
+  public static String getDegreeName(String email) throws SQLException {
+	  String degreeName = null;
+	  String degreeId = getDegreeId(email);
+	  Connection con = null; 
 		 try {
-				 	con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
 		      con.setAutoCommit(false);
 		      Statement stmt = null;
 		      String getdegree = String.format("SELECT degree_name FROM degree WHERE degree_id = %s ", degreeId) ;
@@ -261,7 +260,6 @@ public class Students extends Users{
 		      try (PreparedStatement pstmt = con.prepareStatement(getdegree)){
 				      	rs = pstmt.executeQuery();        // Get the result table from the query  3 
 				      	degreeName = rs.getString(5);        // Retrieve the fifth column value
-					      System.out.println("Degree = " + degreeName + "(" + degreeId + ")");
 				      	rs.close();                       // Close the ResultSet                  5 
 				      	pstmt.close();                    
 				          }
@@ -277,7 +275,13 @@ public class Students extends Users{
 		        }
 		        finally {
 		            if (con != null) con.close();
-		        }		
+		        }	
+	 return degreeName;
+  }
+  public void displayDegree(String email) throws SQLException {
+  	String degreeName = getDegreeName(email);
+    String degreeId = getDegreeId(email);
+  	System.out.println("Degree = " + degreeName + "(" + degreeId + ")");
   }
   
   public void displayTotalGrade(String email) throws SQLException {

@@ -314,5 +314,132 @@ public class Students extends Users{
 		        finally {
 		            if (con != null) con.close();
 		        }		 
-	 }
+	 	}
+  public static Boolean getProgressToNextLevel(String email) throws SQLException {
+	  Boolean progress_to_next_level = null;
+	  Connection con = null; 
+		 try {
+			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+		      con.setAutoCommit(false);
+		      Statement stmt = null;
+		      String getProgress = "SELECT progress_to_next_level FROM year_grade WHERE email = ? " ;
+		      String totalGrade;
+		      ResultSet rs;
+		      try (PreparedStatement pstmt = con.prepareStatement(getProgress)){
+				      	rs = pstmt.executeQuery();       
+				      	progress_to_next_level = rs.getBoolean(6);        
+				      	
+				      	rs.close();                       
+				      	pstmt.close();                    
+				          }
+		            catch (SQLException ex) {
+		                ex.printStackTrace();
+		            }
+		            finally {
+		                if (stmt != null) stmt.close();
+		            }
+		        }
+		        catch (Exception ex) {
+		            ex.printStackTrace();
+		        }
+		        finally {
+		            if (con != null) con.close();
+		        }
+		 return progress_to_next_level;
+  }
+  
+  public static String getPeriodOfStudy(String email) throws SQLException {
+	  String periodOfStudy = null;
+	  Connection con = null; 
+		 try {
+			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+		      con.setAutoCommit(false);
+		      Statement stmt = null;
+		      String getPeriodOfStudy = String.format("SELECT period_of_study FROM year_grade WHERE email = %s" , email);    
+		      ResultSet rs;
+		      try (PreparedStatement pstmt = con.prepareStatement(getPeriodOfStudy)){
+				      	rs = pstmt.executeQuery();        
+				      	periodOfStudy = rs.getString(4);      
+				      	
+				      	rs.close();                       
+				      	pstmt.close();                    
+				          }
+		            catch (SQLException ex) {
+		                ex.printStackTrace();
+		            }
+		            finally {
+		                if (stmt != null) stmt.close();
+		            }
+		        }
+		        catch (Exception ex) {
+		            ex.printStackTrace();
+		        }
+		        finally {
+		            if (con != null) con.close();
+		        }	
+		 return periodOfStudy;
+  }
+   
+  public static String nextPeriodOfStudy(String email) throws SQLException {
+	  Boolean progress_to_next_level = getProgressToNextLevel(email);
+	  String period_of_study = getPeriodOfStudy(email);
+	  String label = period_of_study.substring(0,1);
+	  String updateLabel = "";
+	  String rest_pos = period_of_study.substring(1);
+	  String update_pos = "";
+	  
+	  if (progress_to_next_level == true) {
+		 if(label == "A") {
+			 updateLabel = "B";
+			 update_pos = updateLabel + rest_pos;
+		 }
+		 else if(label == "B") {
+			 updateLabel = "C";
+			 update_pos = updateLabel + rest_pos;
+		 }
+		 else if(label == "C") {
+			 updateLabel = "D";
+			 update_pos = updateLabel + rest_pos;
+		 }
+		 else if(label == "C") {
+			 updateLabel = "D";
+			 update_pos = updateLabel + rest_pos;
+		 }
+		 else {
+			 update_pos = period_of_study;
+		 }
+	  }
+	  return update_pos;
+  }
+  
+  public void updatePeriodOfStudy(String email) throws SQLException {
+	  String update_pos = nextPeriodOfStudy(email);
+	  Connection con = null;
+      //System.out.println(permission.get(newPermission));
+      try {
+          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+          con.setAutoCommit(false);
+          Statement stmt = null;
+          String preparedStmt = String.format("UPDATE year_grade SET period_of_study = %s WHERE email = %s", update_pos, email);
+          try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
+              stmt = con.createStatement();
+              updateStmt.setString(4, update_pos);
+              updateStmt.executeUpdate();
+              con.commit();
+          }
+          catch (SQLException ex) {
+              ex.printStackTrace();
+          }
+          finally {
+              if (stmt != null) stmt.close();
+          }
+      }
+      catch (Exception ex) {
+          ex.printStackTrace();
+      }
+      finally {
+          if (con != null) con.close();
+      }
+   }
+  
 }

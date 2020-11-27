@@ -21,7 +21,7 @@ public class TestRun {
 
         System.out.println(passwordMath + " saved pw: " + nameless.getPassword());
 
-        //testing using data for physcology and modern language
+        //testing using data for psychology and modern language
         
         //-Adding department works 
         //Admins.addDepartment("LAN","Modern Languages","1"); 

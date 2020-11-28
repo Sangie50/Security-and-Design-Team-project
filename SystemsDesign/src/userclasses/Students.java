@@ -136,9 +136,8 @@ public class Students extends Users{
 		 }
 	 }
   
-  public static List<Integer> moduleCredits(String email, String levelOfStudy) throws SQLException{
+  public static List<Integer> moduleCredits(String email, String levelOfStudy, List<String> moduleList) throws SQLException{
   	List<Integer> creditsList = new ArrayList<>();
-  	List<String> moduleList = Grades.getModuleList(email, levelOfStudy);
   	for(int i =0; i < moduleList.size(); i++) {
   		 Connection con = null; 
 	 		 try {
@@ -177,7 +176,7 @@ public class Students extends Users{
   }
 	 
   public void displayModuleCredits(String email, String levelOfStudy) throws SQLException {
-  	List<Integer> creditsList = moduleCredits(email, levelOfStudy);
+  	List<Integer> creditsList = moduleCredits(email, levelOfStudy, Grades.getModuleList(email, levelOfStudy));
   	for (int i = 0; i < creditsList.size(); i++) {
   		System.out.println("Credit worth = " + creditsList.get(i));
   	}
@@ -287,7 +286,7 @@ public class Students extends Users{
   public void displayTotalGrade(String email) throws SQLException {
 		 Connection con = null; 
 		 try {
-				 	con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+			con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
 		      con.setAutoCommit(false);
 		      Statement stmt = null;
 		      String getTg = "SELECT overall_grade FROM year_grade WHERE email = ? " ;
@@ -296,7 +295,7 @@ public class Students extends Users{
 		      try (PreparedStatement pstmt = con.prepareStatement(getTg)){
 				      	rs = pstmt.executeQuery();        // Get the result table from the query  3 
 				      	totalGrade = rs.getString(4);        // Retrieve the fourth column value
-					      System.out.println("Degree = " + totalGrade); // Print the column values
+					    System.out.println("Degree = " + totalGrade); // Print the column values
 				      	
 				      	rs.close();                       // Close the ResultSet                  5 
 				      	pstmt.close();                    
@@ -420,10 +419,11 @@ public class Students extends Users{
           con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
           con.setAutoCommit(false);
           Statement stmt = null;
-          String preparedStmt = String.format("UPDATE year_grade SET period_of_study = %s WHERE email = %s", update_pos, email);
+          String preparedStmt = "UPDATE year_grade SET period_of_study = ? WHERE email = ?";
           try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
               stmt = con.createStatement();
-              updateStmt.setString(4, update_pos);
+              updateStmt.setString(1, update_pos);
+              updateStmt.setString(2, email);
               updateStmt.executeUpdate();
               con.commit();
           }

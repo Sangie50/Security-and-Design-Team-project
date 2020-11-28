@@ -72,7 +72,9 @@ public class Grades { //create a constructor
 		            if (con != null) con.close();
 		        }		
 		 return currentlevelOfStudy;
-	}
+	}	
+	   
+        
 	public static List<String> getModuleList(String email, String levelOfStudy) throws SQLException{
 		List<String> moduleList = new ArrayList<>();
 		Connection con = null; 
@@ -166,10 +168,11 @@ public class Grades { //create a constructor
 			      ResultSet rs;
 			      ResultSet rs2;
 			      try {
-					      	rs = pstmt.executeQuery();        // Get the result table from the query  3   
-					      	rs2 = pstmt2.executeQuery();
-				      	  initialGradeString = rs.getString(3);        // Retrieve the first column value
-				      	  resitGradeString = rs2.getString(4);
+			    	  
+				      	rs = pstmt.executeQuery();        // Get the result table from the query  3   
+				      	rs2 = pstmt2.executeQuery();
+				      	initialGradeString = rs.getString(3);        // Retrieve the first column value
+				      	resitGradeString = rs2.getString(4);
 			      	    int initialGrade = Integer.parseInt(initialGradeString);
 			      	    int resitGrade = Integer.parseInt(resitGradeString);
 					      	if (initialGrade >= 40) {
@@ -198,7 +201,7 @@ public class Grades { //create a constructor
 		 return gradeForModule;
 	}
 	
-	public HashMap<String, Boolean> passModule(String email, String levelOfStudy) throws SQLException { 
+	public static HashMap<String, Boolean> passModule(String email, String levelOfStudy) throws SQLException { 
 		HashMap<String, Integer> grades_hmap = gradesForEachModule(email, levelOfStudy);
 		HashMap<String, Boolean> passOrFail = new HashMap<>();
 		for (Map.Entry<String, Integer> entry : grades_hmap.entrySet()) {
@@ -253,9 +256,9 @@ public class Grades { //create a constructor
 	}
 	
 	
-	public Double getWeightedYearGrade(String email, String levelOfStudy) throws SQLException {
+	public static Double getWeightedYearGrade(String email, String levelOfStudy) throws SQLException {
+		List<Integer> creditsList = Students.moduleCredits(email, levelOfStudy, getModuleList(email, levelOfStudy));
 		List<String> moduleList = getModuleList(email, levelOfStudy);
-		List<Integer> creditsList = Students.moduleCredits(email, levelOfStudy);
 		HashMap<String, Integer> gradePerModule = gradesForEachModule(email, levelOfStudy);
 		Double sum = 0.0;
 		Double meanGrade = 0.0;
@@ -274,7 +277,7 @@ public class Grades { //create a constructor
 		return meanGrade;
 	}
 	
-	public Boolean yearPassed(String email, String levelOfStudy) throws SQLException {
+	public static Boolean yearPassed(String email, String levelOfStudy) throws SQLException {
 		String currentLevelOfStudy = getCurrentLevelOfStudy(email);
 		Double yearGrade = getWeightedYearGrade(email, levelOfStudy);
 		String cpass = checkForConcededPass(email, levelOfStudy);
@@ -310,7 +313,7 @@ public class Grades { //create a constructor
 		}
 	}
 	
-	public String getEntryLevel(String email) throws SQLException {
+	public static String getEntryLevel(String email) throws SQLException {
 		String degreeId = Students.getDegreeId(email);
 		String entryLevel = null;
 		Connection con = null; 
@@ -412,7 +415,7 @@ public class Grades { //create a constructor
 		        }	
 		 return resitYearGrade;
 	}
-	public Double getFinalDegreeGrade(String email) throws SQLException{
+	public static Double getFinalDegreeGrade(String email) throws SQLException{
 		String entryLevel = getEntryLevel(email);
 		String lastLevel = getLastLevelOfStudy(email);
 		String currentLevelOfStudy = getCurrentLevelOfStudy(email);
@@ -462,7 +465,7 @@ public class Grades { //create a constructor
 				      	degreeId = rs.getString(1);        // Retrieve the first column value
 				      	rs.close();                       // Close the ResultSet                  5 
 				      	pstmt.close();                    
-				          }
+		      }
 		            catch (SQLException ex) {
 		                ex.printStackTrace();
 		            }
@@ -489,7 +492,8 @@ public class Grades { //create a constructor
             String preparedStmt = "UPDATE student SET degreeId = ? WHERE email = ?";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
                 stmt = con.createStatement();
-                updateStmt.setString(4, degreeId);
+                updateStmt.setString(1, degreeId);
+                updateStmt.setString(2, email);
                 updateStmt.executeUpdate();
                 con.commit();
             }
@@ -509,8 +513,10 @@ public class Grades { //create a constructor
 		
 	}
 	
-	public String degreeClassification(String email) throws SQLException{
+	public static String degreeClassification(String email) throws SQLException{
 		//check if they have completed their degree
+		String degreeName = Students.getDegreeName(email);
+		String degreeTitle = degreeName.substring(0, degreeName.indexOf(' '));
 		double degreeGrade = getFinalDegreeGrade(email);
 		Integer dissertationMarks = getDissertationMarks(email);
 		String classification = null;
@@ -570,6 +576,11 @@ public class Grades { //create a constructor
 				classification = "pass";
 			}
 		}
+		else if (degreeTitle == "PGCert") {
+			if (degreeGrade >= 49.5) {
+				classification = "pass";
+			}
+		}
 		return classification;
 	}
 	
@@ -586,6 +597,100 @@ public class Grades { //create a constructor
 		}
 		return marks;
 	}
+	
+	public static void pgCert(String email) throws SQLException{
+		String fullDegreeName = Students.getDegreeName(email);
+		String degreeName = fullDegreeName.substring(fullDegreeName.indexOf(' ') + 1);
+		String degreeTitle = fullDegreeName.substring(0, fullDegreeName.indexOf(' '));
+		String updatedDegreeName = "PGCert " + degreeName;
+		String updatedDegreeId = null;
+		if (degreeTitle == "MSc") {
+			HashMap<String, Boolean> passOrFail = passModule(email, getCurrentLevelOfStudy(email));
+			List<String> passedModule = new ArrayList<>();
+			List<String> passedTaughtModules = new ArrayList<>();
+			
+			for (Map.Entry<String, Boolean> entry : passOrFail.entrySet()) {
+		      String moduleId = entry.getKey();
+		      Boolean isPass = entry.getValue();
+		      if (isPass == true) {
+		  			passedModule.add(moduleId);
+		  	  }
+			}
+			
+			for(int i = 0; i < passedModule.size(); i++) {
+				Connection con = null; 
+				try {
+					con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+				    con.setAutoCommit(false);
+				    Statement stmt = null;
+				    String getTaughtMod = "SELECT module_id FROM module WHERE module_id = ? AND isTaught = ? " ;
+				    
+				    ResultSet rs;
+		            try (PreparedStatement pstmt = con.prepareStatement(getTaughtMod)){
+		            	pstmt.setString(1, passedModule.get(i));
+		            	pstmt.setBoolean(2, true);
+				      	rs = pstmt.executeQuery();        // Get the result table from the query  3 
+				      	passedTaughtModules.add(rs.getString(1));        // Retrieve the fourth column value
+				      	rs.close();                       // Close the ResultSet                  5 
+				      	pstmt.close();                    
+				    }
+		            catch (SQLException ex) {
+		                ex.printStackTrace();
+		            }
+		            finally {
+		                if (stmt != null) stmt.close();
+		            }
+				}
+		        catch (Exception ex) {
+		            ex.printStackTrace();
+		        }
+		        finally {
+		            if (con != null) con.close();
+		        }
+				
+			  }
+			
+				List<Integer> creditsList = Students.moduleCredits(email, getCurrentLevelOfStudy(email), passedTaughtModules);
+				int totalCredits = 0;
+				for (int i = 0; i < creditsList.size(); i++) {
+					totalCredits += creditsList.get(i);
+				}
+				if (totalCredits == 60) {
+					Connection con = null; 
+					 try {
+						  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+					      con.setAutoCommit(false);
+					      Statement stmt = null;
+					      String getdegreeId = "SELECT degree_id FROM degree WHERE degree_name = ?" ;
+					      ResultSet rs;
+					      try (PreparedStatement pstmt = con.prepareStatement(getdegreeId)){
+							      	rs = pstmt.executeQuery();        // Get the result table from the query  3 
+							      	updatedDegreeId = rs.getString(1);        // Retrieve the first column value
+							      	rs.close();                       // Close the ResultSet                  5 
+							      	pstmt.close();                    
+					      }
+					            catch (SQLException ex) {
+					                ex.printStackTrace();
+					            }
+					            finally {
+					                if (stmt != null) stmt.close();
+					            }
+					        }
+					        catch (Exception ex) {
+					            ex.printStackTrace();
+					        }
+					        finally {
+					            if (con != null) con.close();
+					        }
+					 updateDegree(email, updatedDegreeId);
+					 degreeClassification(email);
+					 
+				}
+		}
+		
+	}
+	
+	
 	
 	
 }

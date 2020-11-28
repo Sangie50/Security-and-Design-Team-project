@@ -15,7 +15,7 @@ import java.sql.Statement;
 public class Modules{
     String moduleID;
     String moduleName;
-    Integer levelOfStudy;
+    Boolean isTaught;
     Integer creditWorth;
     String departmentID;
     Integer passGrade;
@@ -26,8 +26,8 @@ public class Modules{
     public String getModuleName() {
         return moduleName;
     }
-    public Integer getLevelOfStudy() {
-        return levelOfStudy;
+    public Boolean getisTaught() {
+        return isTaught;
     }
     public Integer getCreditWorth() {
         return creditWorth;
@@ -41,10 +41,10 @@ public class Modules{
     
  
     
-    public Modules(String moduleID,String moduleName,Integer levelOfStudy, Integer creditWorth, String departmentID, Integer passGrade) throws SQLException {
+    public Modules(String moduleID,String moduleName,Boolean isTaught, Integer creditWorth, String departmentID, Integer passGrade) throws SQLException {
         this.moduleID = moduleID;
         this.moduleName = moduleName;
-        this.levelOfStudy = levelOfStudy;
+        this.isTaught = isTaught;
         this.creditWorth = creditWorth;
         this.departmentID = departmentID;
         this.passGrade = passGrade;

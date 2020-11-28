@@ -17,6 +17,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.swing.JButton;
 import java.awt.Font;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 
 
@@ -95,6 +97,10 @@ public class Student extends JFrame {
 		contentPane.add(degree);
 		
 		JButton modulesList = new JButton("Display Module Grades");
+		modulesList.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		modulesList.setBounds(743, 110, 245, 35);
 		contentPane.add(modulesList);
 		

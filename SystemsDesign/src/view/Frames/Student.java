@@ -15,6 +15,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javax.swing.JButton;
+import java.awt.Font;
 
 
 
@@ -48,48 +50,57 @@ public class Student extends JFrame {
 		Students student = getStudent(username);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setExtendedState(JFrame.MAXIMIZED_BOTH);
+		setBounds(100, 100, 1035, 647);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
 		JLabel title = new JLabel("Student Page");
-		title.setBounds(142, 21, 126, 26);
+		title.setFont(title.getFont().deriveFont(title.getFont().getStyle() | Font.BOLD));
+		title.setBounds(413, 21, 224, 71);
 		contentPane.add(title);
 		
 		JLabel registrationLabel = new JLabel("Registration ID:");
-		registrationLabel.setBounds(21, 136, 147, 26);
+		registrationLabel.setBounds(21, 184, 147, 26);
 		contentPane.add(registrationLabel);
 		
 		JLabel surnameLabel = new JLabel("Surname: ");
-		surnameLabel.setBounds(21, 101, 98, 26);
+		surnameLabel.setBounds(21, 149, 98, 26);
 		contentPane.add(surnameLabel);
 		
 		JLabel forenameLabel = new JLabel("Forename: ");
-		forenameLabel.setBounds(21, 66, 107, 26);
+		forenameLabel.setBounds(21, 114, 107, 26);
 		contentPane.add(forenameLabel);
 		
 		JLabel degreeLabel = new JLabel("Degree:");
-		degreeLabel.setBounds(21, 170, 92, 26);
+		degreeLabel.setBounds(21, 218, 92, 26);
 		contentPane.add(degreeLabel);
 		
 		System.out.println("Getting forename");
 		JLabel forename = new JLabel(student.getForename());
-		forename.setBounds(249, 68, 92, 26);
+		forename.setBounds(249, 116, 92, 26);
 		contentPane.add(forename);
 		
 		JLabel surname = new JLabel(student.getSurname());
-		surname.setBounds(249, 101, 92, 26);
+		surname.setBounds(249, 149, 92, 26);
 		contentPane.add(surname);
 		
 		JLabel registrationId = new JLabel(Integer.toString(student.getRegistrationId()));
-		registrationId.setBounds(249, 136, 92, 26);
+		registrationId.setBounds(249, 184, 92, 26);
 		contentPane.add(registrationId);
 		
 		JLabel degree = new JLabel(student.getDegreeId());
-		degree.setBounds(249, 170, 92, 26);
+		degree.setBounds(249, 218, 92, 26);
 		contentPane.add(degree);
+		
+		JButton modulesList = new JButton("Display Module Grades");
+		modulesList.setBounds(743, 110, 245, 35);
+		contentPane.add(modulesList);
+		
+		JPanel panel = new JPanel();
+		panel.setBounds(21, 265, 967, 266);
+		contentPane.add(panel);
 	}
 	
 	public Students getStudent(String username) throws SQLException {

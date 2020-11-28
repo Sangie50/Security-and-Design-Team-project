@@ -72,7 +72,7 @@ public class Admins extends Users{
         }
     }
     
-    public static void updatePermissions(String username, String accountType) throws SQLException {
+    public static void updatePermission(String username, String accountType) throws SQLException {
         // Admin | Registrar | Teacher | Student | Null 
         Connection con = null;
         //System.out.println(permission.get(newPermission));
@@ -109,7 +109,7 @@ public class Admins extends Users{
         }
     }
     
-    public static void removeUsers(String username) throws SQLException {
+    public static void removeUser(String username) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
@@ -129,6 +129,44 @@ public class Admins extends Users{
                 }
                 else{ 
                     System.err.println("No users exist with that username");
+                } 
+                con.commit();
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+    }
+    
+    public static void removeStudent(String username) throws SQLException {
+        Connection con = null;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            Statement stmt = null;
+            String preparedStmt = "SELECT COUNT(*) AS rowcount FROM student WHERE username = ?";
+            String deleteStmt = "DELETE FROM student WHERE username = ?";
+            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt); PreparedStatement delStmt = con.prepareStatement(deleteStmt)){
+                updateStmt.setString(1, username);
+                ResultSet count = updateStmt.executeQuery();
+                count.next();
+                if (count.getInt("rowcount") > 0){
+                    delStmt.setString(1, username);
+                    // Other connected rows should be deleted via cascades
+                    delStmt.executeUpdate();
+                    con.commit();
+                }
+                else{ 
+                    System.err.println("No students exist with that username");
                 } 
                 con.commit();
             }

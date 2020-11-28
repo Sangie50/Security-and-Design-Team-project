@@ -141,23 +141,33 @@ public class Admins extends Users{
         }
     }
     
-    public static void addModule(String moduleID, String moduleName, Integer levelOfStudy, Integer creditWorth, String departmentID, Integer passMark) throws SQLException {
+    public static void addModule(String moduleID, String moduleName, Integer creditWorth, String departmentID, Integer passMark, Boolean isTaught) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
+            String selectStmt = "SELECT COUNT(*) AS rowcount FROM module WHERE module_id = ?";
             String preparedStmt = "INSERT INTO module VALUES (?,?,?,?,?,?)";
-            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
-                stmt = con.createStatement();
-                updateStmt.setString(1, moduleID);
-                updateStmt.setString(2, moduleName);
-                updateStmt.setInt(3, levelOfStudy);
-                updateStmt.setInt(4, creditWorth);
-                updateStmt.setString(5, departmentID);
-                updateStmt.setInt(6, passMark);
-                updateStmt.executeUpdate();
+            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt);PreparedStatement selStmt = con.prepareStatement(selectStmt)){
+                selStmt.setString(1, moduleID);
+                ResultSet count = selStmt.executeQuery();
                 con.commit();
+                count.next();
+                if (count.getInt("rowcount") == 0){
+                    stmt = con.createStatement();
+                    updateStmt.setString(1, moduleID);
+                    updateStmt.setString(2, moduleName);
+                    updateStmt.setInt(3, creditWorth);
+                    updateStmt.setString(4, departmentID);
+                    updateStmt.setInt(5, passMark);
+                    updateStmt.setBoolean(6, isTaught);
+                    updateStmt.executeUpdate();
+                    con.commit();
+                }
+                else{
+                    System.err.println("ModuleID already exists.");
+                }
             }
             catch (SQLException ex) {
                 ex.printStackTrace();
@@ -174,7 +184,7 @@ public class Admins extends Users{
         }
     }
     
-    public static void setCoreModule(String moduleID, String departmentID, Boolean isCore) throws SQLException {
+    public static void setCoreModule(String moduleID, String departmentID, String levelOfStudy) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
@@ -185,7 +195,7 @@ public class Admins extends Users{
                 stmt = con.createStatement();
                 updateStmt.setString(1, moduleID);
                 updateStmt.setString(2, departmentID);
-                updateStmt.setBoolean(3, isCore);
+                updateStmt.setString(3, levelOfStudy);
                 updateStmt.executeUpdate();
                 con.commit();
             }
@@ -204,8 +214,8 @@ public class Admins extends Users{
         }
     }
     
-    public static List viewCoreModule() throws SQLException {
-        List<Object> mod = new ArrayList<Object>();
+    public static List<Modules> viewCoreModule() throws SQLException {
+        List<Modules> mod = new ArrayList<Modules>();
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
@@ -218,18 +228,18 @@ public class Admins extends Users{
                 while (module.next()) {
                     String moduleID = module.getString("module_id");
                     String moduleName = module.getString("module_name");
-                    Integer levelOfStudy = module.getInt("level_of_study");
                     Integer creditWorth = module.getInt("credit_worth");
                     String departmentID = module.getString("department_id");
                     Integer passGrade = module.getInt("pass_grade");
+                    Boolean isTaught = module.getBoolean("pass_grade");
                     String degreeID = module.getString("degree_id");
-                    Boolean isCore = module.getBoolean("is_core");
+                    Boolean level_of_study = module.getBoolean("level_of_study");
                     
                     con.commit();
-                    Modules modules = new Modules(moduleID, moduleName, levelOfStudy, creditWorth, departmentID, passGrade);
+                    Modules modules = new Modules(moduleID, moduleName, isTaught, creditWorth, departmentID, passGrade);
                     mod.add(modules);
                     modules.getModuleName();
-                    System.out.println(moduleID+":"+moduleName+":"+levelOfStudy+":"+creditWorth+":"+departmentID+":"+passGrade+":"+degreeID+":"+isCore);
+                    System.out.println(moduleID+":"+moduleName+":"+isTaught+":"+creditWorth+":"+departmentID+":"+passGrade+":"+degreeID+":"+level_of_study);
                 }
             }
             catch (SQLException ex) {
@@ -247,6 +257,7 @@ public class Admins extends Users{
         }
         return mod;
     }
+    
     public static List<Modules> viewAllModule() throws SQLException {
         List<Modules> mod = new ArrayList<Modules>();
         Connection con = null;
@@ -261,15 +272,15 @@ public class Admins extends Users{
                 while (module.next()) {
                     String moduleID = module.getString("module_id");
                     String moduleName = module.getString("module_name");
-                    Integer levelOfStudy = module.getInt("level_of_study");
                     Integer creditWorth = module.getInt("credit_worth");
                     String departmentID = module.getString("department_id");
                     Integer passGrade = module.getInt("pass_grade");
+                    Boolean isTaught = module.getBoolean("pass_grade");
                     
                     con.commit();
-                    Modules modules = new Modules(moduleID, moduleName, levelOfStudy, creditWorth, departmentID, passGrade);
+                    Modules modules = new Modules(moduleID, moduleName, isTaught, creditWorth, departmentID, passGrade);
                     mod.add(modules);
-                    System.out.println(moduleID+":"+moduleName+":"+levelOfStudy+":"+creditWorth+":"+departmentID+":"+passGrade);
+                    System.out.println(moduleID+":"+moduleName+":"+isTaught+":"+creditWorth+":"+departmentID+":"+passGrade);
                 }
             }
             catch (SQLException ex) {
@@ -288,7 +299,7 @@ public class Admins extends Users{
         return mod;
     }
     
-    public static void removeModule(Integer moduleID) throws SQLException {
+    public static void removeModule(String moduleID) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
@@ -297,11 +308,11 @@ public class Admins extends Users{
             String preparedStmt = "SELECT COUNT(*) AS rowcount FROM module WHERE module_id = ?";
             String deleteStmt = "DELETE FROM module WHERE module_id = ?";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt); PreparedStatement delStmt = con.prepareStatement(deleteStmt)){
-                updateStmt.setInt(1, moduleID);
+                updateStmt.setString(1, moduleID);
                 ResultSet count = updateStmt.executeQuery();
                 count.next();
                 if (count.getInt(1) > 0){
-                    delStmt.setInt(1, moduleID);
+                    delStmt.setString(1, moduleID);
                     delStmt.executeUpdate();
                     con.commit();
                     // Other connected rows should be deleted via cascades
@@ -367,8 +378,8 @@ public class Admins extends Users{
         }
     }
     
-    public static List viewDepartment() throws SQLException {
-        List<Object> departs = new ArrayList<Object>();
+    public static List<Departments> viewDepartment() throws SQLException {
+        List<Departments> departs = new ArrayList<Departments>();
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
@@ -522,14 +533,14 @@ public class Admins extends Users{
         }
     }
     
-    public static List viewDegree() throws SQLException {
-        List<Object> deg = new ArrayList<Object>();
+    public static List<Degrees> viewDegree() throws SQLException {
+        List<Degrees> deg = new ArrayList<Degrees>();
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "SELECT * FROM degree INNER JOIN interdisciplinary_degree ON degree.degree_id = interdisciplinary_degree.degree_id";
+            String preparedStmt = "SELECT * FROM degree Left JOIN interdisciplinary_degree ON degree.degree_id = interdisciplinary_degree.degree_id";
             //System.out.println(preparedStmt);
             try (PreparedStatement selectStmt = con.prepareStatement(preparedStmt)){
                 ResultSet department = selectStmt.executeQuery();

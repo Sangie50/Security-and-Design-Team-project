@@ -18,7 +18,9 @@ public class LoginFrame extends JFrame implements ActionListener{
 	JLabel username = new JLabel("Username");
 	JLabel password = new JLabel("Password");
 	JTextArea textArea = new JTextArea("");
-	
+//	static JFrame loginPage = new LoginFrame();
+//	static JFrame studentPage = new StudentFrame();
+		
 	public LoginFrame() {
 		
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -46,9 +48,9 @@ public class LoginFrame extends JFrame implements ActionListener{
 	public static void main(String[] args) {
 		System.out.println("running...");
 		java.awt.EventQueue.invokeLater(new Runnable() {
-	          public void run() {
-	      		JFrame loginPage = new LoginFrame();
-	               loginPage.setVisible(true);
+	          public void run() {	
+	            (new LoginFrame()).setVisible(true);
+
 	          }
 	    });
 		System.out.println("end");
@@ -75,7 +77,10 @@ public class LoginFrame extends JFrame implements ActionListener{
 			public void actionPerformed(ActionEvent e) {
 			    System.out.println("Logging in sequence...");
 			  	try {
-			  		loginValidation(loginBox, passwordBox);
+			  		String isUser = loginValidation(loginBox, passwordBox);
+			  		System.out.println(isUser);
+			  		setVisible(false);
+			  		new StudentFrame().setVisible(true);
 				} 
 			   	catch (SQLException e1) {
 					e1.printStackTrace();
@@ -89,7 +94,7 @@ public class LoginFrame extends JFrame implements ActionListener{
 		});
 	}
 	
-	public void loginValidation(JTextField username, JPasswordField password) throws SQLException {
+	public String loginValidation(JTextField username, JPasswordField password) throws SQLException {
 		String un = username.getText();
 		String pw = String.valueOf(password.getPassword());
 		String rightpw = "";
@@ -120,15 +125,7 @@ public class LoginFrame extends JFrame implements ActionListener{
 	              boolean passwordMatch = PasswordGen.verifyUserPassword(pw, rightpw, salt);
 	              if (passwordMatch) {
 	            	  System.out.println("Correct password. Access Granted.");
-	            	  if (type == UserTypes.STUDENT.toString()) {
-	            		  java.awt.EventQueue.invokeLater(new Runnable() {
-	            	          public void run() {
-	            	        	setVisible(false);
-	            	      		JFrame studentPage = new StudentFrame();
-	            	            studentPage.setVisible(true);
-	            	          }
-	            	    });
-	            	  }
+	            	 
 	              }
 	              
 	              else System.out.println("Access denied.");
@@ -147,5 +144,6 @@ public class LoginFrame extends JFrame implements ActionListener{
 	        finally {
 	            if (con != null) con.close();
 	        }	
+		return type;
 	}
 }

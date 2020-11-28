@@ -81,10 +81,16 @@ public class Admins extends Users{
             con.setAutoCommit(false);
             Statement stmt = null;
             String preparedStmt = "UPDATE user SET account_type = ? WHERE username = ?";
-            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
-                stmt = con.createStatement();
+            String secondaryTable = "";
+            if (accountType == UserTypes.STUDENT.toString()) secondaryTable = "INSERT INTO student (username) VALUES (SELECT username FROM user WHERE username = ?)";
+            else if (accountType == UserTypes.TEACHER.toString()) secondaryTable = "INSERT INTO teacher (username) VALUES (SELECT username FROM username = ? )";
+            
+            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt);
+            		PreparedStatement updateSecondaryTable = con.prepareStatement(secondaryTable)){
+                
                 updateStmt.setString(1, accountType);
                 updateStmt.setString(2, username);
+                updateSecondaryTable.setString(1, username);
                 updateStmt.executeUpdate();
                 con.commit();
             }

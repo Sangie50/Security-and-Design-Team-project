@@ -1,27 +1,35 @@
 package testing;
 import academics.Modules;
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import features.PasswordGen;
 import java.util.List;
 import userclasses.Admins;
+import userclasses.Students;
 import userclasses.Users;
 import userclasses.Users.UserTypes;
 
 public class TestRun {
     public static void main(String[] args) throws SQLException {
         System.out.println("Hello");
+        
+        Date date = new Date(10/03/20);
+        
+        
         Users nameless = new Users("name", "ms", "a", "a", "password"); // creates an unassigned user
         Users name = new Users("nameless", "ms", "a", "a", "password");
         Admins admin = new Admins("admin", "ms", "a", "a", "password");
-        System.out.println(nameless);
-        System.out.println(nameless.getPassword());
+
+        Students student = new Students("nameless", "ms", "a","a","password", 1234, "COM", 120, "DIF", date, date, "saf");
+
 
         //check password
         String salt = nameless.getSalt();
         boolean passwordMath = PasswordGen.verifyUserPassword("password", nameless.getPassword(), salt);
 
-        Admins.updatePermissions("nameless",UserTypes.STUDENT.toString());
+//        Admins.updatePermissions("nameless", UserTypes.STUDENT.toString());
         System.out.println(passwordMath + " saved pw: " + nameless.getPassword());
 
         //testing using data for physcology and modern language

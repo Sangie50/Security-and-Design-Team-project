@@ -23,17 +23,6 @@ public class Registrars extends Users {
 	inherits from user class
 	*/
 	
-	 // BUS : business school, COM : computer science, PSY : psychology, LAN : modern languages
-	 static Dictionary<String, String> degreeCode = new Hashtable<String, String>();
-	 
-	 static {
-		 degreeCode.put("Business School", "BUS");
-	     degreeCode.put("Computer Science", "COM");
-	     degreeCode.put("Psychology", "PSY");
-	     degreeCode.put("Modern Language", "LAN");
-	 }
-     
-	
 	/**
 	 * Assigns student or teacher to a user account
 	 * @param type				- accountType
@@ -54,7 +43,7 @@ public class Registrars extends Users {
 	            String preparedStmt = "UPDATE user SET accoutType = ? WHERE username = ?";
 	            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
 	                stmt = con.createStatement();
-	                if (type == "student") {
+	                if (type.equals(UserTypes.STUDENT.toString())) {
 	                	updateStmt.setString(1, type);
 	                	updateStmt.setString(2, username);
 	                	con.commit();
@@ -88,7 +77,7 @@ public class Registrars extends Users {
 	            		PreparedStatement delStmt = con.prepareStatement(deleteStmt)){
 	                updateStmt.setString(1, email);
 	                ResultSet type = updateStmt.executeQuery();
-	                if (type.getString(1) == UserTypes.STUDENT.toString()) delStmt.setString(1, email);
+	                if (type.getString(1).equals(UserTypes.STUDENT.toString())) delStmt.setString(1, email);
 	                else System.err.println("Cannot delete a non-student user.");
 	                con.commit();
 	            }
@@ -119,7 +108,7 @@ public class Registrars extends Users {
 	            		PreparedStatement datStmt = con.prepareStatement(dateStmt)){
 	                updateStmt.setString(1, email);
 	                ResultSet type = updateStmt.executeQuery();
-	                if (type.getString(1) == UserTypes.STUDENT.toString()) datStmt.setDate(1, date);
+	                if (type.getString(1).equals(UserTypes.STUDENT.toString())) datStmt.setDate(1, date);
 	                else System.err.println("Cannot add start date to a non-student user.");
 	                con.commit();
 	            }
@@ -150,7 +139,7 @@ public class Registrars extends Users {
 	            		PreparedStatement degreeStmt = con.prepareStatement(setDegree)){
 	            	updateStmt.setString(1, email);
 		            ResultSet type = updateStmt.executeQuery();
-		            if (type.getString(1) == UserTypes.STUDENT.toString()) {
+		            if (type.getString(1).equals(UserTypes.STUDENT.toString())) {
 		            	degreeStmt.setString(1, degreeId);
 		            	degreeStmt.setString(2, email);
 		            }
@@ -267,7 +256,7 @@ public class Registrars extends Users {
 	            		PreparedStatement updateRegNo = con.prepareStatement(hasRegNo)){
 	            	updateStudent.setString(1, username);
 	            	ResultSet isStudent = updateStudent.executeQuery();
-	            	if (isStudent.getString(1) == UserTypes.STUDENT.toString()) {
+	            	if (isStudent.getString(1).equals(UserTypes.STUDENT.toString())) {
 	            		updateRegNo.setString(1, username);
 	            		ResultSet registered = updateRegNo.executeQuery();
 	            		if(registered.getString(1) != null && registered.getString(2) != null) System.out.println("Student is successfully registered.");
@@ -303,7 +292,7 @@ public class Registrars extends Users {
 	                //check whether undergrad or postgrad
 	                ResultSet maxCredits = updateCredit.executeQuery();
                 	while (maxCredits.next()) totalCredits += maxCredits.getInt(1);
-                	if (entryLevel == "U") {
+                	if (entryLevel.equals("U")) {
 	                	if (totalCredits != 120) System.err.println("Credits do not sum to 120. Invalid module selections.");
 	                	else System.out.println("Credits sum to 120.");
                 	}

@@ -37,22 +37,29 @@ public class StudentFrame extends JFrame implements ActionListener{
 		
 	}
 	
+	public static void main(String[] args) {
+		System.out.println("running...");
+		java.awt.EventQueue.invokeLater(new Runnable() {
+	          public void run() {	
+	      		JFrame loginPage = new StudentFrame();
+	            loginPage.setVisible(true);
+	            update(loginPage);
+	          }
+
+			private void update(JFrame loginPage) {
+				// TODO Auto-generated method stub
+				
+			}
+	    });
+		System.out.println("end");
+	}
+	
 	public void actionPerformed(ActionEvent e) {
         String s = (String)e.getActionCommand();
         // calculator.performCommand(s);
         textArea.append(s + " ");     
     } 
 	
-	public static void main(String[] args) {
-		System.out.println("running...");
-		java.awt.EventQueue.invokeLater(new Runnable() {
-	          public void run() {
-	      		JFrame loginPage = new LoginFrame();
-	               loginPage.setVisible(true);
-	          }
-	    });
-		System.out.println("end");
-	}
 	
 	public void buildStudentPanel(JPanel pane) {
 		pane.setLayout(new BorderLayout());

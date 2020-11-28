@@ -1,5 +1,8 @@
 package userclasses;
-import java.sql.*; 
+import java.sql.*;
+import java.util.Dictionary;
+import java.util.Hashtable;
+
 import features.PasswordGen;
 
 public class Users {
@@ -28,6 +31,33 @@ public class Users {
 			return this.name;
 		}
 	}
+	
+	public enum DegreeTypes {
+		BUS ("Business School"),
+		COM ("Computer Science"),
+		PSY ("Psychology"),
+		LAN("Modern Language");
+		
+		private final String name;
+		
+		private DegreeTypes (String s) {
+			name = s;
+		}
+		
+		public String toString() {
+			return this.name;
+		}
+	}
+	
+	 // BUS : business school, COM : computer science, PSY : psychology, LAN : modern languages
+	 public static Dictionary<String, String> degreeCode = new Hashtable<String, String>();
+	 
+	 static {
+		 degreeCode.put("Business School", "BUS");
+	     degreeCode.put("Computer Science", "COM");
+	     degreeCode.put("Psychology", "PSY");
+	     degreeCode.put("Modern Language", "LAN");
+	 }
 	
 	public Users (String username, String title, String surname, String forename, String password) throws SQLException {
 		this.username = username;
@@ -95,6 +125,7 @@ public class Users {
 	public String getPassword() {
 		return password;
 	}
+	
 }
 	
 

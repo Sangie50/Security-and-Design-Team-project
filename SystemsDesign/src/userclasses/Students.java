@@ -27,35 +27,44 @@ public class Students extends Users{
   String personalTutor;
   
   public Students (String username, String title, String surname, String forename, String password, 
-  		Integer registrationId, Integer resit_year, String degreeId, Integer totalCredits, String difficulty, 
+  		int registrationId, String degreeId, int totalCredits, String difficulty, 
   		java.sql.Date startDate, java.sql.Date endDate, String personalTutor ) throws SQLException {
   	super(username, title, surname, forename, password);
+  	
+  	
   	email = emailGen(surname, forename, username);
   	this.registrationId = registrationId;
-  	this.resit_year = resit_year;
   	this.degreeId = degreeId;
   	this.totalCredits = totalCredits;
   	this.difficulty = difficulty;
   	this.startDate = startDate;
   	this.endDate = endDate;
   	this.personalTutor = personalTutor;
+  	
+    System.out.println("Creating student...");
+  	System.out.println("Student: " + forename + "'s email: " + email);
+
   	 Connection con = null;
      try {
          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+         con.setAutoCommit(false);
          Statement stmt = null;
-         String preparedStmt = "INSERT INTO student VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+         String preparedStmt = "INSERT INTO student VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
          try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
-         	con.setAutoCommit(false);
-         	
              updateStmt.setString(1, email);
-             updateStmt.setInt(2, registrationId);
-             updateStmt.setInt(3, resit_year);
-             updateStmt.setString(4, degreeId);
-             updateStmt.setInt(5, totalCredits);
-             updateStmt.setString(6, difficulty);
-             updateStmt.setDate(7, startDate);
-             updateStmt.setDate(8, endDate);
-             updateStmt.setString(9, personalTutor);
+             updateStmt.setString(2, username);
+             updateStmt.setInt(3, registrationId);
+             updateStmt.setBoolean(4, false);
+             updateStmt.setString(5, degreeId);
+             updateStmt.setInt(6, totalCredits);
+             updateStmt.setString(7, difficulty);
+             updateStmt.setDate(8, startDate);
+             updateStmt.setDate(9, endDate);
+             updateStmt.setString(10, personalTutor);
+             
+             updateStmt.executeUpdate();
+             con.commit();
+             
          }
          catch (SQLException ex) {
              ex.printStackTrace();
@@ -72,6 +81,23 @@ public class Students extends Users{
      }
   }
   
+  public java.sql.Date getstartDate() {
+	  return startDate;
+  }
+	  
+  public java.sql.Date getEndDate() {
+	  return endDate;
+  }
+  
+  public int getRegistrationId() {
+	  return registrationId;
+  }
+  
+  public String getDegreeId() {
+	  return degreeId;
+  }
+  
+	  
   public String emailGen(String surname, String forename, String username) throws SQLException{
 	  String[] name = forename.split(" ");
 	  String initials = "";
@@ -118,15 +144,6 @@ public class Students extends Users{
   public String getEmail() {
   	return email;
   	
-  }
-  
-  
-  public java.sql.Date getstartDate() {
-  	return startDate;
-  }
-  
-  public java.sql.Date getEndDate() {
-  	return endDate;
   }
   
   public void displayAllModules(String email, String levelOfStudy) throws SQLException {

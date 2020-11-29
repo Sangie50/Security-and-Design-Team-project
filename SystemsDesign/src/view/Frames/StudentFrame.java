@@ -23,6 +23,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 import javax.swing.JButton;
 import java.awt.Font;
@@ -41,6 +43,15 @@ public class StudentFrame extends JFrame {
 	JScrollPane scroll;
 	String headers[] = { "Module ID", "Initial Grade", "Resit Grade", "Module Name", "Credits Worth", "Department ID" , "Pass Grade"};
 
+	public static Dictionary<String, String> degreeCode = new Hashtable<String, String>();
+	 
+	 static {
+		 degreeCode.put("BUS", "Business School");
+	     degreeCode.put("COM", "Computer Science");
+	     degreeCode.put("PSY", "Psychology");
+	     degreeCode.put("LAN", "Modern Language");
+	 }
+	 
 	/**
 	 * Launch the application.
 	 */
@@ -95,35 +106,20 @@ public class StudentFrame extends JFrame {
 		
 		System.out.println("Getting forename");
 		JLabel forename = new JLabel(student.getForename());
-		forename.setBounds(249, 116, 92, 26);
+		forename.setBounds(249, 116, 206, 26);
 		contentPane.add(forename);
 		
 		JLabel surname = new JLabel(student.getSurname());
-		surname.setBounds(249, 149, 92, 26);
+		surname.setBounds(249, 149, 206, 26);
 		contentPane.add(surname);
 		
 		JLabel registrationId = new JLabel(Integer.toString(student.getRegistrationId()));
-		registrationId.setBounds(249, 184, 92, 26);
+		registrationId.setBounds(249, 184, 206, 26);
 		contentPane.add(registrationId);
 		
-		JLabel degree = new JLabel(student.getDegreeId());
-		degree.setBounds(249, 218, 92, 26);
-		contentPane.add(degree);
+
 		
-		JPanel panel = new JPanel();
-		panel.setBounds(21, 248, 967, 307);
-		contentPane.add(panel);
 		
-		modulesTable = new JTable();
-		panel.add(modulesTable);
-		modulesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		model.setColumnIdentifiers(headers);   
-		modulesTable.setModel(model);
-	    scroll = new JScrollPane(modulesTable);
-	    
-	    insert(username, student.getEmail());
-	    
-	    panel.add(scroll, BorderLayout.CENTER);
 	    
 	    JButton logoutButton = new JButton("Logout");
 	    logoutButton.addActionListener(new ActionListener() {
@@ -143,7 +139,28 @@ public class StudentFrame extends JFrame {
 	    });
 	    logoutButton.setBounds(795, 110, 141, 35);
 	    contentPane.add(logoutButton);
-	    panel.setVisible(true);
+	    
+	    JLabel degree = new JLabel(student.getDegreeId());
+	    degree.setBounds(249, 218, 206, 26);	    
+	    contentPane.add(degree);
+	    
+ 
+	    
+	
+	    
+	    modulesTable = new JTable(model);
+	    modulesTable.setBounds(75,265,861,290);
+	    contentPane.add(modulesTable);
+
+	    scroll = new JScrollPane(modulesTable);
+	    scroll.setBounds(75,265,861,290);
+	    contentPane.add(scroll);
+	    
+	    model.setColumnIdentifiers(headers); 
+	    insert(username, student.getEmail());
+	    modulesTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+	    
+	    contentPane.setVisible(true);
 	}
 
 	
@@ -161,7 +178,6 @@ public class StudentFrame extends JFrame {
 		System.out.println("Executing getting student...");
 		Students student = null;
 		Connection con = null; 
-		int registrationId = 0;
 		String degree = "";
         int credits = 0;
         String difficulty = "";
@@ -190,8 +206,7 @@ public class StudentFrame extends JFrame {
 	              con.commit();
 	          
 		          while (info.next()) {
-				        registrationId = info.getInt(3);
-				        degree = info.getString(5);
+				        degree = degreeCode.get(info.getString(5).substring(0,3));
 				        difficulty = info.getString(7);
 				        startDate = info.getDate(8);
 				        endDate = info.getDate(9);
@@ -205,7 +220,9 @@ public class StudentFrame extends JFrame {
 		            password = names.getString(6);  
 		          }
 		          
-		          student = new Students(username,title, surname, forename, password, degree, credits,difficulty, startDate, endDate, personalTutor);
+		          student = new Students(username,title, surname, forename, password, degree, credits, difficulty, startDate, endDate, personalTutor);
+
+
 			      System.out.println("Student info retrieved!");
 	                
 	           }

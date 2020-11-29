@@ -82,7 +82,7 @@ public class Grades { //create a constructor
 			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 		      con.setAutoCommit(false);
 		      Statement stmt = null;
-		      String getModuleId = String.format("SELECT module_id FROM module_grade WHERE email = %s AND level_of_study = %s ", email, levelOfStudy);
+		      String getModuleId = String.format("SELECT module_id FROM module_grade INNER JOIN degree ON module_grade.degree_id = degree.degree_id WHERE email = '%s' AND entry_level = '%s' ", email, levelOfStudy);
 		      String moduleId;
 		      ResultSet rs;
 		      try (PreparedStatement pstmt = con.prepareStatement(getModuleId)){

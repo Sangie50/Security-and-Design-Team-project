@@ -1,10 +1,17 @@
 package view.Frames;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
+
+import com.sun.xml.internal.ws.api.Component;
 
 import userclasses.Students;
 
@@ -15,18 +22,36 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Hashtable;
+
 import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-
-
+import javax.swing.JTable;
 
 public class StudentFrame extends JFrame {
 	private static final long serialVersionUID = 2L;
 
 	private JPanel contentPane;
 
+	private JTable modulesTable;
+	DefaultTableModel model = new DefaultTableModel();
+	JScrollPane scroll;
+	String headers[] = { "Module ID", "Initial Grade", "Resit Grade", "Module Name", "Credits Worth", "Department ID" , "Pass Grade"};
+
+	public static Dictionary<String, String> degreeCode = new Hashtable<String, String>();
+	 
+	 static {
+		 degreeCode.put("BUS", "Business School");
+	     degreeCode.put("COM", "Computer Science");
+	     degreeCode.put("PSY", "Psychology");
+	     degreeCode.put("LAN", "Modern Language");
+	 }
+	 
 	/**
 	 * Launch the application.
 	 */
@@ -81,6 +106,7 @@ public class StudentFrame extends JFrame {
 		
 		System.out.println("Getting forename");
 		JLabel forename = new JLabel(student.getForename());
+
 		forename.setBounds(249, 116, 92, 26);
 		contentPane.add(forename);
 		
@@ -107,13 +133,68 @@ public class StudentFrame extends JFrame {
 		JPanel panel = new JPanel();
 		panel.setBounds(21, 265, 967, 266);
 		contentPane.add(panel);
+
+		forename.setBounds(249, 116, 206, 26);
+		contentPane.add(forename);
+
+
+		
+		
+	    
+	    JButton logoutButton = new JButton("Logout");
+	    logoutButton.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		setVisible(false);
+	    		EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							LoginFrame frame = new LoginFrame();
+							frame.setVisible(true);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+	    	}
+	    });
+	    logoutButton.setBounds(795, 110, 141, 35);
+	    contentPane.add(logoutButton);
+	    
+ 
+	    
+	
+	    
+	    modulesTable = new JTable(model);
+	    modulesTable.setBounds(75,265,861,290);
+	    contentPane.add(modulesTable);
+
+	    scroll = new JScrollPane(modulesTable);
+	    scroll.setBounds(75,265,861,290);
+	    contentPane.add(scroll);
+	    
+	    model.setColumnIdentifiers(headers); 
+	    insert(username, student.getEmail());
+	    modulesTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+	    
+	    contentPane.setVisible(true);
+	}
+
+	
+	public void insert(String username, String email) throws SQLException {
+		Students student = getStudent(username);
+		ArrayList<ArrayList<String>> ar = student.displayStudentView(email);
+	    System.out.println(ar.size());
+	    for (int i = 0; i < (ar.size()); i++) {
+		        model.addRow(new Object[] { String.valueOf(ar.get(i).get(0)),String.valueOf(ar.get(i).get(1)),String.valueOf(ar.get(i).get(2)),
+		        		String.valueOf(ar.get(i).get(3)),String.valueOf(ar.get(i).get(4)),String.valueOf(ar.get(i).get(5)),String.valueOf(ar.get(i).get(6))});
+	    }	    
 	}
 	
 	public Students getStudent(String username) throws SQLException {
 		System.out.println("Executing getting student...");
 		Students student = null;
 		Connection con = null; 
-		int registrationId = 0;
+
 		String degree = "";
         int credits = 0;
         String difficulty = "";
@@ -142,8 +223,7 @@ public class StudentFrame extends JFrame {
 	              con.commit();
 	          
 		          while (info.next()) {
-				        registrationId = info.getInt(3);
-				        degree = info.getString(5);
+				        degree = degreeCode.get(info.getString(5).substring(0,3));
 				        difficulty = info.getString(7);
 				        startDate = info.getDate(8);
 				        endDate = info.getDate(9);
@@ -157,7 +237,9 @@ public class StudentFrame extends JFrame {
 		            password = names.getString(6);  
 		          }
 		          
-		          student = new Students(username,title, surname, forename, password, registrationId, degree, credits,difficulty, startDate, endDate, personalTutor);
+
+		          student = new Students(username,title, surname, forename, password, degree, credits, difficulty, startDate, endDate, personalTutor);
+
 			      System.out.println("Student info retrieved!");
 	                
 	           }
@@ -177,3 +259,5 @@ public class StudentFrame extends JFrame {
 		return student;
 	}
 }
+
+

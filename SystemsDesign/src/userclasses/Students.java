@@ -2,10 +2,11 @@ package userclasses;
 import java.sql.*;
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.Date;
+import java.sql.Date;
 
 import academics.Grades;
 //Students class
+import userclasses.Users;
 
 /*Methods
  * [X] display all modules
@@ -22,45 +23,40 @@ public class Students extends Users{
 	String degreeId;
 	Integer totalCredits;
 	String difficulty;
-	java.sql.Date startDate;
-	java.sql.Date endDate;
-  String personalTutor;
+	Date startDate;
+	Date endDate;
+        String personalTutor;
   
-  public Students (String username, String title, String surname, String forename, String password, 
-  		int registrationId, String degreeId, int totalCredits, String difficulty, 
-  		java.sql.Date startDate, java.sql.Date endDate, String personalTutor ) throws SQLException {
+  public Students (String username, String title, String surname, String forename, String password, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor) throws SQLException {
   	super(username, title, surname, forename, password);
-  	
-  	
-  	email = emailGen(surname, forename, username);
-  	this.registrationId = registrationId;
+        email = emailGen(surname, forename, username);
   	this.degreeId = degreeId;
   	this.totalCredits = totalCredits;
   	this.difficulty = difficulty;
   	this.startDate = startDate;
   	this.endDate = endDate;
   	this.personalTutor = personalTutor;
-  	
-    System.out.println("Creating student...");
-  	System.out.println("Student: " + forename + "'s email: " + email);
-
+        addStudent(username,degreeId, totalCredits, difficulty, startDate, endDate, personalTutor);
+  }
+  public void addStudent(String username, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor ) throws SQLException {
+        
   	 Connection con = null;
      try {
          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
          con.setAutoCommit(false);
          Statement stmt = null;
-         String preparedStmt = "INSERT INTO student VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+         String preparedStmt = "INSERT INTO student(email, username, resit_year, degree_id, total_credits, difficulty, start_date, end_date, personal_tutor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
          try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
              updateStmt.setString(1, email);
              updateStmt.setString(2, username);
-             updateStmt.setInt(3, registrationId);
-             updateStmt.setBoolean(4, false);
-             updateStmt.setString(5, degreeId);
-             updateStmt.setInt(6, totalCredits);
-             updateStmt.setString(7, difficulty);
-             updateStmt.setDate(8, startDate);
-             updateStmt.setDate(9, endDate);
-             updateStmt.setString(10, personalTutor);
+             updateStmt.setBoolean(3, false);
+             updateStmt.setString(4, degreeId);
+             updateStmt.setInt(5, totalCredits); 
+             updateStmt.setString(6, difficulty);
+             updateStmt.setDate(7, startDate);
+             updateStmt.setDate(8, endDate);
+             updateStmt.setString(9, personalTutor);
              
              updateStmt.executeUpdate();
              con.commit();
@@ -81,64 +77,105 @@ public class Students extends Users{
      }
   }
   
-  public java.sql.Date getstartDate() {
+  public Date getstartDate() {
 	  return startDate;
   }
 	  
-  public java.sql.Date getEndDate() {
+  public Date getEndDate() {
 	  return endDate;
   }
   
-  public int getRegistrationId() {
+  public int getRegistrationId() throws SQLException {
+	  Connection con = null;
+      Statement stmt = null;
+
+	     try {
+	         con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+	         con.setAutoCommit(false);
+
+	         String regId = "SELECT registration_id FROM student WHERE username = ?";
+	         try (PreparedStatement checkRegId = con.prepareStatement(regId)){
+	        	 checkRegId.setString(1, username);
+	             ResultSet rs = checkRegId.executeQuery();
+	             con.commit();
+	              
+	             while (rs.next()) {
+		             registrationId = rs.getInt(1);
+
+	             }
+	             
+	         }
+	         catch (SQLException ex) {
+	             ex.printStackTrace();
+	         }
+	         finally {
+	             if (stmt != null) stmt.close();
+	         }
+	     }
+	     catch (Exception ex) {
+	         ex.printStackTrace();
+	     }
+	     finally {
+	         if (con != null) con.close();
+	     }
 	  return registrationId;
   }
   
   public String getDegreeId() {
 	  return degreeId;
   }
-  
 	  
-  public String emailGen(String surname, String forename, String username) throws SQLException{
-	  String[] name = forename.split(" ");
-	  String initials = "";
-	  String email = "";
-	  int a = 1;
-	  DecimalFormat formatter = new DecimalFormat("00");
-	  for (int i = 0; i < name.length; i++) {
-	      initials = name[i];
-	    }
-	  
-	  email = initials + surname + formatter.format(a); //create email from forename initials and surname and unique 2 digit number
-	  Connection con = null;
-	  
-	  try {
-          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
-          con.setAutoCommit(false);
-          Statement stmt = null;
-          String allEmails = "SELECT email FROM student WHERE username = ?";
-          try (PreparedStatement preparedStmt = con.prepareStatement(allEmails)){
-        	  preparedStmt.setString(1, username);
-        	  ResultSet rs = preparedStmt.executeQuery();
-        	  con.commit();
-        	  while(rs.getString(1) == email) {
-        		  a += 1;
-        		  email = initials + surname + formatter.format(a);
-        	  }
-          }
-          catch (SQLException ex) {
-        	  ex.printStackTrace();
-          }
-          finally {
-        	  if (stmt != null) stmt.close();
-          }
-	  }
-	  catch (Exception ex) {
-		  ex.printStackTrace();
-	  }
-	  finally {
-		  if (con != null) con.close();
-	  }
-	  return email;
+
+  public static String emailGen(String surname, String forename, String username) throws SQLException{
+    String initials = forename.substring(0,1).toUpperCase();
+    int a = 1;
+    String rest = "@sheff.ac.uk";
+    DecimalFormat formatter = new DecimalFormat("00");
+    for (int i = 0; i < forename.length(); i++) {
+    	if (forename.charAt(i) == ' ') {
+    		initials += Character.toUpperCase(forename.charAt(i + 1)); 
+    	}
+    }
+
+    String email = initials + surname + formatter.format(a) + rest; //create email from forename initials and surname and unique 2 digit number
+    Connection con = null;
+
+    try {
+        con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+        con.setAutoCommit(false);
+        Statement stmt = null;
+        String allEmails = "SELECT email FROM student INNER JOIN user WHERE student.username = user.username AND forename = ? AND surname = ?";
+        try (PreparedStatement preparedStmt = con.prepareStatement(allEmails)){
+            preparedStmt.setString(1, forename);
+            preparedStmt.setString(2, surname);
+            ResultSet rs = preparedStmt.executeQuery();
+            System.out.println(email);
+            System.out.println(a);
+            while (rs.next() == true) {
+                String retrieved_email = rs.getString("email");
+                if (retrieved_email == email){
+                    a++;
+                }
+                System.out.println(a);
+                System.out.println(retrieved_email);
+                email = initials + surname + formatter.format(a);
+                System.out.println(email);
+            }
+        }
+        catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (stmt != null) stmt.close();
+        }
+    }
+    catch (Exception ex) {
+        ex.printStackTrace();
+    }
+    finally {
+        if (con != null) con.close();
+    }
+    return email;
   }
   
   public String getEmail() {
@@ -146,12 +183,66 @@ public class Students extends Users{
   	
   }
   
-  public void displayAllModules(String email, String levelOfStudy) throws SQLException {
+  public void registrationIdGen() {
+	  
+  }
+  
+  public List<String> displayAllModules(String email, String levelOfStudy) throws SQLException {
 		 List<String> moduleList = Grades.getModuleList(email, levelOfStudy);
 		 for (int i = 0; i < moduleList.size(); i++) {
 			 System.out.println("Module Id = "+ moduleList.get(i));
 		 }
+		 return moduleList;
 	 }
+  
+  public ArrayList<ArrayList<String>> displayStudentView(String email) throws SQLException {
+	  ArrayList<ArrayList<String>> list= new ArrayList<ArrayList<String>>();
+
+	  System.out.println("DISPLAY STUDENT STUFF...");
+	  Connection con = null; 
+		 try {
+	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+		      con.setAutoCommit(false);
+		      Statement stmt = null;
+		      String studentViewTable ="SELECT module_grade.module_id, initial_grade, resit_grade, module.module_name, "
+		      		+ "module.credit_worth, module.department_id, module.pass_grade FROM module_grade LEFT JOIN module "
+		      		+ "ON module_grade.module_id = module.module_id WHERE email = ?";
+		      
+		      ResultSet rs;
+
+		      try (PreparedStatement pstmt = con.prepareStatement(studentViewTable)){
+		    	  	pstmt.setString(1, email);
+				    rs = pstmt.executeQuery();  
+				    // Get the result table from the query  3 
+					
+		      	 	while (rs.next()) {
+		      		    ArrayList<String> row = new ArrayList<String>();
+		      	 		row.add(rs.getString(1));					//module id
+		      	 		row.add(Integer.toString(rs.getInt(2)));	//initial grade		      	 		
+		      	 		row.add(Integer.toString(rs.getInt(3)));	//resit grade
+		      	 		row.add(rs.getString(4));					//module name
+		      	 		row.add(Integer.toString(rs.getInt(5)));	//credits worth
+		      	 		row.add(rs.getString(6));					//department id
+		      	 		row.add(Integer.toString(rs.getInt(7)));	//pass grade
+		      	 		list.add(row);
+		 
+				    }
+		      }
+		            catch (SQLException ex) {
+		                ex.printStackTrace();
+		            }
+		            finally {
+		                if (stmt != null) stmt.close();
+		            }
+		        }
+		        catch (Exception ex) {
+		            ex.printStackTrace();
+		        }
+		        finally {
+		            if (con != null) con.close();
+		        }		 
+	  return list;
+  }
   
   public static List<Integer> moduleCredits(String email, String levelOfStudy, List<String> moduleList) throws SQLException{
   	List<Integer> creditsList = new ArrayList<>();

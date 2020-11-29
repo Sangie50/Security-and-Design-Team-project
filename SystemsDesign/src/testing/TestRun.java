@@ -1,4 +1,5 @@
 package testing;
+import academics.Grades;
 import academics.Modules;
 import java.sql.*;
 import java.text.DateFormat;
@@ -11,7 +12,9 @@ import userclasses.Students;
 import userclasses.Users;
 import userclasses.Users.UserTypes;
 import java.sql.Date;
+import java.util.HashMap;
 import userclasses.Registrars;
+import userclasses.Teachers;
 
 public class TestRun {
     public static void main(String[] args) throws SQLException {
@@ -55,6 +58,7 @@ public class TestRun {
             System.out.println(m.getModuleName());
         }*/
         //Create users, update to student, add to student table - create business student
+        /*
         Admins.removeUser("infStudent");
         Admins.removeStudent("infStudent");
         Admins.removeUser("busStudent");
@@ -63,40 +67,48 @@ public class TestRun {
         Admins.removeStudent("sofStudent"); 
         Admins.removeUser("psyStudent");
         Admins.removeStudent("psyStudent"); 
-        
         Date date1=Date.valueOf("2020-09-20");
         Date date2=Date.valueOf("2021-06-31");
         Date date3=Date.valueOf("2023-06-31");
         Date date4=Date.valueOf("2024-06-31");
-        
         Students bstudent = new Students("busStudent", "Mr", "John", "Smith", "password", "BUSP01", 180, "Msc", date1, date2, "saf");
         Admins.updatePermission("busStudent", UserTypes.STUDENT.toString());
-        
-        
         Students sstudent = new Students("sofStudent", "Mr", "Johnny", "Smith", "password", "COMU01", 120, "MEng", date1, date4, "saf");
         Admins.updatePermission("sofStudent", UserTypes.STUDENT.toString());
-        
-        
         Students istudent = new Students("infStudent", "Mr", "Jon", "Smith", "password", "COMU02", 120, "Bsc", date1, date3, "saf");
         Admins.updatePermission("infStudent", UserTypes.STUDENT.toString());
-        
-        
-        Students pstudent = new Students("psyStudent", "Mr", "Johnny", "Smith", "password", "PSYP01", 180, "Mpsy", date1, date2, "saf");
-        Admins.updatePermission("psyStudent", UserTypes.STUDENT.toString());
-        
-        //Adding students to modules
-        //Admins.viewAllModule();
-        //String email = "SmithJon01"; // info studies
-        //Registrars.linkModuleToStudent(email, "COM1001");
-        
+        Students pstudent = new Students("psyStudent", "Mr", "Joe", "Smith", "password", "PSYP01", 180, "Mpsy", date1, date2, "saf");
+        Admins.updatePermission("psyStudent", UserTypes.STUDENT.toString()); */
         //String email = Students.emailGen("Johnny","Smith","psyStudent");
         //String email2 = Students.emailGen("Johnny","Smith","pstudent");
         //System.out.println(email);
         //System.out.println(email2);
         
-        /*
+        //Adding students to modules
+        //Admins.viewAllModule();
+        String email = "SmithJohnny01"; //Software student 
+        //Registrars.linkModuleToStudent(email, "COM1001");
+        // Teachers.deleteGrades();
         
-        • Progress these students through the levels, such that
+        
+        
+        
+        /*Teachers.updateGrades("COM1001", email,75);
+        Teachers.updateGrades("COM1002", email,75);
+        Teachers.updateGrades("COM1003", email,75);
+        Teachers.updateGrades("COM1005", email,75);
+        Teachers.updateGrades("COM1006", email,75);
+        Teachers.updateGrades("COM1008", email,75);
+        Teachers.updateGrades("COM1009", email,75);
+        Teachers.updateGrades("FCE1001", email,75);*/
+        
+        // Absolutely not working
+        HashMap<String, Boolean> pass = Grades.passModule(email, "1");
+        pass.entrySet().forEach(entry->{
+            System.out.println(entry.getKey() + " " + entry.getValue());  
+        });
+        
+        /*• Progress these students through the levels, such that
         o the MSc student gets a conceded pass on taught modules, eventually passing MSc
         with merit;
         o the MEng student passes through all levels, including the year in industry, getting a

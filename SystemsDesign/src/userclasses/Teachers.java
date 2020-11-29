@@ -77,16 +77,16 @@ public class Teachers extends Users{
        }
     }
     
-    public void addGrade(String moduleID, Integer registrationID, Integer overallMark) throws SQLException {
+    public static void addGrade(String moduleID, String email, Integer overallMark) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "INSERT INTO module_grade VALUES (?,?,?)";
+            String preparedStmt = "INSERT INTO module_grade (module_id, email, initial_grade) VALUES (?,?,?)";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
                 updateStmt.setString(1, moduleID);
-                updateStmt.setInt(2, registrationID);
+                updateStmt.setString(2, email);
                 updateStmt.setInt(3, overallMark);
                 updateStmt.executeUpdate();
                 con.commit();
@@ -134,16 +134,16 @@ public class Teachers extends Users{
         return null; // for now
     }
     
-    public Boolean viewStudentStatus(Integer registrationID) throws SQLException {
+    public Boolean viewStudentStatus(String email) throws SQLException {
         Boolean status = null;
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "SELECT progress_to_next_level FROM student AS s, year_grade AS yg USING (registration_id) WHERE s.registration_id = ?";
+            String preparedStmt = "SELECT progress_to_next_level FROM student AS s, year_grade AS yg USING (email) WHERE s.email = ?";
             try (PreparedStatement selectStmt = con.prepareStatement(preparedStmt)){
-                selectStmt.setInt(1, registrationID);
+                selectStmt.setString(1, email);
                 con.commit();
                 ResultSet passorfail = selectStmt.executeQuery();
                 status = passorfail.getBoolean(1);
@@ -164,18 +164,18 @@ public class Teachers extends Users{
         return status; 
     }
     
-    public void updateGrades(String moduleID, Integer registrationID, Integer overallMark) throws SQLException {
+    public static void updateGrades(String moduleID, String email, Integer overallMark) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "UPDATE module-grade SET overall_mark = ? WHERE module_id = ? AND registration_id = ?";
+            String preparedStmt = "UPDATE module_grade SET initial_grade = ? WHERE module_id = ? AND email = ?";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
                 stmt = con.createStatement();
                 updateStmt.setInt(1, overallMark);
                 updateStmt.setString(2, moduleID);
-                updateStmt.setInt(3, registrationID);
+                updateStmt.setString(3, email);
                 updateStmt.executeUpdate();
                 con.commit();
             }
@@ -194,18 +194,47 @@ public class Teachers extends Users{
         }
     }
     
-    public void addResitGrades(String moduleID, Integer registrationID, Integer resitMark) throws SQLException {
+    public static void addResitGrades(String moduleID, String email, Integer resitMark) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "UPDATE module_grade SET resit_mark = ? WHERE module_id = ? AND registration_id = ?";
+            String preparedStmt = "UPDATE module_grade SET resit_grade = ? WHERE module_id = ? AND email = ?";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
                 stmt = con.createStatement();
                 updateStmt.setInt(1, resitMark);
                 updateStmt.setString(2, moduleID);
-                updateStmt.setInt(3, registrationID);
+                updateStmt.setString(3, email);
+                updateStmt.executeUpdate();
+                con.commit();
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+    }
+    
+    public static void deleteGrades(String moduleID, String email) throws SQLException {
+        Connection con = null;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            Statement stmt = null;
+            String preparedStmt = "DELETE FROM module_grade WHERE module_id = ? AND email = ?";
+            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
+                stmt = con.createStatement();
+                updateStmt.setString(1, moduleID);
+                updateStmt.setString(2, email);
                 updateStmt.executeUpdate();
                 con.commit();
             }

@@ -45,32 +45,18 @@ public class Students extends Users{
          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
          con.setAutoCommit(false);
          Statement stmt = null;
-         DecimalFormat formatter = new DecimalFormat("0000");
-         int regNo = 0;
 
-         String regId = "SELECT registration_id FROM student";
          String preparedStmt = "INSERT INTO student(email, username, resit_year, degree_id, total_credits, difficulty, start_date, end_date, personal_tutor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-         try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt);
-        		 PreparedStatement checkRegId = con.prepareStatement(regId)){
-        	 ResultSet regIds = checkRegId.executeQuery();
-        	 registrationId = Integer.parseInt(formatter.format(regNo));
-        	 while (regIds.next()) {
-        		 regIds.getInt(regNo);
-        		 if (regIds.getInt(regNo) == registrationId) {
-        			 regNo ++;
-        			 registrationId = Integer.parseInt(formatter.format(regNo));
-        		 }
-        	 }
+         try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
              updateStmt.setString(1, email);
              updateStmt.setString(2, username);
-             updateStmt.setInt(3, registrationId);
-             updateStmt.setBoolean(4, false);
-             updateStmt.setString(5, degreeId);
-             updateStmt.setInt(6, totalCredits); 
-             updateStmt.setString(7, difficulty);
-             updateStmt.setDate(8, startDate);
-             updateStmt.setDate(9, endDate);
-             updateStmt.setString(10, personalTutor);
+             updateStmt.setBoolean(3, false);
+             updateStmt.setString(4, degreeId);
+             updateStmt.setInt(5, totalCredits); 
+             updateStmt.setString(6, difficulty);
+             updateStmt.setDate(7, startDate);
+             updateStmt.setDate(8, endDate);
+             updateStmt.setString(9, personalTutor);
              
              updateStmt.executeUpdate();
              con.commit();
@@ -99,7 +85,39 @@ public class Students extends Users{
 	  return endDate;
   }
   
-  public int getRegistrationId() {
+  public int getRegistrationId() throws SQLException {
+	  Connection con = null;
+      Statement stmt = null;
+
+	     try {
+	         con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+	         con.setAutoCommit(false);
+
+	         String regId = "SELECT registration_id FROM student WHERE username = ?";
+	         try (PreparedStatement checkRegId = con.prepareStatement(regId)){
+	        	 checkRegId.setString(1, username);
+	             ResultSet rs = checkRegId.executeQuery();
+	             con.commit();
+	              
+	             while (rs.next()) {
+		             registrationId = rs.getInt(1);
+
+	             }
+	             
+	         }
+	         catch (SQLException ex) {
+	             ex.printStackTrace();
+	         }
+	         finally {
+	             if (stmt != null) stmt.close();
+	         }
+	     }
+	     catch (Exception ex) {
+	         ex.printStackTrace();
+	     }
+	     finally {
+	         if (con != null) con.close();
+	     }
 	  return registrationId;
   }
   
@@ -109,15 +127,17 @@ public class Students extends Users{
 	  
 
   public static String emailGen(String surname, String forename, String username) throws SQLException{
-    String[] name = forename.split(" ");
-    String initials = "";
+    String initials = forename.substring(0,1).toUpperCase();
     int a = 1;
+    String rest = "@sheff.ac.uk";
     DecimalFormat formatter = new DecimalFormat("00");
-    for (int i = 0; i < name.length; i++) {
-        initials = name[i];
+    for (int i = 0; i < forename.length(); i++) {
+    	if (forename.charAt(i) == ' ') {
+    		initials += Character.toUpperCase(forename.charAt(i + 1)); 
+    	}
     }
 
-    String email = initials + surname + formatter.format(a); //create email from forename initials and surname and unique 2 digit number
+    String email = initials + surname + formatter.format(a) + rest; //create email from forename initials and surname and unique 2 digit number
     Connection con = null;
 
     try {
@@ -177,7 +197,7 @@ public class Students extends Users{
   
   public ArrayList<ArrayList<String>> displayStudentView(String email) throws SQLException {
 	  ArrayList<ArrayList<String>> list= new ArrayList<ArrayList<String>>();
-	  ArrayList<String> row = new ArrayList<String>();
+
 	  System.out.println("DISPLAY STUDENT STUFF...");
 	  Connection con = null; 
 		 try {
@@ -194,10 +214,9 @@ public class Students extends Users{
 		    	  	pstmt.setString(1, email);
 				    rs = pstmt.executeQuery();  
 				    // Get the result table from the query  3 
-					System.out.println("DASDFADLSFJAS;DLFKJADF;ALKJSDF");
+					
 		      	 	while (rs.next()) {
-		      	 		row.clear();
-		      	 		System.out.println("MODULE ID" + rs.getString(1));
+		      		    ArrayList<String> row = new ArrayList<String>();
 		      	 		row.add(rs.getString(1));					//module id
 		      	 		row.add(Integer.toString(rs.getInt(2)));	//initial grade		      	 		
 		      	 		row.add(Integer.toString(rs.getInt(3)));	//resit grade
@@ -206,6 +225,7 @@ public class Students extends Users{
 		      	 		row.add(rs.getString(6));					//department id
 		      	 		row.add(Integer.toString(rs.getInt(7)));	//pass grade
 		      	 		list.add(row);
+		 
 				    }
 		      }
 		            catch (SQLException ex) {

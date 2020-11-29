@@ -19,13 +19,17 @@ import userclasses.Teachers;
 public class TestRun {
     public static void main(String[] args) throws SQLException {
         System.out.println("Hello");
-        /* Useful code
         Date date = new Date(10/03/20);
+        Students student = new Students("student", "ms", "Doe","Jane","password", "COM", 120, "DIF", date, date, "saf");
+        Students student1 = new Students("stuff", "ms", "Doe","Jane Erin","password", "COM", 120, "DIF", date, date, "saf");
+        System.out.println("email: " + student1.getEmail() + " reg id: " + student1.getRegistrationId());
+
+        /* Useful code
+       
         Users nameless = new Users("name", "ms", "a", "a", "password"); // creates an unassigned user
         Users name = new Users("nameless", "ms", "a", "a", "password");
         Admins admin = new Admins("admin", "ms", "a", "a", "password");
-        Students student = new Students("nameless", "ms", "a","a","password", 1234, "COM", 120, "DIF", date, date, "saf");
-
+        
 
 
 

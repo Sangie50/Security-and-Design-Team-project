@@ -1,99 +1,104 @@
 package view.Frames;
-import java.awt.*;
-import java.awt.event.*;
-import java.sql.*;
-import javax.swing.*;
+
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.border.EmptyBorder;
 
 import features.PasswordGen;
 import userclasses.Users.UserTypes;
 
-public class LoginFrame extends JFrame implements ActionListener{
-	
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.awt.event.ActionEvent;
+import view.Frames.StudentFrame;
+
+public class LoginFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
-	
-	public JTextField loginBox = new JTextField(20);
-	public JPasswordField passwordBox = new JPasswordField(20);
-	JButton loginButton = new JButton("Login");
-	JButton registerButton = new JButton("Register");
-	JLabel username = new JLabel("Username");
-	JLabel password = new JLabel("Password");
-	JTextArea textArea = new JTextArea("");
-//	static JFrame loginPage = new LoginFrame();
-//	static JFrame studentPage = new StudentFrame();
-		
-	public LoginFrame() {
-		
-		Toolkit toolkit = Toolkit.getDefaultToolkit();
-		Dimension screenDimensions = toolkit.getScreenSize();
 
-		setTitle("Login Page");
-		setPreferredSize(screenDimensions);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setExtendedState(JFrame.MAXIMIZED_BOTH);
-		
-		JPanel pane = new JPanel();
-		add(pane);
-		
-		buildLoginPanel(pane);
-		pack();
-		
-	}
-	
-	public void actionPerformed(ActionEvent e) {
-        String s = (String)e.getActionCommand();
-        // calculator.performCommand(s);
-        textArea.append(s + " ");      // <<--- THIS IS LINE 106
-    } 
-	
+	private JPanel contentPane;
+	private JTextField loginBox;
+	private JPasswordField passwordBox;
+
+	/**
+	 * Launch the application.
+	 */
 	public static void main(String[] args) {
-		System.out.println("running...");
-		java.awt.EventQueue.invokeLater(new Runnable() {
-	          public void run() {	
-	            (new LoginFrame()).setVisible(true);
-
-	          }
-	    });
-		System.out.println("end");
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					LoginFrame frame = new LoginFrame();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
-	
-	public void buildLoginPanel(JPanel pane) {
-		pane.setLayout(null);
-		username.setBounds(10,20,80,25);
-		pane.add(username);
-		loginBox.setBounds(100,20,165,25);
-		pane.add(loginBox);
-		password.setBounds(10,50,80,25);
-		pane.add(password);
-		passwordBox.setBounds(100,50,165,25);
-		pane.add(passwordBox);
-		loginButton.setBounds(10, 80, 80, 25);
-		pane.add(loginButton);
-		registerButton.setBounds(100, 80, 100, 25);
-		pane.add(registerButton);
+
+	/**
+	 * Create the frame.
+	 */
+	public LoginFrame() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 450, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
 		
-		loginButton.setActionCommand("login");
-		registerButton.setActionCommand("register");
+		JLabel lblNewLabel = new JLabel("Username");
+		lblNewLabel.setBounds(21, 33, 117, 47);
+		contentPane.add(lblNewLabel);
+		
+		passwordBox = new JPasswordField(20);
+		passwordBox.setBounds(143, 96, 207, 38);
+		contentPane.add(passwordBox);
+		passwordBox.setColumns(10);
+		
+		JLabel lblNewLabel_1 = new JLabel("Password");
+		lblNewLabel_1.setBounds(21, 78, 101, 74);
+		contentPane.add(lblNewLabel_1);
+		
+		loginBox = new JTextField();
+		loginBox.setBounds(143, 37, 207, 38);
+		contentPane.add(loginBox);
+		loginBox.setColumns(5);
+		
+		JButton loginButton = new JButton("Login");
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-			    System.out.println("Logging in sequence...");
+				System.out.println("Logging in sequence...");
 			  	try {
 			  		String isUser = loginValidation(loginBox, passwordBox);
-			  		System.out.println(isUser);
 			  		setVisible(false);
-			  		new StudentFrame().setVisible(true);
+			  		launchStudentFrame(isUser, loginBox.getText());
+			  		System.out.println("TYPE: " + isUser);
 				} 
 			   	catch (SQLException e1) {
 					e1.printStackTrace();
 			   	}        
-			}	
-		});
-		registerButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Registering sequence...");				
 			}
+			
 		});
+		loginButton.setBounds(44, 155, 117, 38);
+		contentPane.add(loginButton);
+		
+		JButton registerButton = new JButton("Register");
+		registerButton.setBounds(209, 155, 117, 38);
+		contentPane.add(registerButton);
 	}
-	
+
 	public String loginValidation(JTextField username, JPasswordField password) throws SQLException {
 		String un = username.getText();
 		String pw = String.valueOf(password.getPassword());
@@ -115,16 +120,16 @@ public class LoginFrame extends JFrame implements ActionListener{
 //	              System.out.println("username: " + un + " password: " + pw);
 	          
 		          while (checkpw.next()) {
+				        type = checkpw.getString(5);
 		        	    rightpw = checkpw.getString(6);
 				        salt = checkpw.getString(7);
-				        type = checkpw.getString(5);
-				        
 		          }
 //	              System.out.println(rightpw + " " + salt);
 
 	              boolean passwordMatch = PasswordGen.verifyUserPassword(pw, rightpw, salt);
 	              if (passwordMatch) {
 	            	  System.out.println("Correct password. Access Granted.");
+
 	            	 
 	              }
 	              
@@ -145,5 +150,22 @@ public class LoginFrame extends JFrame implements ActionListener{
 	            if (con != null) con.close();
 	        }	
 		return type;
+	}
+	
+	public void launchStudentFrame(String type, String username) throws SQLException {
+		System.out.println("Hello, this is student frame");
+		if (type.equals(UserTypes.STUDENT.toString())) {
+			System.out.println("ahlo");
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						StudentFrame frame = new StudentFrame(username);
+						frame.setVisible(true);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+		}
 	}
 }

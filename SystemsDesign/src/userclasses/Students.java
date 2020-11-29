@@ -109,12 +109,13 @@ public class Students extends Users{
           con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
           con.setAutoCommit(false);
           Statement stmt = null;
-          String allEmails = "SELECT email FROM student WHERE username = ?";
+          String allEmails = "SELECT email FROM student INNER JOIN user WHERE student.username = user.username AND forename = ? AND surname = ?";
           try (PreparedStatement preparedStmt = con.prepareStatement(allEmails)){
-        	  preparedStmt.setString(1, username);
+        	  preparedStmt.setString(1, forename);
+                  preparedStmt.setString(2, surname);
         	  ResultSet rs = preparedStmt.executeQuery();
         	  con.commit();
-        	  while(rs.getString(1) == email) {
+        	  while(rs.getString(1).equals(email)) {
         		  a += 1;
         		  email = initials + surname + formatter.format(a);
         	  }

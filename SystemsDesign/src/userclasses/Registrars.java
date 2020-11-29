@@ -161,7 +161,7 @@ public class Registrars extends Users {
 	 }
 	 
 	 //Add for module grade a new row linking a new module and student email
-	 public void linkModuleToStudent(String email, String moduleId) throws SQLException {
+	 public static void linkModuleToStudent(String email, String moduleId) throws SQLException {
 		 Connection con = null; 
 		 try {
 	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");

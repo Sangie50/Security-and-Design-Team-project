@@ -263,7 +263,45 @@ public class Admins extends Users{
         }
         return mod;
     }
-    
+    public static List<String> viewAllUsers() throws SQLException {
+        List<String> usersList = new ArrayList<String>();
+        Connection con = null;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            Statement stmt = null;
+            String preparedStmt = "SELECT username, title, forename, surname, account_type FROM user";
+            //System.out.println(preparedStmt);
+            try (PreparedStatement selectStmt = con.prepareStatement(preparedStmt)){
+                ResultSet eachUser = selectStmt.executeQuery();
+                while (eachUser.next()) {
+                	
+                	String username = eachUser.getString("username");
+                    String title = eachUser.getString("title");
+                    String forename = eachUser.getString("forename");
+                    String surname = eachUser.getString("surname");
+                    String accountType = eachUser.getString("account_type");
+                    
+                    con.commit();
+                    String user = username + ";" + title + ";" + forename + ";" + surname+ ";" + accountType;
+                    usersList.add(user);
+                }
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+        return usersList;
+    }
     public static List<Modules> viewAllModule() throws SQLException {
         List<Modules> mod = new ArrayList<Modules>();
         Connection con = null;
@@ -286,7 +324,7 @@ public class Admins extends Users{
                     con.commit();
                     Modules modules = new Modules(moduleID, moduleName, isTaught, creditWorth, departmentID, passGrade);
                     mod.add(modules);
-                    System.out.println(moduleID+":"+moduleName+":"+isTaught+":"+creditWorth+":"+departmentID+":"+passGrade);
+                    //System.out.println(moduleID+":"+moduleName+":"+isTaught+":"+creditWorth+":"+departmentID+":"+passGrade);
                 }
             }
             catch (SQLException ex) {
@@ -402,7 +440,8 @@ public class Admins extends Users{
                     con.commit();
                     Departments depart = new Departments(departmentID, departmentName, entryLevel);
                     departs.add(depart);
-                    System.out.println(departmentID+"; "+departmentName+", Entry level; "+entryLevel);
+                    //System.out.println(departmentID+"; "+departmentName+", Entry level; "+entryLevel);
+                    
                 }
             }
             catch (SQLException ex) {
@@ -562,7 +601,7 @@ public class Admins extends Users{
                     con.commit();
                     Degrees degree = new Degrees(degreeID, departmentID, entryLevel, difficulty, degreeName, lastLevel);
                     deg.add(degree); 
-                    System.out.println(degreeID+":"+departmentID+":"+entryLevel+":"+difficulty+":"+degreeName+":"+lastLevel+":"+partner);
+                    //System.out.println(degreeID+":"+departmentID+":"+entryLevel+":"+difficulty+":"+degreeName+":"+lastLevel+":"+partner);
                 }
             }
             catch (SQLException ex) {

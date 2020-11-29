@@ -1,70 +1,179 @@
 package view.Frames;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.sql.*;
-import javax.swing.*;
+import java.awt.EventQueue;
 
-import features.PasswordGen;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 
-public class StudentFrame extends JFrame implements ActionListener{
-	
-	private static final long serialVersionUID = 4L;
-//	
-//	public JTextField loginBox = new JTextField(20);
-//	public JPasswordField passwordBox = new JPasswordField(20);
-//	JButton loginButton = new JButton("Login");
-//	JButton registerButton = new JButton("Register");
-//	JLabel username = new JLabel("Username");
-//	JLabel password = new JLabel("Password");
-	JTextArea textArea = new JTextArea("[Student page here.]");
-	
-	public StudentFrame() {
-		
-		Toolkit toolkit = Toolkit.getDefaultToolkit();
-		Dimension screenDimensions = toolkit.getScreenSize();
+import userclasses.Students;
 
-		setTitle("Student Page");
-		setPreferredSize(screenDimensions);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setExtendedState(JFrame.MAXIMIZED_BOTH);
-		
-		JPanel pane = new JPanel();
-		add(pane);
-		
-		buildStudentPanel(pane);
-		pack();
-		
-	}
-	
+import javax.swing.JLabel;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.JButton;
+import java.awt.Font;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+
+
+public class Student extends JFrame {
+	private static final long serialVersionUID = 2L;
+
+	private JPanel contentPane;
+
+	/**
+	 * Launch the application.
+	 */
 	public static void main(String[] args) {
-		System.out.println("running...");
-		java.awt.EventQueue.invokeLater(new Runnable() {
-	          public void run() {	
-	      		JFrame loginPage = new StudentFrame();
-	            loginPage.setVisible(true);
-	            update(loginPage);
-	          }
-
-			private void update(JFrame loginPage) {
-				// TODO Auto-generated method stub
-				
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Student frame = new Student("nameless");
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
-	    });
-		System.out.println("end");
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 * @throws SQLException 
+	 */
+	public Student(String username) throws SQLException {
+		
+		Students student = getStudent(username);
+		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1035, 647);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel title = new JLabel("Student Page");
+		title.setFont(title.getFont().deriveFont(title.getFont().getStyle() | Font.BOLD));
+		title.setBounds(413, 21, 224, 71);
+		contentPane.add(title);
+		
+		JLabel registrationLabel = new JLabel("Registration ID:");
+		registrationLabel.setBounds(21, 184, 147, 26);
+		contentPane.add(registrationLabel);
+		
+		JLabel surnameLabel = new JLabel("Surname: ");
+		surnameLabel.setBounds(21, 149, 98, 26);
+		contentPane.add(surnameLabel);
+		
+		JLabel forenameLabel = new JLabel("Forename: ");
+		forenameLabel.setBounds(21, 114, 107, 26);
+		contentPane.add(forenameLabel);
+		
+		JLabel degreeLabel = new JLabel("Degree:");
+		degreeLabel.setBounds(21, 218, 92, 26);
+		contentPane.add(degreeLabel);
+		
+		System.out.println("Getting forename");
+		JLabel forename = new JLabel(student.getForename());
+		forename.setBounds(249, 116, 92, 26);
+		contentPane.add(forename);
+		
+		JLabel surname = new JLabel(student.getSurname());
+		surname.setBounds(249, 149, 92, 26);
+		contentPane.add(surname);
+		
+		JLabel registrationId = new JLabel(Integer.toString(student.getRegistrationId()));
+		registrationId.setBounds(249, 184, 92, 26);
+		contentPane.add(registrationId);
+		
+		JLabel degree = new JLabel(student.getDegreeId());
+		degree.setBounds(249, 218, 92, 26);
+		contentPane.add(degree);
+		
+		JButton modulesList = new JButton("Display Module Grades");
+		modulesList.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		modulesList.setBounds(743, 110, 245, 35);
+		contentPane.add(modulesList);
+		
+		JPanel panel = new JPanel();
+		panel.setBounds(21, 265, 967, 266);
+		contentPane.add(panel);
 	}
 	
-	public void actionPerformed(ActionEvent e) {
-        String s = (String)e.getActionCommand();
-        // calculator.performCommand(s);
-        textArea.append(s + " ");     
-    } 
-	
-	
-	public void buildStudentPanel(JPanel pane) {
-		pane.setLayout(new BorderLayout());
-		pane.add(textArea);
-		
-	
+	public Students getStudent(String username) throws SQLException {
+		System.out.println("Executing getting student...");
+		Students student = null;
+		Connection con = null; 
+		int registrationId = 0;
+		String degree = "";
+        int credits = 0;
+        String difficulty = "";
+        java.sql.Date startDate = null;
+        java.sql.Date endDate = null;
+        String personalTutor = ""; 
+  		String title = "";
+        String forename = "";
+        String surname = "";
+        String password = "";
+
+		try {
+	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+	          System.out.println("Connected to database...");
+	          con.setAutoCommit(false);
+	          Statement stmt = null;
+	          String getStudent = "SELECT * FROM student WHERE username = ?";
+	          String getNames = "SELECT * FROM user WHERE username = ?";
+	          try (PreparedStatement studentInfo = con.prepareStatement(getStudent);
+	        		  PreparedStatement nameInfo = con.prepareStatement(getNames)){
+	        	  System.out.println("Executing prepared statements...");
+	              studentInfo.setString(1, username);
+	              nameInfo.setString(1, username);
+	              ResultSet info = studentInfo.executeQuery();
+	              ResultSet names = nameInfo.executeQuery();
+	              con.commit();
+	          
+		          while (info.next()) {
+				        registrationId = info.getInt(3);
+				        degree = info.getString(5);
+				        difficulty = info.getString(7);
+				        startDate = info.getDate(8);
+				        endDate = info.getDate(9);
+				        personalTutor = info.getString(10);   
+		          }
+		          
+		          while (names.next()) {
+		      		title = names.getString(2);
+		            forename = names.getString(3);
+		            surname = names.getString(4);
+		            password = names.getString(6);  
+		          }
+		          
+		          student = new Students(username,title, surname, forename, password, registrationId, degree, credits,difficulty, startDate, endDate, personalTutor);
+			      System.out.println("Student info retrieved!");
+	                
+	           }
+	           catch (SQLException ex) {
+	                ex.printStackTrace();
+	            }
+	            finally {
+	                if (stmt != null) stmt.close();
+	            }
+	        }
+	        catch (Exception ex) {
+	            ex.printStackTrace();
+	        }
+	        finally {
+	            if (con != null) con.close();
+	        }	
+		return student;
 	}
 }

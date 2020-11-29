@@ -2,7 +2,7 @@ package userclasses;
 import java.sql.*;
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.Date;
+import java.sql.Date;
 
 import academics.Grades;
 //Students class
@@ -23,18 +23,14 @@ public class Students extends Users{
 	String degreeId;
 	Integer totalCredits;
 	String difficulty;
-	java.sql.Date startDate;
-	java.sql.Date endDate;
-  String personalTutor;
+	Date startDate;
+	Date endDate;
+        String personalTutor;
   
-  public Students (String username, String title, String surname, String forename, String password, 
-  		int registrationId, String degreeId, int totalCredits, String difficulty, 
-  		java.sql.Date startDate, java.sql.Date endDate, String personalTutor ) throws SQLException {
+  public Students (String username, String title, String surname, String forename, String password, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor ) throws SQLException {
   	super(username, title, surname, forename, password);
   	
-  	
   	email = emailGen(surname, forename, username);
-  	this.registrationId = registrationId;
   	this.degreeId = degreeId;
   	this.totalCredits = totalCredits;
   	this.difficulty = difficulty;
@@ -42,26 +38,25 @@ public class Students extends Users{
   	this.endDate = endDate;
   	this.personalTutor = personalTutor;
   	
-    System.out.println("Creating student...");
-  	System.out.println("Student: " + forename + "'s email: " + email);
+        //java.sql.Date stDate = new java.sql.Date(startDate.getTime()); 
+        //java.sql.Date enDate = new java.sql.Date(endDate.getTime());
 
   	 Connection con = null;
      try {
          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
          con.setAutoCommit(false);
          Statement stmt = null;
-         String preparedStmt = "INSERT INTO student VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+         String preparedStmt = "INSERT INTO student(email, username, resit_year, degree_id, total_credits, difficulty, start_date, end_date, personal_tutor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
          try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
              updateStmt.setString(1, email);
              updateStmt.setString(2, username);
-             updateStmt.setInt(3, registrationId);
-             updateStmt.setBoolean(4, false);
-             updateStmt.setString(5, degreeId);
-             updateStmt.setInt(6, totalCredits);
-             updateStmt.setString(7, difficulty);
-             updateStmt.setDate(8, startDate);
-             updateStmt.setDate(9, endDate);
-             updateStmt.setString(10, personalTutor);
+             updateStmt.setBoolean(3, false);
+             updateStmt.setString(4, degreeId);
+             updateStmt.setInt(5, totalCredits);
+             updateStmt.setString(6, difficulty);
+             updateStmt.setDate(7, startDate);
+             updateStmt.setDate(8, endDate);
+             updateStmt.setString(9, personalTutor);
              
              updateStmt.executeUpdate();
              con.commit();
@@ -82,11 +77,11 @@ public class Students extends Users{
      }
   }
   
-  public java.sql.Date getstartDate() {
+  public Date getstartDate() {
 	  return startDate;
   }
 	  
-  public java.sql.Date getEndDate() {
+  public Date getEndDate() {
 	  return endDate;
   }
   
@@ -97,7 +92,6 @@ public class Students extends Users{
   public String getDegreeId() {
 	  return degreeId;
   }
-  
 	  
   public String emailGen(String surname, String forename, String username) throws SQLException{
 	  String[] name = forename.split(" ");

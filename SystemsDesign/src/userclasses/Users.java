@@ -67,7 +67,6 @@ public class Users {
 		this.accountType = UserTypes.UNASSIGNED.toString();
 		
 		this.password = PasswordGen.generateSecurePassword(password, salt);
-		System.out.println("User: " + username + "'s password: " + password);
 		
     	Connection con = null;
 	        try {

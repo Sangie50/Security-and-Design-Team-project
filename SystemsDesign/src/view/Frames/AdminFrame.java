@@ -27,10 +27,6 @@ import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 import java.awt.GridLayout;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
 import java.awt.Color;
 import javax.swing.UIManager;
 

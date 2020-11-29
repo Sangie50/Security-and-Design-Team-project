@@ -22,7 +22,7 @@ import java.awt.event.ActionEvent;
 
 
 
-public class Student extends JFrame {
+public class StudentFrame extends JFrame {
 	private static final long serialVersionUID = 2L;
 
 	private JPanel contentPane;
@@ -34,7 +34,7 @@ public class Student extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Student frame = new Student("nameless");
+					StudentFrame frame = new StudentFrame("nameless");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -47,7 +47,7 @@ public class Student extends JFrame {
 	 * Create the frame.
 	 * @throws SQLException 
 	 */
-	public Student(String username) throws SQLException {
+	public StudentFrame(String username) throws SQLException {
 		
 		Students student = getStudent(username);
 		

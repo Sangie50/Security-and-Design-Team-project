@@ -21,7 +21,7 @@ public class TestRun {
         Users name = new Users("nameless", "ms", "a", "a", "password");
         Admins admin = new Admins("admin", "ms", "a", "a", "password");
         Students student = new Students("nameless", "ms", "a","a","password", 1234, "COM", 120, "DIF", date, date, "saf");
-<<<<<<< HEAD
+
 
 
 
@@ -34,8 +34,7 @@ public class TestRun {
         System.out.println(passwordMath + " saved pw: " + nameless.getPassword());
 
         //testing using data for psychology and modern language
-=======
->>>>>>> 99474e65aee104c505e7ae8c521da50b422e2610
+
         
         String salt = nameless.getSalt();
         boolean passwordMath = PasswordGen.verifyUserPassword("password", nameless.getPassword(), salt);

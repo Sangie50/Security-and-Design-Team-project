@@ -46,17 +46,32 @@ public class Students extends Users{
          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
          con.setAutoCommit(false);
          Statement stmt = null;
+         DecimalFormat formatter = new DecimalFormat("0000");
+         int regNo = 0;
+
+         String regId = "SELECT registration_id FROM student";
          String preparedStmt = "INSERT INTO student(email, username, resit_year, degree_id, total_credits, difficulty, start_date, end_date, personal_tutor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-         try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
+         try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt);
+        		 PreparedStatement checkRegId = con.prepareStatement(regId)){
+        	 ResultSet regIds = checkRegId.executeQuery();
+        	 registrationId = Integer.parseInt(formatter.format(regNo));
+        	 while (regIds.next()) {
+        		 regIds.getInt(regNo);
+        		 if (regIds.getInt(regNo) == registrationId) {
+        			 regNo ++;
+        			 registrationId = Integer.parseInt(formatter.format(regNo));
+        		 }
+        	 }
              updateStmt.setString(1, email);
              updateStmt.setString(2, username);
-             updateStmt.setBoolean(3, false);
-             updateStmt.setString(4, degreeId);
-             updateStmt.setInt(5, totalCredits);
-             updateStmt.setString(6, difficulty);
-             updateStmt.setDate(7, startDate);
-             updateStmt.setDate(8, endDate);
-             updateStmt.setString(9, personalTutor);
+             updateStmt.setInt(3, registrationId);
+             updateStmt.setBoolean(4, false);
+             updateStmt.setString(5, degreeId);
+             updateStmt.setInt(6, totalCredits); 
+             updateStmt.setString(7, difficulty);
+             updateStmt.setDate(8, startDate);
+             updateStmt.setDate(9, endDate);
+             updateStmt.setString(10, personalTutor);
              
              updateStmt.executeUpdate();
              con.commit();
@@ -97,6 +112,7 @@ public class Students extends Users{
 	  String[] name = forename.split(" ");
 	  String initials = "";
 	  String email = "";
+	  String rest = "@sheff.ac.uk";
 	  int a = 1;
 	  DecimalFormat formatter = new DecimalFormat("00");
 	  for (int i = 0; i < name.length; i++) {
@@ -117,7 +133,7 @@ public class Students extends Users{
         	  con.commit();
         	  while(rs.getString(1) == email) {
         		  a += 1;
-        		  email = initials + surname + formatter.format(a);
+        		  email = initials + surname + formatter.format(a) + rest;
         	  }
           }
           catch (SQLException ex) {
@@ -139,6 +155,10 @@ public class Students extends Users{
   public String getEmail() {
   	return email;
   	
+  }
+  
+  public void registrationIdGen() {
+	  
   }
   
   public List<String> displayAllModules(String email, String levelOfStudy) throws SQLException {
@@ -180,9 +200,6 @@ public class Students extends Users{
 		      	 		row.add(rs.getString(6));					//department id
 		      	 		row.add(Integer.toString(rs.getInt(7)));	//pass grade
 		      	 		list.add(row);
-		      	 		System.out.println("11111111 Size of row of list: " + list.get(0).size()); // 7
-
-		      	 		System.out.println("Size of row of list: " + list.get(0).size()); // 0
 				    }
 		      }
 		            catch (SQLException ex) {

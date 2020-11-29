@@ -113,15 +113,15 @@ public class StudentFrame extends JFrame {
 		contentPane.add(forename);
 		
 		JLabel surname = new JLabel(student.getSurname());
-		surname.setBounds(249, 149, 92, 26);
+		surname.setBounds(249, 149, 206, 26);
 		contentPane.add(surname);
 		
 		JLabel registrationId = new JLabel(Integer.toString(student.getRegistrationId()));
-		registrationId.setBounds(249, 184, 92, 26);
+		registrationId.setBounds(249, 184, 206, 26);
 		contentPane.add(registrationId);
 		
 		JLabel degree = new JLabel(student.getDegreeId());
-		degree.setBounds(249, 218, 92, 26);
+		degree.setBounds(249, 218, 206, 26);
 		contentPane.add(degree);
 		
 		JButton modulesList = new JButton("Display Module Grades");
@@ -131,10 +131,6 @@ public class StudentFrame extends JFrame {
 		});
 		modulesList.setBounds(743, 110, 245, 35);
 		contentPane.add(modulesList);
-		
-		JPanel panel = new JPanel();
-		panel.setBounds(21, 265, 967, 266);
-		contentPane.add(panel);
 
 		forename.setBounds(249, 116, 206, 26);
 		contentPane.add(forename);

@@ -90,6 +90,18 @@ public class AdminFrame extends JFrame {
 		logoutButton.setBounds(654, 13, 81, 29);
 		logoutButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				setVisible(false);
+	    		EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							LoginFrame frame = new LoginFrame();
+							frame.setVisible(true);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+	    	
 			}
 		});
 		contentPane.add(logoutButton);

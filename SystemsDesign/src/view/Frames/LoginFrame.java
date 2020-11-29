@@ -21,9 +21,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.awt.event.ActionEvent;
-import view.Frames.Student;
+import view.Frames.StudentFrame;
 
-public class Login extends JFrame {
+public class LoginFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel contentPane;
@@ -37,7 +37,7 @@ public class Login extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Login frame = new Login();
+					LoginFrame frame = new LoginFrame();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -49,7 +49,7 @@ public class Login extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Login() {
+	public LoginFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -159,7 +159,7 @@ public class Login extends JFrame {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					try {
-						Student frame = new Student(username);
+						StudentFrame frame = new StudentFrame(username);
 						frame.setVisible(true);
 					} catch (Exception e) {
 						e.printStackTrace();

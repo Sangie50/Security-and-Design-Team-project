@@ -28,8 +28,8 @@ public class TestRun {
 
 
         //check password
-        //String salt = nameless.getSalt();
-        //boolean passwordMath = PasswordGen.verifyUserPassword("password", nameless.getPassword(), salt);
+        String salt = nameless.getSalt();
+        boolean passwordMath = PasswordGen.verifyUserPassword("password", nameless.getPassword(), salt);
 
 
 //        Admins.updatePermissions("nameless", UserTypes.STUDENT.toString());

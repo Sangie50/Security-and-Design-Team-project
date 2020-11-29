@@ -28,4 +28,8 @@ public class Departments{
         this.entryLevel = entryLevel;
     }
     
+    public String toString(){
+    	return String.format(this.departmentID + ";" + this.departmentName + ";" + this.entryLevel);
+    }
+    
 }

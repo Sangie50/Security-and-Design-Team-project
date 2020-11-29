@@ -82,5 +82,8 @@ public class Modules{
        }
     }
 
-    
+    public String toString() {
+    	return String.format(this.moduleID + ";"+ this.moduleName + ";"+ this.isTaught +";"+ this.creditWorth + ";"+
+    			this.departmentID +";"+ this.passGrade);
+    }
 }

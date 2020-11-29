@@ -6,6 +6,7 @@ import java.util.Date;
 
 import academics.Grades;
 //Students class
+import userclasses.Users;
 
 /*Methods
  * [X] display all modules
@@ -146,12 +147,65 @@ public class Students extends Users{
   	
   }
   
-  public void displayAllModules(String email, String levelOfStudy) throws SQLException {
+  public List<String> displayAllModules(String email, String levelOfStudy) throws SQLException {
 		 List<String> moduleList = Grades.getModuleList(email, levelOfStudy);
 		 for (int i = 0; i < moduleList.size(); i++) {
 			 System.out.println("Module Id = "+ moduleList.get(i));
 		 }
+		 return moduleList;
 	 }
+  
+  public ArrayList<ArrayList<String>> displayStudentView(String email) throws SQLException {
+	  ArrayList<ArrayList<String>> list= new ArrayList<ArrayList<String>>();
+	  ArrayList<String> row = new ArrayList<String>();
+	  System.out.println("DISPLAY STUDENT STUFF...");
+	  Connection con = null; 
+		 try {
+	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+		      con.setAutoCommit(false);
+		      Statement stmt = null;
+		      String studentViewTable ="SELECT module_grade.module_id, initial_grade, resit_grade, module.module_name, "
+		      		+ "module.credit_worth, module.department_id, module.pass_grade FROM module_grade LEFT JOIN module "
+		      		+ "ON module_grade.module_id = module.module_id WHERE email = ?";
+		      
+		      ResultSet rs;
+
+		      try (PreparedStatement pstmt = con.prepareStatement(studentViewTable)){
+		    	  	pstmt.setString(1, email);
+				    rs = pstmt.executeQuery();  
+				    // Get the result table from the query  3 
+					System.out.println("DASDFADLSFJAS;DLFKJADF;ALKJSDF");
+		      	 	while (rs.next()) {
+		      	 		row.clear();
+		      	 		System.out.println("MODULE ID" + rs.getString(1));
+		      	 		row.add(rs.getString(1));					//module id
+		      	 		row.add(Integer.toString(rs.getInt(2)));	//initial grade		      	 		
+		      	 		row.add(Integer.toString(rs.getInt(3)));	//resit grade
+		      	 		row.add(rs.getString(4));					//module name
+		      	 		row.add(Integer.toString(rs.getInt(5)));	//credits worth
+		      	 		row.add(rs.getString(6));					//department id
+		      	 		row.add(Integer.toString(rs.getInt(7)));	//pass grade
+		      	 		list.add(row);
+		      	 		System.out.println("11111111 Size of row of list: " + list.get(0).size()); // 7
+
+		      	 		System.out.println("Size of row of list: " + list.get(0).size()); // 0
+				    }
+		      }
+		            catch (SQLException ex) {
+		                ex.printStackTrace();
+		            }
+		            finally {
+		                if (stmt != null) stmt.close();
+		            }
+		        }
+		        catch (Exception ex) {
+		            ex.printStackTrace();
+		        }
+		        finally {
+		            if (con != null) con.close();
+		        }		 
+	  return list;
+  }
   
   public static List<Integer> moduleCredits(String email, String levelOfStudy, List<String> moduleList) throws SQLException{
   	List<Integer> creditsList = new ArrayList<>();

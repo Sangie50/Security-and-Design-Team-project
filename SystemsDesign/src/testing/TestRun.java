@@ -53,39 +53,46 @@ public class TestRun {
         List<Modules> mod = Admins.viewAllModule();
         for (Modules m : mod) {
             System.out.println(m.getModuleName());
-        }
+        }*/
         //Create users, update to student, add to student table - create business student
         Admins.removeUser("infStudent");
-        Admins.removeStudent("infStudent"); */
-        String str="2020-09-20";  //works finally
-        Date date1=Date.valueOf(str);
-        String str2="2021-06-31";  
-        Date date2=Date.valueOf(str2);
-        /*
-        Users busStudent = new Users("busStudent", "Mr", "John", "Smith", "password");
-        Admins.updatePermission("busStudent", UserTypes.STUDENT.toString());
+        Admins.removeStudent("infStudent");
+        Admins.removeUser("busStudent");
+        Admins.removeStudent("busStudent"); 
+        Admins.removeUser("sofStudent");
+        Admins.removeStudent("sofStudent"); 
+        Admins.removeUser("psyStudent");
+        Admins.removeStudent("psyStudent"); 
+        
+        Date date1=Date.valueOf("2020-09-20");
+        Date date2=Date.valueOf("2021-06-31");
+        Date date3=Date.valueOf("2023-06-31");
+        Date date4=Date.valueOf("2024-06-31");
+        
         Students bstudent = new Students("busStudent", "Mr", "John", "Smith", "password", "BUSP01", 180, "Msc", date1, date2, "saf");
+        Admins.updatePermission("busStudent", UserTypes.STUDENT.toString());
         
-        Users sofStudent = new Users("sofStudent", "Mr", "Johnny", "Smith", "password");
+        
+        Students sstudent = new Students("sofStudent", "Mr", "Johnny", "Smith", "password", "COMU01", 120, "MEng", date1, date4, "saf");
         Admins.updatePermission("sofStudent", UserTypes.STUDENT.toString());
-        Students sstudent = new Students("sofStudent", "Mr", "Johnny", "Smith", "password", "COMU01", 120, "MEng", date1, date2, "saf");
         
-        Users infStudent = new Users("infStudent", "Mr", "Johnny", "Smith", "password");
+        
+        Students istudent = new Students("infStudent", "Mr", "Jon", "Smith", "password", "COMU02", 120, "Bsc", date1, date3, "saf");
         Admins.updatePermission("infStudent", UserTypes.STUDENT.toString());
-        Students istudent = new Students("infStudent", "Mr", "Jon", "Smith", "password", "COMU02", 120, "Bsc", date1, date2, "saf");*/
         
-        //Users psyStudent = new Users("psyStudent", "Mr", "Johnny", "Smith", "password");
-        //Admins.updatePermission("psyStudent", UserTypes.STUDENT.toString());
         
-        //Need to run this but brings up errors 
         Students pstudent = new Students("psyStudent", "Mr", "Johnny", "Smith", "password", "PSYP01", 180, "Mpsy", date1, date2, "saf");
+        Admins.updatePermission("psyStudent", UserTypes.STUDENT.toString());
         
         //Adding students to modules
         //Admins.viewAllModule();
         //String email = "SmithJon01"; // info studies
         //Registrars.linkModuleToStudent(email, "COM1001");
         
-        
+        //String email = Students.emailGen("Johnny","Smith","psyStudent");
+        //String email2 = Students.emailGen("Johnny","Smith","pstudent");
+        //System.out.println(email);
+        //System.out.println(email2);
         
         /*
         

@@ -27,20 +27,19 @@ public class Students extends Users{
 	Date endDate;
         String personalTutor;
   
-  public Students (String username, String title, String surname, String forename, String password, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor ) throws SQLException {
+  public Students (String username, String title, String surname, String forename, String password, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor) throws SQLException {
   	super(username, title, surname, forename, password);
-  	
-  	email = emailGen(surname, forename, username);
+        email = emailGen(surname, forename, username);
   	this.degreeId = degreeId;
   	this.totalCredits = totalCredits;
   	this.difficulty = difficulty;
   	this.startDate = startDate;
   	this.endDate = endDate;
   	this.personalTutor = personalTutor;
-  	
-        //java.sql.Date stDate = new java.sql.Date(startDate.getTime()); 
-        //java.sql.Date enDate = new java.sql.Date(endDate.getTime());
-
+        addStudent(username,degreeId, totalCredits, difficulty, startDate, endDate, personalTutor);
+  }
+  public void addStudent(String username, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor ) throws SQLException {
+        
   	 Connection con = null;
      try {
          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
@@ -93,48 +92,54 @@ public class Students extends Users{
 	  return degreeId;
   }
 	  
-  public String emailGen(String surname, String forename, String username) throws SQLException{
-	  String[] name = forename.split(" ");
-	  String initials = "";
-	  String email = "";
-	  int a = 1;
-	  DecimalFormat formatter = new DecimalFormat("00");
-	  for (int i = 0; i < name.length; i++) {
-	      initials = name[i];
-	    }
-	  
-	  email = initials + surname + formatter.format(a); //create email from forename initials and surname and unique 2 digit number
-	  Connection con = null;
-	  
-	  try {
-          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
-          con.setAutoCommit(false);
-          Statement stmt = null;
-          String allEmails = "SELECT email FROM student INNER JOIN user WHERE student.username = user.username AND forename = ? AND surname = ?";
-          try (PreparedStatement preparedStmt = con.prepareStatement(allEmails)){
-        	  preparedStmt.setString(1, forename);
-                  preparedStmt.setString(2, surname);
-        	  ResultSet rs = preparedStmt.executeQuery();
-        	  con.commit();
-        	  while(rs.getString(1).equals(email)) {
-        		  a += 1;
-        		  email = initials + surname + formatter.format(a);
-        	  }
-          }
-          catch (SQLException ex) {
-        	  ex.printStackTrace();
-          }
-          finally {
-        	  if (stmt != null) stmt.close();
-          }
-	  }
-	  catch (Exception ex) {
-		  ex.printStackTrace();
-	  }
-	  finally {
-		  if (con != null) con.close();
-	  }
-	  return email;
+  public static String emailGen(String surname, String forename, String username) throws SQLException{
+    String[] name = forename.split(" ");
+    String initials = "";
+    int a = 1;
+    DecimalFormat formatter = new DecimalFormat("00");
+    for (int i = 0; i < name.length; i++) {
+        initials = name[i];
+    }
+
+    String email = initials + surname + formatter.format(a); //create email from forename initials and surname and unique 2 digit number
+    Connection con = null;
+
+    try {
+        con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+        con.setAutoCommit(false);
+        Statement stmt = null;
+        String allEmails = "SELECT email FROM student INNER JOIN user WHERE student.username = user.username AND forename = ? AND surname = ?";
+        try (PreparedStatement preparedStmt = con.prepareStatement(allEmails)){
+            preparedStmt.setString(1, forename);
+            preparedStmt.setString(2, surname);
+            ResultSet rs = preparedStmt.executeQuery();
+            System.out.println(email);
+            System.out.println(a);
+            while (rs.next() == true) {
+                String retrieved_email = rs.getString("email");
+                if (retrieved_email == email){
+                    a = a+1;
+                }
+                System.out.println(a);
+                System.out.println(retrieved_email);
+                email = initials + surname + formatter.format(a);
+                System.out.println(email);
+            }
+        }
+        catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (stmt != null) stmt.close();
+        }
+    }
+    catch (Exception ex) {
+        ex.printStackTrace();
+    }
+    finally {
+        if (con != null) con.close();
+    }
+    return email;
   }
   
   public String getEmail() {

@@ -27,11 +27,13 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
+import javax.swing.UIManager;
 
 public class StudentFrame extends JFrame {
 	private static final long serialVersionUID = 2L;
@@ -167,14 +169,17 @@ public class StudentFrame extends JFrame {
 	    modulesTable = new JTable(model);
 	    modulesTable.setBounds(75,265,861,290);
 	    contentPane.add(modulesTable);
+	    modulesTable.setBackground(UIManager.getColor("Button.background"));
+	    modulesTable.setEnabled(false);
+	    modulesTable.getTableHeader().setReorderingAllowed(false);
 
 	    scroll = new JScrollPane(modulesTable);
 	    scroll.setBounds(75,265,861,290);
+	    scroll.setBorder(BorderFactory.createEmptyBorder());
 	    contentPane.add(scroll);
 	    
 	    model.setColumnIdentifiers(headers); 
 	    insert(username, student.getEmail());
-	    modulesTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
 	    
 	    contentPane.setVisible(true);
 	}
@@ -183,11 +188,20 @@ public class StudentFrame extends JFrame {
 	public void insert(String username, String email) throws SQLException {
 		Students student = getStudent(username);
 		ArrayList<ArrayList<String>> ar = student.displayStudentView(email);
-	    System.out.println(ar.size());
+
 	    for (int i = 0; i < (ar.size()); i++) {
-		        model.addRow(new Object[] { String.valueOf(ar.get(i).get(0)),String.valueOf(ar.get(i).get(1)),String.valueOf(ar.get(i).get(2)),
-		        		String.valueOf(ar.get(i).get(3)),String.valueOf(ar.get(i).get(4)),String.valueOf(ar.get(i).get(5)),String.valueOf(ar.get(i).get(6))});
-	    }	    
+	    	String moduleid = ar.get(i).get(0); //module id
+	    	String initGrade = ar.get(i).get(1); //initial grade
+	    	String reGrade = ar.get(i).get(2); //resit grade
+	    	String modName = ar.get(i).get(3); //module name
+	    	String creds = ar.get(i).get(4); //credits worth
+	    	String depId = ar.get(i).get(5); //department id
+	    	String pass = ar.get(i).get(6); //pass grade
+	    	String[] arr = {moduleid, initGrade, reGrade, modName, creds, depId, pass};
+		    model.addRow(arr);
+	    }	 
+	    
+	    
 	}
 	
 	public Students getStudent(String username) throws SQLException {
@@ -213,6 +227,7 @@ public class StudentFrame extends JFrame {
 	          Statement stmt = null;
 	          String getStudent = "SELECT * FROM student WHERE username = ?";
 	          String getNames = "SELECT * FROM user WHERE username = ?";
+	          
 	          try (PreparedStatement studentInfo = con.prepareStatement(getStudent);
 	        		  PreparedStatement nameInfo = con.prepareStatement(getNames)){
 	        	  System.out.println("Executing prepared statements...");

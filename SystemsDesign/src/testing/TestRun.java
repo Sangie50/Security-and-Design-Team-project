@@ -56,12 +56,12 @@ public class TestRun {
         }
         //Create users, update to student, add to student table - create business student
         Admins.removeUser("infStudent");
-        Admins.removeStudent("infStudent");
+        Admins.removeStudent("infStudent"); */
         String str="2020-09-20";  //works finally
         Date date1=Date.valueOf(str);
         String str2="2021-06-31";  
         Date date2=Date.valueOf(str2);
-        
+        /*
         Users busStudent = new Users("busStudent", "Mr", "John", "Smith", "password");
         Admins.updatePermission("busStudent", UserTypes.STUDENT.toString());
         Students bstudent = new Students("busStudent", "Mr", "John", "Smith", "password", "BUSP01", 180, "Msc", date1, date2, "saf");
@@ -78,11 +78,11 @@ public class TestRun {
         //Admins.updatePermission("psyStudent", UserTypes.STUDENT.toString());
         
         //Need to run this but brings up errors 
-        //Students pstudent = new Students("psyStudent", "Mr", "Jon", "Smith", "password", "PSYP01", 180, "Mpsy", date1, date2, "saf");
+        Students pstudent = new Students("psyStudent", "Mr", "Johnny", "Smith", "password", "PSYP01", 180, "Mpsy", date1, date2, "saf");
         
         //Adding students to modules
-        Admins.viewAllModule();
-        String email = "SmithJon01"; // info studies
+        //Admins.viewAllModule();
+        //String email = "SmithJon01"; // info studies
         //Registrars.linkModuleToStudent(email, "COM1001");
         
         

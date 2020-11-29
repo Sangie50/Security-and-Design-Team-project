@@ -205,7 +205,7 @@ public class StudentFrame extends JFrame {
 		            password = names.getString(6);  
 		          }
 		          
-		          student = new Students(username,title, surname, forename, password, registrationId, degree, credits,difficulty, startDate, endDate, personalTutor);
+		          student = new Students(username,title, surname, forename, password, degree, credits,difficulty, startDate, endDate, personalTutor);
 			      System.out.println("Student info retrieved!");
 	                
 	           }

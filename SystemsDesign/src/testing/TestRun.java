@@ -10,21 +10,22 @@ import java.util.List;
 import userclasses.Admins;
 import userclasses.Students;
 import userclasses.Users;
-import userclasses.Users.UserTypes;
 import java.sql.Date;
 import java.util.HashMap;
 import userclasses.Registrars;
 import userclasses.Teachers;
+import userclasses.Users.UserTypes;
 
 public class TestRun {
     public static void main(String[] args) throws SQLException {
+        /*
         System.out.println("Hello");
         Date date = new Date(10/03/20);
         Students student = new Students("student", "ms", "Doe","Jane","password", "COM", 120, "DIF", date, date, "saf");
         Students student1 = new Students("stuff", "ms", "Doe","Jane Erin","password", "COM", 120, "DIF", date, date, "saf");
         System.out.println("email: " + student1.getEmail() + " reg id: " + student1.getRegistrationId());
 
-        /* Useful code
+         Useful code
        
         Users nameless = new Users("name", "ms", "a", "a", "password"); // creates an unassigned user
         Users name = new Users("nameless", "ms", "a", "a", "password");
@@ -105,13 +106,18 @@ public class TestRun {
         Teachers.updateGrades("COM1009", email,75);
         Teachers.updateGrades("FCE1001", email,75);*/
         
+        // registrar; generic, admin; normal, teacher; ordinary
+        
+        /*Users teacher = new Users("ordinary", "Mr", "Incredibly", "Generic", "password");
+        Admins.updatePermission("ordinary", UserTypes.TEACHER.toString());
+        Teachers.addJustTeachers("ordinary", 29, "COM");
         // Absolutely not working
         HashMap<String, Boolean> pass = Grades.passModule(email, "1");
         pass.entrySet().forEach(entry->{
             System.out.println(entry.getKey() + " " + entry.getValue());  
         });
         
-        /*• Progress these students through the levels, such that
+        • Progress these students through the levels, such that
         o the MSc student gets a conceded pass on taught modules, eventually passing MSc
         with merit;
         o the MEng student passes through all levels, including the year in industry, getting a

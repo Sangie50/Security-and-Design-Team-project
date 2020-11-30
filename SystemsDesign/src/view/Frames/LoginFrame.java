@@ -83,6 +83,7 @@ public class LoginFrame extends JFrame {
 			  		String isUser = loginValidation(loginBox, passwordBox);
 			  		setVisible(false);
 			  		launchStudentFrame(isUser, loginBox.getText());
+                                        launchTeacherFrame(isUser, loginBox.getText());
 			  		System.out.println("TYPE: " + isUser);
 				} 
 			   	catch (SQLException e1) {
@@ -160,6 +161,22 @@ public class LoginFrame extends JFrame {
 				public void run() {
 					try {
 						StudentFrame frame = new StudentFrame(username);
+						frame.setVisible(true);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+		}
+	}
+        public void launchTeacherFrame(String type, String username) throws SQLException {
+		System.out.println("Hello, this is student frame");
+		if (type.equals(UserTypes.TEACHER.toString())) {
+			System.out.println("ooo");
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						TeacherFrame frame = new TeacherFrame(username);
 						frame.setVisible(true);
 					} catch (Exception e) {
 						e.printStackTrace();

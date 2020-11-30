@@ -8,8 +8,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import view.Panels.RegisterStudent;
-import view.Panels.RegistrarMenu;
+import view.Panels.Registrar.RegisterStudent;
+import view.Panels.Registrar.RegistrarMenu;
 
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -60,6 +60,6 @@ public class RegistrarFrame extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JPanel menu = new RegistrarMenu(contentPane);
+		JPanel menu = new RegistrarMenu(contentPane,this);
 	}
 }

@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Date;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -22,6 +23,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 
+import userclasses.Registrars;
 import userclasses.Students;
 import view.Frames.LoginFrame;
 import view.Frames.RegistrarFrame;
@@ -288,6 +290,7 @@ public class RegisterStudent extends JPanel {
 		             }
 		             new Students(username, title, surname, forename, password,
 		            		degreeId, totalCredits, difficulty, startDate, endDate, personalTutor);
+		             Registrars.setAccountType(username);
 		             System.out.println("new student created!");
 		         }
 		         catch (SQLException ex) {
@@ -306,8 +309,9 @@ public class RegisterStudent extends JPanel {
 	}
 	
 	public Date convertDate(String day, String month, String year) {
-		String dd = year + month + year;
-		
+		DecimalFormat formatter = new DecimalFormat("00");
+		String dd = year + "-" + formatter.format(Integer.parseInt(month)) + "-" + formatter.format(Integer.parseInt(day));
+		System.out.println(dd);
 		Date date = Date.valueOf(dd);
 
 		return date;

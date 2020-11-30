@@ -13,7 +13,7 @@ import userclasses.Users;
  * [X] display credits for each module
  * [X] display personal tutor
  * [X] display degree
- * [X] display total grade
+ * [X] display total rgrade
  * */
 
 public class Students extends Users{
@@ -30,6 +30,7 @@ public class Students extends Users{
   public Students (String username, String title, String surname, String forename, String password, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor) throws SQLException {
   	super(username, title, surname, forename, password);
         email = emailGen(surname, forename, username);
+    this.password = password;
   	this.degreeId = degreeId;
   	this.totalCredits = totalCredits;
   	this.difficulty = difficulty;
@@ -145,21 +146,29 @@ public class Students extends Users{
         con.setAutoCommit(false);
         Statement stmt = null;
         String allEmails = "SELECT email FROM student INNER JOIN user WHERE student.username = user.username AND forename = ? AND surname = ?";
-        try (PreparedStatement preparedStmt = con.prepareStatement(allEmails)){
+        String setEmail = "UPDATE student SET email = ? WHERE username = ?";
+        try (PreparedStatement preparedStmt = con.prepareStatement(allEmails);
+        		PreparedStatement setStmt = con.prepareStatement(setEmail)){
             preparedStmt.setString(1, forename);
             preparedStmt.setString(2, surname);
             ResultSet rs = preparedStmt.executeQuery();
             System.out.println(email);
             System.out.println(a);
             while (rs.next() == true) {
-                String retrieved_email = rs.getString("email");
-                if (retrieved_email == email){
+                String retrievedEmail = rs.getString("email");
+                while (retrievedEmail.toLowerCase().equals(email.toLowerCase())){
                     a++;
-                }
+                
+                setStmt.setString(1, email);
+                setStmt.setString(2, username);
+                setStmt.executeUpdate();
+                con.commit();
                 System.out.println(a);
-                System.out.println(retrieved_email);
+                System.out.println(retrievedEmail);
                 email = initials + surname + formatter.format(a);
                 System.out.println(email);
+                }
+
             }
         }
         catch (SQLException ex) {

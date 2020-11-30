@@ -32,31 +32,31 @@ public class Registrars extends Users {
 	 
 	 public Registrars (String username, String title, String surname, String forename, String password)throws SQLException {
 			super(username, title, surname, forename, password);
+			Admins.updatePermission(username, UserTypes.REGISTRAR.toString());
 		}
 	     
-	 public void addAccountType(String type, String username) throws SQLException {
+	 public static void setAccountType(String username) throws SQLException {
 	        Connection con = null;
+	        Statement stmt = null;
  	        try {
  	           con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
-	            con.setAutoCommit(false);
-	            Statement stmt = null;
+	            con.setAutoCommit(false);	            
 	            String preparedStmt = "UPDATE user SET accoutType = ? WHERE username = ?";
 	            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
 	                stmt = con.createStatement();
-	                if (type.equals(UserTypes.STUDENT.toString())) {
-	                	updateStmt.setString(1, type);
+	                	updateStmt.setString(1, UserTypes.STUDENT.toString());
 	                	updateStmt.setString(2, username);
 	                	con.commit();
 	                }
-	                else System.err.println("Not an accepted accountType.");
-	            }
+	            
 	            catch (SQLException ex) {
 	                ex.printStackTrace();
 	            }
 	            finally {
 	                if (stmt != null) stmt.close();
 	            }
-	        }
+ 	        }
+ 	        
 	        catch (Exception ex) {
 	            ex.printStackTrace();
 	        }

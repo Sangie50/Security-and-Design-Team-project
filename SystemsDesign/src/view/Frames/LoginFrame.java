@@ -82,8 +82,7 @@ public class LoginFrame extends JFrame {
 			  	try {
 			  		String isUser = loginValidation(loginBox, passwordBox);
 			  		setVisible(false);
-			  		launchStudentFrame(isUser, loginBox.getText());
-                                        launchTeacherFrame(isUser, loginBox.getText());
+			  		launchFrames(isUser, loginBox.getText());                    
 			  		System.out.println("TYPE: " + isUser);
 				} 
 			   	catch (SQLException e1) {
@@ -153,10 +152,10 @@ public class LoginFrame extends JFrame {
 		return type;
 	}
 	
-	public void launchStudentFrame(String type, String username) throws SQLException {
-		System.out.println("Hello, this is student frame");
+	public void launchFrames(String type, String username) throws SQLException {
+
 		if (type.equals(UserTypes.STUDENT.toString())) {
-			System.out.println("ahlo");
+			System.out.println("Hello, this is student frame");
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					try {
@@ -166,13 +165,10 @@ public class LoginFrame extends JFrame {
 						e.printStackTrace();
 					}
 				}
-			});
+			});	
 		}
-	}
-        public void launchTeacherFrame(String type, String username) throws SQLException {
-		System.out.println("Hello, this is student frame");
-		if (type.equals(UserTypes.TEACHER.toString())) {
-			System.out.println("ooo");
+		else if (type.equals(UserTypes.TEACHER.toString())) {
+			System.out.println("This is teacher frame");
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					try {
@@ -184,5 +180,33 @@ public class LoginFrame extends JFrame {
 				}
 			});
 		}
+
+		else if (type.equals(UserTypes.REGISTRAR.toString())) {
+			System.out.println("This is registrar frame");
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						RegistrarFrame frame = new RegistrarFrame();
+						frame.setVisible(true);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+		}
+		else if (type.equals(UserTypes.ADMIN.toString())) {
+			System.out.println("This is admin frame.");
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						AdminFrame frame = new AdminFrame();
+						frame.setVisible(true);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+		}
 	}
+        
 }

@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import view.Panels.RegisterStudent;
-import view.Panels.RegistrarMenu;
+import view.Panels.Registrar.RegistrarMenu;
 
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;

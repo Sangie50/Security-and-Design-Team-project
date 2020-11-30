@@ -63,6 +63,7 @@ public class RegistrarMenu extends JPanel {
 		registerPage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JPanel registerPanel = null;
+<<<<<<< Updated upstream
 				try {
 					System.out.println("Selected User: " + (String) usernameBox.getSelectedItem());
 					registerPanel = new RegisterStudent(contentPane, (String) usernameBox.getSelectedItem(), mainFrame);
@@ -71,6 +72,9 @@ public class RegistrarMenu extends JPanel {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+=======
+                                registerPanel = new RegisterStudent(contentPane, selectedUser);
+>>>>>>> Stashed changes
 				contentPane.add(registerPanel);
 
 			}

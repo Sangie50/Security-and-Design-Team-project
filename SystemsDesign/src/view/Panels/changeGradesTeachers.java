@@ -199,11 +199,12 @@ public class changeGradesTeachers extends JPanel {
                 EventQueue.invokeLater(new Runnable() {
                     public void run() {
                         try {
-                            JPanel menu = new TeacherMenu(panel, username);
-                            panel.add(menu);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                            mainFrame.setVisible(false);
+                                LoginFrame frame = new LoginFrame();
+                                frame.setVisible(true);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                     }
                 });
             }
@@ -211,24 +212,25 @@ public class changeGradesTeachers extends JPanel {
         backButton.setBounds(620, 50, 141, 35);
         panel.add(backButton);
         
-        JButton logoutButton = new JButton("Logout");
-        logoutButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
+        JButton logout = new JButton("Logout");
+        logout.setBounds(608, 525, 307, 35);
+        logout.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                        setVisible(false);
                 EventQueue.invokeLater(new Runnable() {
-                    public void run() {
-                        try {
-                            LoginFrame frame = new LoginFrame();
-                            frame.setVisible(true);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
+                                public void run() {
+                                        try {
+                                                mainFrame.setVisible(false);
+                                                LoginFrame frame = new LoginFrame();
+                                                frame.setVisible(true);
+                                        } catch (Exception e) {
+                                                e.printStackTrace();
+                                        }
+                                }
+                        });
+                }
         });
-        logoutButton.setBounds(620, 576, 141, 35);
-        panel.add(logoutButton);
+        panel.add(logout);
         
 		
 

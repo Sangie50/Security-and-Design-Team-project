@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 import academics.*;
 import userclasses.Admins;
 import userclasses.Users;
+import view.Panels.addDeptPanel;
 
 import javax.swing.JLabel;
 import javax.swing.BorderFactory;
@@ -74,13 +75,15 @@ public class AdminFrame extends JFrame {
 				
 		String[] options = {"Departments", "Degrees", "Modules", "Users"};
 		
-		JButton btnNewButton = new JButton("New");
-		btnNewButton.setBounds(309, 69, 63, 29);
-		btnNewButton.addActionListener(new ActionListener() {
+		JButton newButton = new JButton("New");
+		newButton.setBounds(309, 69, 63, 29);
+		newButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				addDeptPanel addDept = new addDeptPanel();
+				
 			}
 		});
-		contentPane.add(btnNewButton);
+		contentPane.add(newButton);
 		
 		JLabel welcomeLabel = new JLabel("Welcome Admin!");
 		welcomeLabel.setBounds(35, 17, 120, 20);

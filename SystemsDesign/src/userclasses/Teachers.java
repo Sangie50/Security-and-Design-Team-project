@@ -1,4 +1,5 @@
 package userclasses;
+import features.PasswordGen;
 import java.sql.*;
 import java.util.*;
 //Teacher class
@@ -22,15 +23,15 @@ Unique Attributes:
 Employee Number
 Department ID
 */
-public class Teachers extends Users{
+public class Teachers{
     
     Integer employeeNo;
     String departmentID;
-
+    /*
     public Teachers(String username, String title, String surname, String forename, String password) throws SQLException {
-        super(username, title, surname, forename, password);
+        super(username, title, surname, forename, password); 
     }
-    
+    */
     public Integer getEmployeeNo() {
         return employeeNo;
     }
@@ -41,6 +42,9 @@ public class Teachers extends Users{
     public void addTeachers (String username, String title, String surname, String forename, String password, Integer employeeNo, String departmentID) throws SQLException {
     	this.employeeNo = employeeNo;
     	this.departmentID = departmentID;
+        String salt = PasswordGen.getSalt(30);
+        String accountType = UserTypes.UNASSIGNED.toString();
+        password = PasswordGen.generateSecurePassword(password, salt);
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
@@ -54,12 +58,16 @@ public class Teachers extends Users{
                 addUStmt.setString(2, title);
                 addUStmt.setString(3, surname);
                 addUStmt.setString(4, forename);
-                addUStmt.setString(5, password);
+                addUStmt.setString(5, accountType);
+                addUStmt.setString(6, password);
+                addUStmt.setString(7, salt);
+                addUStmt.executeUpdate();
                 con.commit();
                 //Set variables for adding to teacher
                 addTStmt.setString(1, username);
                 addTStmt.setInt(2, employeeNo);
                 addTStmt.setString(3, departmentID);
+                addTStmt.executeUpdate();
                 con.commit();
             }
             catch (SQLException ex) {
@@ -76,6 +84,41 @@ public class Teachers extends Users{
             if (con != null) con.close();
        }
     }
+    
+    public static void addJustTeachers (String username, Integer employeeNo, String departmentID) throws SQLException {
+    	
+        Connection con = null;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            Statement stmt = null;
+            String addTeacherStmt = "INSERT INTO teacher VALUES (?, ?, ?)";
+            // Assumes checking that username doesn't exist beforehand
+            try (PreparedStatement addTStmt = con.prepareStatement(addTeacherStmt)){
+                
+                con.commit();
+                //Set variables for adding to teacher
+                addTStmt.setString(1, username);
+                addTStmt.setInt(2, employeeNo);
+                addTStmt.setString(3, departmentID);
+                addTStmt.executeUpdate();
+                con.commit();
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+       }
+       catch (Exception ex) {
+            ex.printStackTrace();
+       }
+       finally {
+            if (con != null) con.close();
+       }
+    }
+    
     
     public static void addGrade(String moduleID, String email, Integer overallMark) throws SQLException {
         Connection con = null;

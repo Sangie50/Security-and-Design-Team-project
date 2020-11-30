@@ -52,7 +52,7 @@ public class TeacherFrame extends JFrame {
      * Create the frame.
      * @throws SQLException 
      */
-    public TeacherFrame(String username, JFrame mainFrame) throws SQLException {
+    public TeacherFrame(String username) throws SQLException {
         this.username = username;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 1035, 650);
@@ -61,9 +61,8 @@ public class TeacherFrame extends JFrame {
         setContentPane(contentPane);
         contentPane.setLayout(null);
         
-        JPanel menu = new TeacherMenu(contentPane, username,  mainFrame);
+        JPanel menu = new TeacherMenu(contentPane, username);
 
-        /*
         JButton logoutButton = new JButton("Logout");
         logoutButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -81,7 +80,7 @@ public class TeacherFrame extends JFrame {
             }
         });
         logoutButton.setBounds(795, 550, 141, 35);
-        contentPane.add(logoutButton);*/
+        contentPane.add(logoutButton);
 
     }
 }

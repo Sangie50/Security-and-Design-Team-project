@@ -32,7 +32,6 @@ import javax.swing.JFrame;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import view.Panels.Registrar.RegistrarMenu;
 
 public class RegisterStudent extends JPanel {
 	private JTable table;

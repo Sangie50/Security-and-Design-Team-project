@@ -50,7 +50,6 @@ public class LoginFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public LoginFrame() {
-                
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -85,8 +84,6 @@ public class LoginFrame extends JFrame {
 			  		setVisible(false);
 			  		launchStudentFrame(isUser, loginBox.getText());
                                         launchTeacherFrame(isUser, loginBox.getText());
-                                        launchRegistrarFrame(isUser, loginBox.getText());
-                                        launchAdminFrame(isUser, loginBox.getText());
 			  		System.out.println("TYPE: " + isUser);
 				} 
 			   	catch (SQLException e1) {
@@ -157,7 +154,7 @@ public class LoginFrame extends JFrame {
 	}
 	
 	public void launchStudentFrame(String type, String username) throws SQLException {
-		//System.out.println("Hello, this is student frame");
+		System.out.println("Hello, this is student frame");
 		if (type.equals(UserTypes.STUDENT.toString())) {
 			System.out.println("ahlo");
 			EventQueue.invokeLater(new Runnable() {
@@ -173,45 +170,13 @@ public class LoginFrame extends JFrame {
 		}
 	}
         public void launchTeacherFrame(String type, String username) throws SQLException {
-		//System.out.println("Hello, this is student frame");
+		System.out.println("Hello, this is student frame");
 		if (type.equals(UserTypes.TEACHER.toString())) {
 			System.out.println("ooo");
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					try {
 						TeacherFrame frame = new TeacherFrame(username);
-						frame.setVisible(true);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			});
-		}
-	}
-        public void launchRegistrarFrame(String type, String username) throws SQLException {
-		//System.out.println("Hello, this is student frame");
-		if (type.equals(UserTypes.REGISTRAR.toString())) {
-			System.out.println("ahlo");
-			EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					try {
-						RegistrarFrame frame = new RegistrarFrame();
-						frame.setVisible(true);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			});
-		}
-	}
-        public void launchAdminFrame(String type, String username) throws SQLException {
-		//System.out.println("Hello, this is student frame");
-		if (type.equals(UserTypes.ADMIN.toString())) {
-			System.out.println("ahlo");
-			EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					try {
-						AdminFrame frame = new AdminFrame();
 						frame.setVisible(true);
 					} catch (Exception e) {
 						e.printStackTrace();

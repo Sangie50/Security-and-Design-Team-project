@@ -1,7 +1,6 @@
 package view.Panels;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,15 +14,13 @@ import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import view.Frames.LoginFrame;
 
 /*
  - View Students 
- - Add to modules for students - needs list of users, modules
+ - Add Grades to modules for students
  - 
 
 */
@@ -31,12 +28,9 @@ public class TeacherMenu extends JPanel {
     
     /**
      * Create the panel.
-     * @param contentPane
-     * @param username
-     * @param mainFrame
      * @throws SQLException 
      */
-    public TeacherMenu(JPanel contentPane, String username, JFrame mainFrame) throws SQLException {
+    public TeacherMenu(JPanel contentPane, String username) throws SQLException {
         contentPane.removeAll();
         contentPane.revalidate();
         contentPane.repaint();
@@ -54,50 +48,42 @@ public class TeacherMenu extends JPanel {
         contentPane.add(usernameBox, BorderLayout.PAGE_START);
         String selectedUser =  (String) usernameBox.getSelectedItem();
 
-        JLabel user = new JLabel("Usernames of Students:");
+        JLabel user = new JLabel("Username:");
         user.setBounds(81, 248, 277, 26);
         contentPane.add(user);
 
-        JButton modifyPage = new JButton("Modify Grades");
-        modifyPage.addActionListener(new ActionListener() {
+        JButton registerPage = new JButton("Register/ remove student");
+        registerPage.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JPanel modifyGradesPanel = null;
+                JPanel registerPanel = null;
                 try {
-                    modifyGradesPanel = new changeGradesTeachers(contentPane, username, selectedUser);
+                    registerPanel = new RegisterStudent(contentPane, selectedUser);
                 } catch (SQLException e1) {
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
-                contentPane.add(modifyGradesPanel);
+                contentPane.add(registerPanel);
 
             }
         });
-        modifyPage.setBounds(608, 163, 307, 35);
-        contentPane.add(modifyPage);
+        registerPage.setBounds(608, 163, 307, 35);
+        contentPane.add(registerPage);
+
+        JButton modulesPage = new JButton("Add/ remove modules");
+        modulesPage.setBounds(608, 247, 307, 35);
+        contentPane.add(modulesPage);
+
+        JButton checkRegisterPage = new JButton("Check registration");
+        checkRegisterPage.setBounds(608, 335, 307, 35);
+        contentPane.add(checkRegisterPage);
+
+        JButton checkModulePage = new JButton("Check module sum");
+        checkModulePage.setBounds(608, 425, 307, 35);
+        contentPane.add(checkModulePage);
 
         JLabel descLabel = new JLabel("Select a user and click on the buttons to control their fate.");
         descLabel.setBounds(81, 68, 834, 26);
         contentPane.add(descLabel);
-        
-        JButton logout = new JButton("Logout");
-        logout.setBounds(608, 525, 307, 35);
-        logout.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                        setVisible(false);
-                EventQueue.invokeLater(new Runnable() {
-                                public void run() {
-                                        try {
-                                                mainFrame.setVisible(false);
-                                                LoginFrame frame = new LoginFrame();
-                                                frame.setVisible(true);
-                                        } catch (Exception e) {
-                                                e.printStackTrace();
-                                        }
-                                }
-                        });
-                }
-        });
-        contentPane.add(logout);
 	
     }
 
@@ -110,7 +96,7 @@ public class TeacherMenu extends JPanel {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String usernames = "SELECT username FROM user WHERE account_type = 'Student'";
+            String usernames = "SELECT username FROM user";
             try (PreparedStatement getUsernames = con.prepareStatement(usernames)){
                 ResultSet usernameList = getUsernames.executeQuery();
                 con.commit();
@@ -138,6 +124,5 @@ public class TeacherMenu extends JPanel {
         return arr;
 	
 	}
-    
 
 }

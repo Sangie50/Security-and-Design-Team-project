@@ -53,7 +53,7 @@ public class TeacherMenu extends JPanel {
         emailBox.setBounds(81, 291, 277, 45);
         contentPane.add(emailBox);
         contentPane.add(emailBox, BorderLayout.PAGE_START);
-        String selectedEmail =  (String) emailBox.getSelectedItem();
+        
 
         JLabel user = new JLabel("Emails of students:");
         user.setBounds(81, 248, 277, 26);
@@ -64,6 +64,7 @@ public class TeacherMenu extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 JPanel menu = null;
                 try {
+                    String selectedEmail =  (String) emailBox.getSelectedItem();
                     menu = new changeGradesTeachers(contentPane, username, selectedEmail);
                     contentPane.add(menu);
                 } catch (SQLException ex) {

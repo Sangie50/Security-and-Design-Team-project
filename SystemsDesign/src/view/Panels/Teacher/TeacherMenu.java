@@ -49,7 +49,7 @@ public class TeacherMenu extends JPanel {
         contentPane.add(title);
 
 
-        JComboBox<String> emailBox = new JComboBox<>(getEmails());
+        JComboBox<String> emailBox = new JComboBox<>(getEmails(username));
         emailBox.setBounds(81, 291, 277, 45);
         contentPane.add(emailBox);
         contentPane.add(emailBox, BorderLayout.PAGE_START);
@@ -102,16 +102,23 @@ public class TeacherMenu extends JPanel {
     }
 
 	
-	
-    public String[] getEmails() throws SQLException{
+	// Gets emails of students that this teacher teaches only
+    public String[] getEmails(String username) throws SQLException{
         ArrayList<String> list = new ArrayList<String>();
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String usernames = "SELECT email FROM student";
+            String usernames = "SELECT student.email FROM student INNER JOIN "
+                    + "module_grade ON student.email = module_grade.email INNER"
+                    + " JOIN module ON module_grade.module_id = module.module_id"
+                    + " INNER JOIN module_teacher ON module.module_id = "
+                    + "module_teacher.module_id INNER JOIN teacher ON "
+                    + "module_teacher.employee_no = teacher.employee_no WHERE"
+                    + " teacher.username = ?";
             try (PreparedStatement getUsernames = con.prepareStatement(usernames)){
+                getUsernames.setString(1, username);
                 ResultSet usernameList = getUsernames.executeQuery();
                 con.commit();
                 

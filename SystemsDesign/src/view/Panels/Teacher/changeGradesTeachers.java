@@ -53,12 +53,14 @@ public class changeGradesTeachers extends JPanel {
         String degreeID ="";
         Integer credits = 0;
         String tutor = "";
-        
+        Integer initialGrade = 0;
+        Integer resitGrade = 0;
+        String moduleName = "";
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
 
-            String accType = "SELECT * FROM student WHERE email = ?";
+            String accType = "SELECT * FROM student INNER JOIN module_grade ON student.email = module_grade.email INNER JOIN module ON module_grade.module_id = module.module_id WHERE student.email = ?";
             try (PreparedStatement checkAccType = con.prepareStatement(accType)){
                 checkAccType.setString(1, studentEmail);
                 ResultSet rs = checkAccType.executeQuery();
@@ -67,6 +69,9 @@ public class changeGradesTeachers extends JPanel {
                     degreeID = rs.getString("degree_id");
                     credits = rs.getInt("total_credits");
                     tutor = rs.getString("personal_tutor");
+                    moduleName = rs.getString("module_name");
+                    initialGrade = rs.getInt("initial_grade");
+                    resitGrade = rs.getInt("resit_grade");
                 }
 
             }
@@ -91,15 +96,15 @@ public class changeGradesTeachers extends JPanel {
 
         JLabel infoLabel = new JLabel("Student Information");
         infoLabel.setFont(new Font("Tahoma", Font.BOLD, 21));
-        infoLabel.setBounds(30, 30, 202, 26);
+        infoLabel.setBounds(30, 40, 300, 26);
         panel.add(infoLabel);
 
         JLabel emailLabel = new JLabel("Email:");
-        emailLabel.setBounds(21, 68, 202, 26);
+        emailLabel.setBounds(21, 80, 202, 26);
         panel.add(emailLabel);
 
         JLabel idLabel = new JLabel("Degree ID:");
-        idLabel.setBounds(21, 115, 148, 26);
+        idLabel.setBounds(21, 120, 148, 26);
         panel.add(idLabel);
         
         JLabel cred = new JLabel("Credits:");
@@ -110,22 +115,47 @@ public class changeGradesTeachers extends JPanel {
         tut.setBounds(21, 200, 148, 26);
         panel.add(tut);
         
+        JLabel ini = new JLabel("Initial Grade:");
+        ini.setBounds(21, 240, 148, 26);
+        panel.add(ini);
+        
+        JLabel res = new JLabel("Resit Grade:");
+        res.setBounds(21, 280, 148, 26);
+        panel.add(res);
+        
+        JLabel na = new JLabel("Module Name:");
+        na.setBounds(21, 320, 148, 26);
+        panel.add(na);
+        
+        
 
         JLabel email = new JLabel(studentEmail);
-        email.setBounds(221, 68, 156, 26);
+        email.setBounds(221, 80, 156, 26);
         panel.add(email);
 
         JLabel degreeid = new JLabel(degreeID);
-        degreeid.setBounds(221, 115, 156, 26);
+        degreeid.setBounds(221, 120, 156, 26);
         panel.add(degreeid);
         
         JLabel credi = new JLabel("'"+credits+"'");
-        credi.setBounds(221, 150, 156, 26);
+        credi.setBounds(221, 160, 156, 26);
         panel.add(credi);
 
         JLabel tuto = new JLabel(tutor);
         tuto.setBounds(221, 200, 156, 26);
         panel.add(tuto);
+        
+        JLabel in = new JLabel(""+initialGrade+"");
+        in.setBounds(221, 240, 156, 26);
+        panel.add(in);
+        
+        JLabel re = new JLabel(""+resitGrade+"");
+        re.setBounds(221, 280, 156, 26);
+        panel.add(re);
+        
+        JLabel nam = new JLabel(moduleName);
+        nam.setBounds(221, 320, 156, 26);
+        panel.add(nam);
 
         /*JButton addStudent = new JButton("Add Student");
         addStudent.setBounds(20, 576, 202, 35);

@@ -27,10 +27,10 @@ import java.awt.event.ActionEvent;
 import javax.swing.JFrame;
 
 public class changeGradesTeachers extends JPanel {
-    private JTable table;
-    private JTextField degreeId;
-    private JTextField personalTutor;
-    private String username;
+//    private JTable table;
+//    private JTextField degreeId;
+//    private JTextField personalTutor;
+//    private String username;
 
     /**
      * Create the panel.
@@ -120,11 +120,11 @@ public class changeGradesTeachers extends JPanel {
         panel.add(degreeid);
         
         JLabel credi = new JLabel("'"+credits+"'");
-        credi.setBounds(221, 68, 156, 26);
+        credi.setBounds(221, 150, 156, 26);
         panel.add(credi);
 
         JLabel tuto = new JLabel(tutor);
-        tuto.setBounds(221, 115, 156, 26);
+        tuto.setBounds(221, 200, 156, 26);
         panel.add(tuto);
 
         /*JButton addStudent = new JButton("Add Student");
@@ -230,7 +230,7 @@ public class changeGradesTeachers extends JPanel {
         backButton.setBounds(620, 50, 141, 35);
         panel.add(backButton);
         
-        JButton logoutButton = new JButton("Logout");
+/*        JButton logoutButton = new JButton("Logout");
         logoutButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
@@ -247,7 +247,7 @@ public class changeGradesTeachers extends JPanel {
             }
         });
         logoutButton.setBounds(620, 576, 141, 35);
-        panel.add(logoutButton); 
+        panel.add(logoutButton); */
         
 		
 

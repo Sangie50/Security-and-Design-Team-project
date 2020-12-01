@@ -4,6 +4,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 import userclasses.Users.UserTypes;
 
@@ -219,17 +221,16 @@ public class Registrars extends Users {
 	        }		 
 	 }
 	 
-	 public void linkModuleToTeacher(Integer employeeNo,String department_id, String moduleId) throws SQLException {
+	 public void linkModuleToTeacher(String employeeNo, String moduleId) throws SQLException {
 		 Connection con = null; 
 		 try {
 	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
-	            String getModuleId = "INSERT INTO module_teacher (employee_no, department_id, module_id) VALUES (?,?,?)";
+	            String getModuleId = "INSERT INTO module_teacher (employeeNo, moduleId) VALUES (?,?)";
 	            try (PreparedStatement updateStmt = con.prepareStatement(getModuleId)){
-	                updateStmt.setInt(1, employeeNo);
-                        updateStmt.setString(2, department_id);
-	                updateStmt.setString(3, moduleId);
+	                updateStmt.setString(1, employeeNo);
+	                updateStmt.setString(2, moduleId);
 	                updateStmt.executeUpdate();
 	                con.commit();
 	                }
@@ -247,7 +248,6 @@ public class Registrars extends Users {
 	            if (con != null) con.close();
 	        }	
 	 }
-	 
 	 
 	 public void deleteModule(String moduleId) throws SQLException {
 		 Connection con = null; 
@@ -357,13 +357,14 @@ public class Registrars extends Users {
 	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
-	            String modules = "SELECT module_id FROM module WHERE email = ?";
+	            String modules = "SELECT module_id FROM module_grade WHERE email = ?";
 	            try (PreparedStatement modulesList = con.prepareStatement(modules)){
 	                modulesList.setString(1, email);
 	                ResultSet modulesSet = modulesList.executeQuery();
                 	while (modulesSet.next()) {
-                		m.add(modulesSet.getString("module"));
+                		m.add(modulesSet.getString("module_id"));
                 	}
+                	
 	            }
 	            catch (SQLException ex) {
 	                ex.printStackTrace();
@@ -381,24 +382,27 @@ public class Registrars extends Users {
 		 String[] ar = new String[m.size()];
 		 for (int i = 0; i < m.size(); i++) {
 			 ar[i] = m.get(i);
+			 System.out.println(m.get(i));
 		 }
 		 return ar;
 	 }
 	 
 	 public static String[] getOptionalModulesList(String email) throws SQLException {
 		 Connection con = null; 
-		 ArrayList<String> m = new ArrayList<String>();
+		 LinkedHashSet<String> m = new LinkedHashSet<String>();
 		 try {
 	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
-	            String modules = "SELECT module_id FROM core_modules WHERE email = ?";
+	            String modules = "SELECT core_modules.module_id FROM core_modules INNER JOIN module_grade ON core_modules.module_id != module_grade.module_id WHERE email = ?";
 	            try (PreparedStatement modulesList = con.prepareStatement(modules)){
 	                modulesList.setString(1, email);
 	                ResultSet modulesSet = modulesList.executeQuery();
                 	while (modulesSet.next()) {
-                		m.add(modulesSet.getString("module"));
+                		m.add(modulesSet.getString("core_modules.module_id"));
                 	}
+           		 System.out.println(m);
+
 	            }
 	            catch (SQLException ex) {
 	                ex.printStackTrace();
@@ -413,11 +417,8 @@ public class Registrars extends Users {
 	        finally {
 	            if (con != null) con.close();
 	        }		
-		 String[] ar = new String[m.size()];
-		 for (int i = 0; i < m.size(); i++) {
-			 ar[i] = m.get(i);
-		 }
+		 String[] ar = m.toArray(new String[m.size()]);
+//		 }
 		 return ar;
 	 }
-
 }

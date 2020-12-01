@@ -167,6 +167,7 @@ public class LoginFrame extends JFrame {
 				}
 			});	
 		}
+		
 		else if (type.equals(UserTypes.TEACHER.toString())) {
 			System.out.println("This is teacher frame");
 			EventQueue.invokeLater(new Runnable() {
@@ -186,7 +187,7 @@ public class LoginFrame extends JFrame {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					try {
-						RegistrarFrame frame = new RegistrarFrame();
+						RegistrarFrame frame = new RegistrarFrame(username);
 						frame.setVisible(true);
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -194,6 +195,7 @@ public class LoginFrame extends JFrame {
 				}
 			});
 		}
+		
 		else if (type.equals(UserTypes.ADMIN.toString())) {
 			System.out.println("This is admin frame.");
 			EventQueue.invokeLater(new Runnable() {

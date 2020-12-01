@@ -230,7 +230,7 @@ public class changeGradesTeachers extends JPanel {
         backButton.setBounds(620, 50, 141, 35);
         panel.add(backButton);
         
-        /*JButton logoutButton = new JButton("Logout");
+        JButton logoutButton = new JButton("Logout");
         logoutButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
@@ -247,7 +247,7 @@ public class changeGradesTeachers extends JPanel {
             }
         });
         logoutButton.setBounds(620, 576, 141, 35);
-        panel.add(logoutButton); */
+        panel.add(logoutButton); 
         
 		
 

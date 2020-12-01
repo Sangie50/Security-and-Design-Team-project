@@ -38,7 +38,7 @@ public class RegistrarFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					RegistrarFrame frame = new RegistrarFrame();
+					RegistrarFrame frame = new RegistrarFrame("registrar");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -51,7 +51,7 @@ public class RegistrarFrame extends JFrame {
 	 * Create the frame.
 	 * @throws SQLException 
 	 */
-	public RegistrarFrame() throws SQLException {
+	public RegistrarFrame(String username) throws SQLException {
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1035, 647);
@@ -60,6 +60,6 @@ public class RegistrarFrame extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JPanel menu = new RegistrarMenu(contentPane,this);
+		JPanel menu = new RegistrarMenu(contentPane,this, username);
 	}
 }

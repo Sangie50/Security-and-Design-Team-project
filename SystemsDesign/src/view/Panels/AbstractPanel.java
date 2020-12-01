@@ -42,8 +42,7 @@ public abstract class AbstractPanel extends JPanel{
 	 */
 	
 
-	private static JScrollPane scroll;
-	private static String headers[] = { "Module ID", "Initial Grade", "Resit Grade", "Module Name", "Credits Worth", "Department ID" , "Pass Grade"};
+	public static String[] headers = { "Module ID", "Initial Grade", "Resit Grade", "Module Name", "Credits Worth", "Department ID" , "Pass Grade"};
 	
 	public static Dictionary<String, String> degreeCode = new Hashtable<String, String>();
 	 
@@ -60,13 +59,13 @@ public abstract class AbstractPanel extends JPanel{
 			Students student = null;
 			Connection con = null; 
 
-			String degree = "";
+	      String degree = "";
 	      int credits = 0;
 	      String difficulty = "";
 	      java.sql.Date startDate = null;
 	      java.sql.Date endDate = null;
 	      String personalTutor = ""; 
-			String title = "";
+	      String title = "";
 	      String forename = "";
 	      String surname = "";
 	      String password = "";
@@ -76,33 +75,26 @@ public abstract class AbstractPanel extends JPanel{
 		          System.out.println("Connected to database...");
 		          con.setAutoCommit(false);
 		          Statement stmt = null;
-		          String getStudent = "SELECT * FROM student WHERE username = ?";
-		          String getNames = "SELECT * FROM user WHERE username = ?";
+		          String getInfo = "SELECT degree_id, difficulty, start_date, end_date, personal_tutor, user.title, "
+		          		+ "user.forename, user.surname, user.password FROM student LEFT JOIN user ON user.username = student.username WHERE student.username = ?";
 		          
-		          try (PreparedStatement studentInfo = con.prepareStatement(getStudent);
-		        		  PreparedStatement nameInfo = con.prepareStatement(getNames)){
+		          try (PreparedStatement studentInfo = con.prepareStatement(getInfo)){
 		        	  System.out.println("Executing prepared statements...");
 		              studentInfo.setString(1, username);
-		              nameInfo.setString(1, username);
 		              ResultSet info = studentInfo.executeQuery();
-		              ResultSet names = nameInfo.executeQuery();
 		              con.commit();
 		          
 			          while (info.next()) {
-					        degree = degreeCode.get(info.getString(5).substring(0,3));
-					        difficulty = info.getString(7);
-					        startDate = info.getDate(8);
-					        endDate = info.getDate(9);
-					        personalTutor = info.getString(10);   
+					        degree = degreeCode.get(info.getString("degree_id").substring(0,2));
+					        difficulty = info.getString("difficulty");
+					        startDate = info.getDate("start_date");
+					        endDate = info.getDate("end_date");
+					        personalTutor = info.getString("personal_tutor"); 
+					        title = info.getString("title");
+					        forename = info.getString("forename");
+					        surname = info.getString("surname");
+					        password = info.getString("password");
 			          }
-			          
-			          while (names.next()) {
-			      		title = names.getString(2);
-			            forename = names.getString(3);
-			            surname = names.getString(4);
-			            password = names.getString(6);  
-			          }
-			          
 
 			          student = new Students(username,title, surname, forename, password, degree, credits, difficulty, startDate, endDate, personalTutor);
 
@@ -125,7 +117,7 @@ public abstract class AbstractPanel extends JPanel{
 			return student;
 		}
 	 
-	 public Registrars getRegistrar(String username) throws SQLException {
+	public Registrars getRegistrar(String username) throws SQLException {
 			System.out.println("Executing getting student...");
 			Registrars registrar = null;
 			Connection con = null; 
@@ -178,19 +170,12 @@ public abstract class AbstractPanel extends JPanel{
 			return registrar;
 		}
 	 
-	public void insertStudentsTable(String username, String email, JTable modulesTable, DefaultTableModel model, JPanel contentPane) throws SQLException {
-		
+	public void insertStudentsTable(String username, String email, JTable modulesTable, DefaultTableModel model, JPanel contentPane, JScrollPane scroll) throws SQLException {
 		modulesTable = new JTable(model);
 		contentPane.add(modulesTable);
 		modulesTable.setBackground(UIManager.getColor("Button.background"));
 		modulesTable.setEnabled(false);
 		modulesTable.getTableHeader().setReorderingAllowed(false);
-
-		scroll = new JScrollPane(modulesTable);
-		scroll.setBounds(75,265,861,290);
-		scroll.setBorder(BorderFactory.createEmptyBorder());
-		contentPane.add(scroll);
-		    
 		model.setColumnIdentifiers(headers); 
 		   
 		Students student = getStudent(username);

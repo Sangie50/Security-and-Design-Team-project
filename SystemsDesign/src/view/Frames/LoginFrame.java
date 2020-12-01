@@ -129,6 +129,8 @@ public class LoginFrame extends JFrame {
 	              boolean passwordMatch = PasswordGen.verifyUserPassword(pw, rightpw, salt);
 	              if (passwordMatch) {
 	            	  System.out.println("Correct password. Access Granted.");
+
+	            	 
 	              }
 	              
 	              else System.out.println("Access denied.");

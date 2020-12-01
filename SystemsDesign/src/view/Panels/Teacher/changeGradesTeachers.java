@@ -1,5 +1,6 @@
-package view.Panels;
+package view.Panels.Teacher;
 
+import view.Panels.Teacher.TeacherMenu;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -18,12 +19,12 @@ import javax.swing.JButton;
 import javax.swing.JTextField;
 
 import view.Frames.LoginFrame;
-import view.Frames.RegistrarFrame;
 
 import javax.swing.JRadioButton;
 import javax.swing.JComboBox;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JFrame;
 
 public class changeGradesTeachers extends JPanel {
     private JTable table;
@@ -33,13 +34,14 @@ public class changeGradesTeachers extends JPanel {
 
     /**
      * Create the panel.
- * @param panel
  * @param username
- * @param studentUsername
+ * @param studentEmail
      * @throws SQLException 
      */
-    public changeGradesTeachers(JPanel panel, String username, String studentUsername) throws SQLException {
-        
+    public changeGradesTeachers(JPanel panel, String username, String studentEmail) throws SQLException {
+        panel.removeAll();
+        panel.revalidate();
+        panel.repaint();
 
         setLayout(null);
         setBounds(100, 100, 1035, 700);
@@ -56,9 +58,9 @@ public class changeGradesTeachers extends JPanel {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
 
-            String accType = "SELECT * FROM student WHERE username = ?";
+            String accType = "SELECT * FROM student WHERE email = ?";
             try (PreparedStatement checkAccType = con.prepareStatement(accType)){
-                checkAccType.setString(1, studentUsername);
+                checkAccType.setString(1, studentEmail);
                 ResultSet rs = checkAccType.executeQuery();
                 con.commit();
                 while (rs.next()) {
@@ -92,23 +94,40 @@ public class changeGradesTeachers extends JPanel {
         infoLabel.setBounds(30, 30, 202, 26);
         panel.add(infoLabel);
 
-        JLabel accountTypeLabel = new JLabel("Username:");
-        accountTypeLabel.setBounds(21, 68, 202, 26);
-        panel.add(accountTypeLabel);
+        JLabel emailLabel = new JLabel("Email:");
+        emailLabel.setBounds(21, 68, 202, 26);
+        panel.add(emailLabel);
 
-        JLabel usernameLabel = new JLabel("Degree ID:");
-        usernameLabel.setBounds(21, 115, 148, 26);
-        panel.add(usernameLabel);
+        JLabel idLabel = new JLabel("Degree ID:");
+        idLabel.setBounds(21, 115, 148, 26);
+        panel.add(idLabel);
+        
+        JLabel cred = new JLabel("Credits:");
+        cred.setBounds(21, 160, 202, 26);
+        panel.add(cred);
 
-        JLabel uname = new JLabel(studentUsername);
-        uname.setBounds(221, 68, 156, 26);
-        panel.add(uname);
+        JLabel tut = new JLabel("Tutor:");
+        tut.setBounds(21, 200, 148, 26);
+        panel.add(tut);
+        
+
+        JLabel email = new JLabel(studentEmail);
+        email.setBounds(221, 68, 156, 26);
+        panel.add(email);
 
         JLabel degreeid = new JLabel(degreeID);
         degreeid.setBounds(221, 115, 156, 26);
         panel.add(degreeid);
+        
+        JLabel credi = new JLabel("'"+credits+"'");
+        credi.setBounds(221, 68, 156, 26);
+        panel.add(credi);
 
-        JButton addStudent = new JButton("Add Student");
+        JLabel tuto = new JLabel(tutor);
+        tuto.setBounds(221, 115, 156, 26);
+        panel.add(tuto);
+
+        /*JButton addStudent = new JButton("Add Student");
         addStudent.setBounds(20, 576, 202, 35);
         panel.add(addStudent);
 
@@ -190,7 +209,7 @@ public class changeGradesTeachers extends JPanel {
         personalTutor = new JTextField();
         personalTutor.setBounds(221, 483, 186, 32);
         panel.add(personalTutor);
-        personalTutor.setColumns(10);
+        personalTutor.setColumns(10); */
 
         JButton backButton = new JButton("Back");
         backButton.addActionListener(new ActionListener() {
@@ -228,7 +247,7 @@ public class changeGradesTeachers extends JPanel {
             }
         });
         logoutButton.setBounds(620, 576, 141, 35);
-        panel.add(logoutButton);
+        panel.add(logoutButton); 
         
 		
 

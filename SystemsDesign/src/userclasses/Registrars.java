@@ -4,6 +4,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 import userclasses.Users.UserTypes;
 
@@ -361,7 +363,6 @@ public class Registrars extends Users {
 	                ResultSet modulesSet = modulesList.executeQuery();
                 	while (modulesSet.next()) {
                 		m.add(modulesSet.getString("module_id"));
-                		System.out.println(m);
                 	}
                 	
 	            }
@@ -388,18 +389,20 @@ public class Registrars extends Users {
 	 
 	 public static String[] getOptionalModulesList(String email) throws SQLException {
 		 Connection con = null; 
-		 ArrayList<String> m = new ArrayList<String>();
+		 LinkedHashSet<String> m = new LinkedHashSet<String>();
 		 try {
 	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
-	            String modules = "SELECT module_id FROM core_modules WHERE email = ?";
+	            String modules = "SELECT core_modules.module_id FROM core_modules INNER JOIN module_grade ON core_modules.module_id != module_grade.module_id WHERE email = ?";
 	            try (PreparedStatement modulesList = con.prepareStatement(modules)){
 	                modulesList.setString(1, email);
 	                ResultSet modulesSet = modulesList.executeQuery();
                 	while (modulesSet.next()) {
-                		m.add(modulesSet.getString("module"));
+                		m.add(modulesSet.getString("core_modules.module_id"));
                 	}
+           		 System.out.println(m);
+
 	            }
 	            catch (SQLException ex) {
 	                ex.printStackTrace();
@@ -414,10 +417,8 @@ public class Registrars extends Users {
 	        finally {
 	            if (con != null) con.close();
 	        }		
-		 String[] ar = new String[m.size()];
-		 for (int i = 0; i < m.size(); i++) {
-			 ar[i] = m.get(i);
-		 }
+		 String[] ar = m.toArray(new String[m.size()]);
+//		 }
 		 return ar;
 	 }
 }

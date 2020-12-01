@@ -4,7 +4,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.sql.Connection;
@@ -23,8 +25,10 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 
+import userclasses.Admins;
 import userclasses.Registrars;
 import userclasses.Students;
+import userclasses.Users.UserTypes;
 import view.Frames.LoginFrame;
 import view.Frames.RegistrarFrame;
 
@@ -39,6 +43,7 @@ public class RegisterStudent extends JPanel {
 	private JTable table;
 	private JTextField degreeId;
 	private JTextField personalTutor;
+	String notif = "";
 
 	/**
 	 * Create the panel.
@@ -52,6 +57,7 @@ public class RegisterStudent extends JPanel {
 		setLayout(null);
 		setBounds(100, 100, 1035, 647);
 		String type = "";
+	
 		
 		Connection con = null;
 	    Statement stmt = null;
@@ -247,6 +253,8 @@ public class RegisterStudent extends JPanel {
 				String pt = personalTutor.getText();
 				try {
 					addStudent(un, deg, creds, diff, start, end, pt);
+					JOptionPane.showMessageDialog(mainFrame.getComponent(0), "Student Added.");
+					
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -257,11 +265,25 @@ public class RegisterStudent extends JPanel {
 		JButton removeStudent = new JButton("Remove Student");
 		removeStudent.setBounds(409, 576, 202, 35);
 		panel.add(removeStudent);
-		
+		removeStudent.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				try {
+					Registrars.deleteStudent((String) username.getText());
+					JOptionPane.showMessageDialog(mainFrame.getComponent(0), "Student Removed.");
+					
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+			
+		});
 		
 
 	}
 	
+
 	public void addStudent(String username, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor) throws SQLException {
 		Connection con = null;
 	    Statement stmt = null;
@@ -290,7 +312,7 @@ public class RegisterStudent extends JPanel {
 		             }
 		             new Students(username, title, surname, forename, password,
 		            		degreeId, totalCredits, difficulty, startDate, endDate, personalTutor);
-		             Registrars.setAccountType(username);
+		             Admins.updatePermission(username, UserTypes.STUDENT.toString());
 		             System.out.println("new student created!");
 		         }
 		         catch (SQLException ex) {
@@ -307,6 +329,7 @@ public class RegisterStudent extends JPanel {
 		         if (con != null) con.close();
 		     }
 	}
+	
 	
 	public Date convertDate(String day, String month, String year) {
 		DecimalFormat formatter = new DecimalFormat("00");

@@ -35,51 +35,31 @@ public class Registrars extends Users {
 			Admins.updatePermission(username, UserTypes.REGISTRAR.toString());
 		}
 	     
-	 public static void setAccountType(String username) throws SQLException {
-	        Connection con = null;
-	        Statement stmt = null;
- 	        try {
- 	           con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
-	            con.setAutoCommit(false);	            
-	            String preparedStmt = "UPDATE user SET accoutType = ? WHERE username = ?";
-	            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
-	                stmt = con.createStatement();
-	                	updateStmt.setString(1, UserTypes.STUDENT.toString());
-	                	updateStmt.setString(2, username);
-	                	con.commit();
-	                }
-	            
-	            catch (SQLException ex) {
-	                ex.printStackTrace();
-	            }
-	            finally {
-	                if (stmt != null) stmt.close();
-	            }
- 	        }
- 	        
-	        catch (Exception ex) {
-	            ex.printStackTrace();
-	        }
-	        finally {
-	            if (con != null) con.close();
-	        }
-	    }
 	 
-	 public void deleteStudent(String email) throws SQLException {
+	 public static void deleteStudent(String username) throws SQLException {
 		 Connection con = null;
 	        try {
 	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
-	            String preparedStmt = "SELECT accountType FROM user WHERE email = ?";
-	            String deleteStmt = "DELETE FROM user WHERE email = ?";
+	            String preparedStmt = "SELECT account_type FROM user WHERE username = ?";
+	            String deleteStmt = "DELETE FROM student WHERE username = ?";
 	            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt);
 	            		PreparedStatement delStmt = con.prepareStatement(deleteStmt)){
-	                updateStmt.setString(1, email);
+	                updateStmt.setString(1, username);
 	                ResultSet type = updateStmt.executeQuery();
-	                if (type.getString(1).equals(UserTypes.STUDENT.toString())) delStmt.setString(1, email);
-	                else System.err.println("Cannot delete a non-student user.");
-	                con.commit();
+	                while (type.next()) {
+	                	 if (type.getString(1).equals(UserTypes.STUDENT.toString())) {
+	 	                	delStmt.setString(1, username);
+	 	                	delStmt.executeUpdate();
+	 	                	Admins.updatePermission(username, UserTypes.UNASSIGNED.toString());
+	 						System.out.println("Student deleted");
+	 	                }
+	 	                else System.err.println("Cannot delete a non-student user.");
+	 	                con.commit();
+	                }
+
+	               
 	            }
 	            catch (SQLException ex) {
 	                ex.printStackTrace();

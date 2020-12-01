@@ -169,16 +169,17 @@ public class Registrars extends Users {
 	        }		 
 	 }
 	 
-	 public void linkModuleToTeacher(String employeeNo, String moduleId) throws SQLException {
+	 public void linkModuleToTeacher(Integer employeeNo,String department_id, String moduleId) throws SQLException {
 		 Connection con = null; 
 		 try {
 	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
-	            String getModuleId = "INSERT INTO module_teacher (employeeNo, moduleId) VALUES (?,?)";
+	            String getModuleId = "INSERT INTO module_teacher (employee_no, department_id, module_id) VALUES (?,?,?)";
 	            try (PreparedStatement updateStmt = con.prepareStatement(getModuleId)){
-	                updateStmt.setString(1, employeeNo);
-	                updateStmt.setString(2, moduleId);
+	                updateStmt.setInt(1, employeeNo);
+                        updateStmt.setString(2, department_id);
+	                updateStmt.setString(3, moduleId);
 	                updateStmt.executeUpdate();
 	                con.commit();
 	                }

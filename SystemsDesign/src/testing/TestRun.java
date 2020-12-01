@@ -90,7 +90,7 @@ public class TestRun {
         
         //Adding students to modules
         //Admins.viewAllModule();
-        String email = "SmithJohnny01"; //Software student 
+        //String email = "SmithJohnny01"; //Software student 
         //Registrars.linkModuleToStudent(email, "COM1001");
         // Teachers.deleteGrades();
         

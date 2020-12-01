@@ -37,7 +37,7 @@ public class Students extends Users{
   	this.startDate = startDate;
   	this.endDate = endDate;
   	this.personalTutor = personalTutor;
-        addStudent(username,degreeId, totalCredits, difficulty, startDate, endDate, personalTutor);
+    addStudent(username,degreeId, totalCredits, difficulty, startDate, endDate, personalTutor);
   }
   public void addStudent(String username, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor ) throws SQLException {
         
@@ -46,21 +46,33 @@ public class Students extends Users{
          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
          con.setAutoCommit(false);
          Statement stmt = null;
-
+         String checkExisting = "SELECT username FROM student WHERE username = ?";
          String preparedStmt = "INSERT INTO student(email, username, resit_year, degree_id, total_credits, difficulty, start_date, end_date, personal_tutor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-         try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
-             updateStmt.setString(1, email);
-             updateStmt.setString(2, username);
-             updateStmt.setBoolean(3, false);
-             updateStmt.setString(4, degreeId);
-             updateStmt.setInt(5, totalCredits); 
-             updateStmt.setString(6, difficulty);
-             updateStmt.setDate(7, startDate);
-             updateStmt.setDate(8, endDate);
-             updateStmt.setString(9, personalTutor);
-             
-             updateStmt.executeUpdate();
-             con.commit();
+         try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt);
+        		 PreparedStatement checkStmt = con.prepareStatement(checkExisting)){
+        	 checkStmt.setString(1, username);
+        	 ResultSet existingUsers = checkStmt.executeQuery();
+        	 con.commit();
+        	 while (existingUsers.next()) {
+        		 if (username.equals(existingUsers.getString("username"))) {
+        			 System.err.println("Student/username already exists.");
+        		 }
+        		 else {
+        			 updateStmt.setString(1, email);
+                     updateStmt.setString(2, username);
+                     updateStmt.setBoolean(3, false);
+                     updateStmt.setString(4, degreeId);
+                     updateStmt.setInt(5, totalCredits); 
+                     updateStmt.setString(6, difficulty);
+                     updateStmt.setDate(7, startDate);
+                     updateStmt.setDate(8, endDate);
+                     updateStmt.setString(9, personalTutor);
+                     
+                     updateStmt.executeUpdate();
+                     con.commit();
+                     
+        		 }
+        	 }
              
          }
          catch (SQLException ex) {

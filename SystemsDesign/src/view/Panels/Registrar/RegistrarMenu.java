@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,26 +21,32 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import userclasses.Admins;
+import userclasses.Registrars;
+import userclasses.Students;
+import userclasses.Users.UserTypes;
 import view.Frames.LoginFrame;
+import view.Panels.AbstractPanel;
 
-public class RegistrarMenu extends JPanel {
+public class RegistrarMenu extends AbstractPanel {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 10L;
-
-
+	private Registrars registrar;
 	
 
 	/**
 	 * Create the panel.
 	 * @throws SQLException 
 	 */
-	public RegistrarMenu(JPanel contentPane, JFrame mainFrame) throws SQLException {
+	public RegistrarMenu(JPanel contentPane, JFrame mainFrame, String registrarUsername) throws SQLException {
 		contentPane.removeAll();
 		contentPane.revalidate();
 		contentPane.repaint();
+		
+		registrar = getRegistrar(registrarUsername);
 		
 		
 		JLabel title = new JLabel("Registrar Page");
@@ -65,7 +72,7 @@ public class RegistrarMenu extends JPanel {
 				JPanel registerPanel = null;
 				try {
 					System.out.println("Selected User: " + (String) usernameBox.getSelectedItem());
-					registerPanel = new RegisterStudent(contentPane, (String) usernameBox.getSelectedItem(), mainFrame);
+					registerPanel = new RegisterStudent(contentPane, (String) usernameBox.getSelectedItem(), mainFrame, registrar);
 					registerPanel.setVisible(true);
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
@@ -81,6 +88,20 @@ public class RegistrarMenu extends JPanel {
 		JButton modulesPage = new JButton("Add/ remove modules");
 		modulesPage.setBounds(608, 247, 307, 35);
 		contentPane.add(modulesPage);
+		modulesPage.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JPanel modules = null;
+				try {
+					modules = new ChangeModules(contentPane, (String) usernameBox.getSelectedItem(), mainFrame, registrar);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				modules.setVisible(true);
+
+				contentPane.add(modules);
+			}
+		});
 		
 		JButton checkRegisterPage = new JButton("Check registration");
 		checkRegisterPage.setBounds(608, 335, 307, 35);
@@ -154,5 +175,7 @@ public class RegistrarMenu extends JPanel {
         return arr;
 	
 	}
+	
+	 
 
 }

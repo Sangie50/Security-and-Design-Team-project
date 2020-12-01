@@ -192,17 +192,14 @@ public class Students extends Users{
   	
   }
   
-  public void registrationIdGen() {
-	  
-  }
-  
+
   public List<String> displayAllModules(String email, String levelOfStudy) throws SQLException {
 		 List<String> moduleList = Grades.getModuleList(email, levelOfStudy);
 		 for (int i = 0; i < moduleList.size(); i++) {
 			 System.out.println("Module Id = "+ moduleList.get(i));
 		 }
 		 return moduleList;
-	 }
+  }
   
   public ArrayList<ArrayList<String>> displayStudentView(String email) throws SQLException {
 	  ArrayList<ArrayList<String>> list= new ArrayList<ArrayList<String>>();
@@ -234,6 +231,7 @@ public class Students extends Users{
 		      	 		row.add(rs.getString(6));					//department id
 		      	 		row.add(Integer.toString(rs.getInt(7)));	//pass grade
 		      	 		list.add(row);
+		      	 		System.out.println(row);
 		 
 				    }
 		      }
@@ -249,7 +247,8 @@ public class Students extends Users{
 		        }
 		        finally {
 		            if (con != null) con.close();
-		        }		 
+		        }		
+		 System.out.println(list);
 	  return list;
   }
   
@@ -558,5 +557,11 @@ public class Students extends Users{
           if (con != null) con.close();
       }
    }
+  
+ 
+  
+	    
+	    
+	
   
 }

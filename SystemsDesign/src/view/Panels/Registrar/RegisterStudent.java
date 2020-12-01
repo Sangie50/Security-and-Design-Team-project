@@ -49,7 +49,7 @@ public class RegisterStudent extends JPanel {
 	 * Create the panel.
 	 * @throws SQLException 
 	 */
-	public RegisterStudent(JPanel panel, String name, JFrame mainFrame) throws SQLException {
+	public RegisterStudent(JPanel panel, String name, JFrame mainFrame, Registrars registrar) throws SQLException {
 		panel.removeAll();
 		panel.revalidate();
 		panel.repaint();
@@ -224,7 +224,7 @@ public class RegisterStudent extends JPanel {
 	    		EventQueue.invokeLater(new Runnable() {
 					public void run() {
 						try {
-							JPanel menu = new RegistrarMenu(panel, mainFrame);
+							JPanel menu = new RegistrarMenu(panel, mainFrame, registrar.getUsername());
 							panel.add(menu);
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -252,7 +252,7 @@ public class RegisterStudent extends JPanel {
 				Date end = convertDate((String) endDay.getSelectedItem(), (String) endMonth.getSelectedItem(), (String) endYear.getSelectedItem());
 				String pt = personalTutor.getText();
 				try {
-					addStudent(un, deg, creds, diff, start, end, pt);
+					registrar.addStudent(un, deg, creds, diff, start, end, pt);
 					JOptionPane.showMessageDialog(mainFrame.getComponent(0), "Student Added.");
 					
 				} catch (SQLException e1) {
@@ -284,51 +284,7 @@ public class RegisterStudent extends JPanel {
 	}
 	
 
-	public void addStudent(String username, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor) throws SQLException {
-		Connection con = null;
-	    Statement stmt = null;
-	    String title = "";
-	    String surname = "";
-	    String forename = "";
-	    String password = "";
-	    
-
-		     try {
-		         con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
-		         con.setAutoCommit(false);
-
-		         String userInfo = "SELECT title, surname, forename, password FROM user WHERE username = ?";
-		         try (PreparedStatement getUserInfo = con.prepareStatement(userInfo)){
-		        	 getUserInfo.setString(1, username);
-		             ResultSet rs = getUserInfo.executeQuery();
-		             con.commit();
-		              
-		             while (rs.next()) {
-			             title = rs.getString("title");
-			             surname = rs.getString("surname");
-			             forename = rs.getString("forename");
-			             password = rs.getString("password");
-
-		             }
-		             new Students(username, title, surname, forename, password,
-		            		degreeId, totalCredits, difficulty, startDate, endDate, personalTutor);
-		             Admins.updatePermission(username, UserTypes.STUDENT.toString());
-		             System.out.println("new student created!");
-		         }
-		         catch (SQLException ex) {
-		             ex.printStackTrace();
-		         }
-		         finally {
-		             if (stmt != null) stmt.close();
-		         }
-		     }
-		     catch (Exception ex) {
-		         ex.printStackTrace();
-		     }
-		     finally {
-		         if (con != null) con.close();
-		     }
-	}
+	
 	
 	
 	public Date convertDate(String day, String month, String year) {

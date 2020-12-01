@@ -1,8 +1,11 @@
 package userclasses;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+
+import userclasses.Users.UserTypes;
 
 public class Registrars extends Users {
 	/*
@@ -32,6 +35,7 @@ public class Registrars extends Users {
 	 
 	 public Registrars (String username, String title, String surname, String forename, String password)throws SQLException {
 			super(username, title, surname, forename, password);
+			this.password = password;
 			Admins.updatePermission(username, UserTypes.REGISTRAR.toString());
 		}
 	     
@@ -75,6 +79,52 @@ public class Registrars extends Users {
 	            if (con != null) con.close();
 	        }
 	 }
+	 
+	 public static void addStudent(String username, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor) throws SQLException {
+			Connection con = null;
+		    Statement stmt = null;
+		    String title = "";
+		    String surname = "";
+		    String forename = "";
+		    String password = "";
+		    
+
+			     try {
+			         con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+			         con.setAutoCommit(false);
+
+			         String userInfo = "SELECT title, surname, forename, password FROM user WHERE username = ?";
+			         try (PreparedStatement getUserInfo = con.prepareStatement(userInfo)){
+			        	 getUserInfo.setString(1, username);
+			             ResultSet rs = getUserInfo.executeQuery();
+			             con.commit();
+			              
+			             while (rs.next()) {
+				             title = rs.getString("title");
+				             surname = rs.getString("surname");
+				             forename = rs.getString("forename");
+				             password = rs.getString("password");
+
+			             }
+			             new Students(username, title, surname, forename, password,
+			            		degreeId, totalCredits, difficulty, startDate, endDate, personalTutor);
+			             Admins.updatePermission(username, UserTypes.STUDENT.toString());
+			             System.out.println("new student created!");
+			         }
+			         catch (SQLException ex) {
+			             ex.printStackTrace();
+			         }
+			         finally {
+			             if (stmt != null) stmt.close();
+			         }
+			     }
+			     catch (Exception ex) {
+			         ex.printStackTrace();
+			     }
+			     finally {
+			         if (con != null) con.close();
+			     }
+		}
 	 
 	 public void registerInitialPeriodOfStudy(String email, java.sql.Date date) throws SQLException {
 		 Connection con = null;
@@ -259,7 +309,7 @@ public class Registrars extends Users {
 	        }			 
 	 }
 	 
-	 public void checkModuleSum(String moduleId, String email, String entryLevel) throws SQLException{
+	 public void checkCredits(String moduleId, String email, String entryLevel) throws SQLException{
 		 Connection con = null; 
 		 try {
 	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
@@ -295,5 +345,76 @@ public class Registrars extends Users {
 	            if (con != null) con.close();
 	        }		
 		 
+	 }
+	 
+
+	 public String[] getModulesList(String email) throws SQLException {
+		 Connection con = null; 
+		 ArrayList<String> m = new ArrayList<String>();
+		 try {
+	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+	            con.setAutoCommit(false);
+	            Statement stmt = null;
+	            String modules = "SELECT module_id FROM module WHERE email = ?";
+	            try (PreparedStatement modulesList = con.prepareStatement(modules)){
+	                modulesList.setString(1, email);
+	                ResultSet modulesSet = modulesList.executeQuery();
+                	while (modulesSet.next()) {
+                		m.add(modulesSet.getString("module"));
+                	}
+	            }
+	            catch (SQLException ex) {
+	                ex.printStackTrace();
+	            }
+	            finally {
+	                if (stmt != null) stmt.close();
+	            }
+	        }
+	        catch (Exception ex) {
+	            ex.printStackTrace();
+	        }
+	        finally {
+	            if (con != null) con.close();
+	        }		
+		 String[] ar = new String[m.size()];
+		 for (int i = 0; i < m.size(); i++) {
+			 ar[i] = m.get(i);
+		 }
+		 return ar;
+	 }
+	 
+	 public static String[] getOptionalModulesList(String email) throws SQLException {
+		 Connection con = null; 
+		 ArrayList<String> m = new ArrayList<String>();
+		 try {
+	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+	            con.setAutoCommit(false);
+	            Statement stmt = null;
+	            String modules = "SELECT module_id FROM core_modules WHERE email = ?";
+	            try (PreparedStatement modulesList = con.prepareStatement(modules)){
+	                modulesList.setString(1, email);
+	                ResultSet modulesSet = modulesList.executeQuery();
+                	while (modulesSet.next()) {
+                		m.add(modulesSet.getString("module"));
+                	}
+	            }
+	            catch (SQLException ex) {
+	                ex.printStackTrace();
+	            }
+	            finally {
+	                if (stmt != null) stmt.close();
+	            }
+	        }
+	        catch (Exception ex) {
+	            ex.printStackTrace();
+	        }
+	        finally {
+	            if (con != null) con.close();
+	        }		
+		 String[] ar = new String[m.size()];
+		 for (int i = 0; i < m.size(); i++) {
+			 ar[i] = m.get(i);
+		 }
+		 return ar;
 	 }
 }

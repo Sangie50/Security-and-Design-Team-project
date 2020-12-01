@@ -73,18 +73,30 @@ public class Users {
 	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
+	            String checkExisting = "SELECT username FROM student WHERE username = ?";
+
                 String preparedStmt = "INSERT INTO user VALUES (?, ?, ?, ?, ?, ?, ?)";
-	            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
-	                updateStmt.setString(1, username);
-	                updateStmt.setString(2, title);
-	                updateStmt.setString(3, surname);
-	                updateStmt.setString(4, forename);
-	                updateStmt.setString(5, accountType);
-	                updateStmt.setString(6, this.password);
-	                updateStmt.setString(7, salt);
-	                updateStmt.executeUpdate();
-	                con.commit();
-	                
+	            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt);
+	            		PreparedStatement checkStmt = con.prepareStatement(checkExisting)){
+	            	checkStmt.setString(1, username);
+	            	ResultSet existingUsers = checkStmt.executeQuery();
+	            	con.commit();
+	            	while (existingUsers.next()) {
+	           		 if (username.equals(existingUsers.getString("username"))) {
+	        			 System.err.println("User/username already exists.");
+	        		 }
+	        		 else {
+	        			updateStmt.setString(1, username);
+	 	                updateStmt.setString(2, title);
+	 	                updateStmt.setString(3, surname);
+	 	                updateStmt.setString(4, forename);
+	 	                updateStmt.setString(5, accountType);
+	 	                updateStmt.setString(6, this.password);
+	 	                updateStmt.setString(7, salt);
+	 	                updateStmt.executeUpdate();
+	 	                con.commit();
+	        		 }
+	            	}          	  	               
 	            }
 	            catch (SQLException ex) {
 	                ex.printStackTrace();

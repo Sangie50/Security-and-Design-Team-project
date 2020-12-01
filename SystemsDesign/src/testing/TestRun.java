@@ -1,3 +1,4 @@
+
 package testing;
 import academics.Grades;
 import academics.Modules;
@@ -18,6 +19,11 @@ import userclasses.Users.UserTypes;
 
 public class TestRun {
     public static void main(String[] args) throws SQLException {
+//    	Registrars reg = new Registrars("registrar", "ms", "balding", "senna", "password");
+//        Users nameless = new Users("name", "ms", "a", "a", "password"); // creates an unassigned user
+        Users name = new Users("nameless", "ms", "a", "a", "password");
+
+
         /*
         System.out.println("Hello");
         Date date = new Date(10/03/20);
@@ -29,6 +35,7 @@ public class TestRun {
        
         Users nameless = new Users("name", "ms", "a", "a", "password"); // creates an unassigned user
         Users name = new Users("nameless", "ms", "a", "a", "password");
+
         Admins admin = new Admins("admin", "ms", "a", "a", "password");
         
 

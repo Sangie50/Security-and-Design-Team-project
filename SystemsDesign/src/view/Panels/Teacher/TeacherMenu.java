@@ -1,6 +1,7 @@
-package view.Panels;
+package view.Panels.Teacher;
 
 import java.awt.BorderLayout;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,12 +12,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import view.Frames.LoginFrame;
 
 /*
  - View Students 
@@ -28,6 +33,8 @@ public class TeacherMenu extends JPanel {
     
     /**
      * Create the panel.
+     * @param contentPane
+     * @param username
      * @throws SQLException 
      */
     public TeacherMenu(JPanel contentPane, String username) throws SQLException {
@@ -42,67 +49,74 @@ public class TeacherMenu extends JPanel {
         contentPane.add(title);
 
 
-        JComboBox<String> usernameBox = new JComboBox<>(getUsernames());
-        usernameBox.setBounds(81, 291, 277, 45);
-        contentPane.add(usernameBox);
-        contentPane.add(usernameBox, BorderLayout.PAGE_START);
-        String selectedUser =  (String) usernameBox.getSelectedItem();
+        JComboBox<String> emailBox = new JComboBox<>(getEmails());
+        emailBox.setBounds(81, 291, 277, 45);
+        contentPane.add(emailBox);
+        contentPane.add(emailBox, BorderLayout.PAGE_START);
+        
 
-        JLabel user = new JLabel("Username:");
+        JLabel user = new JLabel("Emails of students:");
         user.setBounds(81, 248, 277, 26);
         contentPane.add(user);
 
-        JButton registerPage = new JButton("Register/ remove student");
-        registerPage.addActionListener(new ActionListener() {
+        JButton changeGradesPage = new JButton("Edit module grades");
+        changeGradesPage.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JPanel registerPanel = null;
+                JPanel menu = null;
                 try {
-                    registerPanel = new RegisterStudent(contentPane, selectedUser);
-                } catch (SQLException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                    String selectedEmail =  (String) emailBox.getSelectedItem();
+                    menu = new changeGradesTeachers(contentPane, username, selectedEmail);
+                    contentPane.add(menu);
+                } catch (SQLException ex) {
+                    Logger.getLogger(TeacherMenu.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                contentPane.add(registerPanel);
-
+                
             }
         });
-        registerPage.setBounds(608, 163, 307, 35);
-        contentPane.add(registerPage);
+        changeGradesPage.setBounds(608, 163, 307, 35);
+        contentPane.add(changeGradesPage);
 
         JButton modulesPage = new JButton("Add/ remove modules");
         modulesPage.setBounds(608, 247, 307, 35);
         contentPane.add(modulesPage);
-
-        JButton checkRegisterPage = new JButton("Check registration");
-        checkRegisterPage.setBounds(608, 335, 307, 35);
-        contentPane.add(checkRegisterPage);
-
-        JButton checkModulePage = new JButton("Check module sum");
-        checkModulePage.setBounds(608, 425, 307, 35);
-        contentPane.add(checkModulePage);
-
-        JLabel descLabel = new JLabel("Select a user and click on the buttons to control their fate.");
-        descLabel.setBounds(81, 68, 834, 26);
-        contentPane.add(descLabel);
 	
+        JButton logoutButton = new JButton("Logout");
+        logoutButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setVisible(false);
+                EventQueue.invokeLater(new Runnable() {
+                    public void run() {
+                        try {
+                            LoginFrame frame = new LoginFrame();
+                            frame.setVisible(true);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
+        logoutButton.setBounds(620, 576, 141, 35);
+        contentPane.add(logoutButton); 
+        
     }
 
 	
 	
-    public String[] getUsernames() throws SQLException{
+    public String[] getEmails() throws SQLException{
         ArrayList<String> list = new ArrayList<String>();
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String usernames = "SELECT username FROM user";
+            String usernames = "SELECT email FROM student";
             try (PreparedStatement getUsernames = con.prepareStatement(usernames)){
                 ResultSet usernameList = getUsernames.executeQuery();
                 con.commit();
                 
                 while (usernameList.next()) {
-                	list.add(usernameList.getString("username"));	
+                	list.add(usernameList.getString("email"));	
                 }
                 
             }

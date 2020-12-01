@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import view.Panels.TeacherMenu;
+import view.Panels.Teacher.TeacherMenu;
 
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -38,7 +38,7 @@ public class TeacherFrame extends JFrame {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    TeacherFrame frame = new TeacherFrame("generic");
+                    TeacherFrame frame = new TeacherFrame("ordinary");
                     frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -355,13 +355,15 @@ public class Registrars extends Users {
 	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
-	            String modules = "SELECT module_id FROM module WHERE email = ?";
+	            String modules = "SELECT module_id FROM module_grade WHERE email = ?";
 	            try (PreparedStatement modulesList = con.prepareStatement(modules)){
 	                modulesList.setString(1, email);
 	                ResultSet modulesSet = modulesList.executeQuery();
                 	while (modulesSet.next()) {
-                		m.add(modulesSet.getString("module"));
+                		m.add(modulesSet.getString("module_id"));
+                		System.out.println(m);
                 	}
+                	
 	            }
 	            catch (SQLException ex) {
 	                ex.printStackTrace();
@@ -379,6 +381,7 @@ public class Registrars extends Users {
 		 String[] ar = new String[m.size()];
 		 for (int i = 0; i < m.size(); i++) {
 			 ar[i] = m.get(i);
+			 System.out.println(m.get(i));
 		 }
 		 return ar;
 	 }

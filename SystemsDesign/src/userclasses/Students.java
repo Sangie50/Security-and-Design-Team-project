@@ -29,7 +29,7 @@ public class Students extends Users{
   
   public Students (String username, String title, String surname, String forename, String password, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor) throws SQLException {
   	super(username, title, surname, forename, password);
-        email = emailGen(surname, forename, username);
+    
     this.password = password;
   	this.degreeId = degreeId;
   	this.totalCredits = totalCredits;
@@ -37,7 +37,9 @@ public class Students extends Users{
   	this.startDate = startDate;
   	this.endDate = endDate;
   	this.personalTutor = personalTutor;
-    addStudent(username,degreeId, totalCredits, difficulty, startDate, endDate, personalTutor);
+  	
+  	addStudent(username, degreeId, totalCredits, difficulty, startDate, endDate, personalTutor);
+
   }
   public void addStudent(String username, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor ) throws SQLException {
         
@@ -46,18 +48,21 @@ public class Students extends Users{
          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
          con.setAutoCommit(false);
          Statement stmt = null;
-         String checkExisting = "SELECT username FROM student WHERE username = ?";
+         String checkExisting = "SELECT username, email FROM student WHERE username = ?";
          String preparedStmt = "INSERT INTO student(email, username, resit_year, degree_id, total_credits, difficulty, start_date, end_date, personal_tutor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
          try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt);
         		 PreparedStatement checkStmt = con.prepareStatement(checkExisting)){
         	 checkStmt.setString(1, username);
         	 ResultSet existingUsers = checkStmt.executeQuery();
         	 con.commit();
+        	 
         	 while (existingUsers.next()) {
         		 if (username.equals(existingUsers.getString("username"))) {
+        			 email = existingUsers.getString("email");
         			 System.err.println("Student/username already exists.");
         		 }
         		 else {
+        			 email = emailGen(surname, forename, username);
         			 updateStmt.setString(1, email);
                      updateStmt.setString(2, username);
                      updateStmt.setBoolean(3, false);
@@ -114,8 +119,7 @@ public class Students extends Users{
 	              
 	             while (rs.next()) {
 		             registrationId = rs.getInt(1);
-
-	             }
+		         }
 	             
 	         }
 	         catch (SQLException ex) {
@@ -149,7 +153,7 @@ public class Students extends Users{
     		initials += Character.toUpperCase(forename.charAt(i + 1)); 
     	}
     }
-
+    
     String email = initials + surname + formatter.format(a) + rest; //create email from forename initials and surname and unique 2 digit number
     Connection con = null;
 
@@ -180,7 +184,6 @@ public class Students extends Users{
                 email = initials + surname + formatter.format(a);
                 System.out.println(email);
                 }
-
             }
         }
         catch (SQLException ex) {
@@ -201,7 +204,6 @@ public class Students extends Users{
   
   public String getEmail() {
   	return email;
-  	
   }
   
 

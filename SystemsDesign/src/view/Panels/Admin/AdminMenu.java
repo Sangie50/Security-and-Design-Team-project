@@ -21,7 +21,7 @@ import academics.Departments;
 import academics.Modules;
 import userclasses.Admins;
 import view.Frames.LoginFrame;
-import view.Panels.Admin.addDeptPanel;
+import view.Panels.Admin.AddDeptPanel;
 
 public class AdminMenu extends JPanel {
 
@@ -33,27 +33,24 @@ public class AdminMenu extends JPanel {
 	private static JTable departTable;
 	private static JTable degreeTable;
 	private static JTable userTable;
+	public static JComboBox<String> mainComboBox;
 	
 	/**
 	 * Create the panel.
 	 * @throws SQLException 
+	 * 
 	 */
+	
 	public AdminMenu(JPanel contentPane, JFrame mainFrame) throws SQLException {
+		contentPane.removeAll();
+		contentPane.revalidate();
+		contentPane.repaint();
+		
 		JLabel listOf = new JLabel("List of: ");
 		listOf.setBounds(35, 73, 54, 20);
 		contentPane.add(listOf);
 				
 		String[] options = {"Departments", "Degrees", "Modules", "Users"};
-		
-		JButton newButton = new JButton("New");
-		newButton.setBounds(309, 69, 63, 29);
-		newButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				addDeptPanel addDept = new addDeptPanel(contentPane);
-				
-			}
-		});
-		contentPane.add(newButton);
 		
 		JLabel welcomeLabel = new JLabel("Welcome Admin!");
 		welcomeLabel.setBounds(35, 17, 120, 20);
@@ -101,11 +98,11 @@ public class AdminMenu extends JPanel {
 	    user_sp.setBorder(BorderFactory.createEmptyBorder());
 	    
 	    
-	    JComboBox<String> comboBox = new JComboBox<>(options);
-	    comboBox.setBounds(119, 70, 121, 26);
-	    comboBox.setSelectedIndex(0);
+	    mainComboBox = new JComboBox<>(options);
+	    mainComboBox.setBounds(119, 70, 121, 26);
+	    mainComboBox.setSelectedIndex(0);
 	    
-	    comboBox.addActionListener(new ActionListener() {
+	    mainComboBox.addActionListener(new ActionListener() {
 	    
 	    	 
 	        @Override
@@ -144,9 +141,32 @@ public class AdminMenu extends JPanel {
 	        }
 	    });
 	    
-	    contentPane.add(comboBox);
+	    contentPane.add(mainComboBox);
+	    
+	    JButton newButton = new JButton("New");
+		newButton.setBounds(309, 69, 63, 29);
+		newButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+		        String selectedOption = (String) mainComboBox.getSelectedItem();
+		        
+		        if (selectedOption.equals("Departments")) {
+		        	AddDeptPanel addDept = new AddDeptPanel(contentPane, mainFrame);
+		        }
+		        else if (selectedOption.equals("Degrees")) {
+		        	AddDegreePanel addDegree = new AddDegreePanel(contentPane, mainFrame);
+		        }
+		        else if (selectedOption.equals("Modules")) {
+		        	AddModulePanel addModule = new AddModulePanel(contentPane, mainFrame);
+		        }
+		        else if (selectedOption.equals("Users")) {
+		        	AddUserPanel addUser = new AddUserPanel(contentPane, mainFrame);
+		        }
+			}
+		});
+		contentPane.add(newButton);
 	
 	}
+	
 	
 
 	public static JTable deptTable() throws SQLException{

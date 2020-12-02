@@ -73,9 +73,9 @@ public class changeGradesTeachers extends JPanel {
                     degreeID = rs.getString("degree_id");
                     credits = rs.getInt("total_credits");
                     tutor = rs.getString("personal_tutor");
-                    moduleName = rs.getString("module_name");
-                    initialGrade = rs.getInt("initial_grade");
-                    resitGrade = rs.getInt("resit_grade");
+                    //moduleName = rs.getString("module_name");
+                    //initialGrade = rs.getInt("initial_grade");
+                    //resitGrade = rs.getInt("resit_grade");
                 }
 
             }
@@ -119,7 +119,7 @@ public class changeGradesTeachers extends JPanel {
         tut.setBounds(21, 200, 148, 26);
         panel.add(tut);
         
-        /*JLabel ini = new JLabel("Initial Grade:");
+        JLabel ini = new JLabel("Initial Grade:");
         ini.setBounds(21, 240, 148, 26);
         panel.add(ini);
         
@@ -129,7 +129,31 @@ public class changeGradesTeachers extends JPanel {
         
         JLabel na = new JLabel("Module Name:");
         na.setBounds(21, 320, 148, 26);
-        panel.add(na); */
+        panel.add(na); 
+        
+        JComboBox<String> gradesBox = new JComboBox<>(getModules(studentEmail,username));
+        gradesBox.setBounds(81, 400, 277, 45);
+        panel.add(gradesBox);
+        panel.add(gradesBox, BorderLayout.PAGE_START);
+        
+        JButton viewGrades = new JButton("View Grades");
+        viewGrades.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    String selectedModule =  (String) gradesBox.getSelectedItem();
+                    ArrayList list = new ArrayList();
+                    list = getGrades(studentEmail, selectedModule);
+                    Integer initialGrade = (int)list.get(0);
+                    Integer resitGrade = (int)list.get(1);
+                    Integer moduleName = (int)list.get(2);
+                } catch (SQLException ex) {
+                    Logger.getLogger(changeGradesTeachers.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        viewGrades.setBounds(608, 200, 307, 35);
+        panel.add(viewGrades);
+        
         
         
 
@@ -149,7 +173,7 @@ public class changeGradesTeachers extends JPanel {
         tuto.setBounds(221, 200, 156, 26);
         panel.add(tuto);
         
-        /*JLabel in = new JLabel(""+initialGrade+"");
+        JLabel in = new JLabel(""+initialGrade+"");
         in.setBounds(221, 240, 156, 26);
         panel.add(in);
         
@@ -159,12 +183,9 @@ public class changeGradesTeachers extends JPanel {
         
         JLabel nam = new JLabel(moduleName);
         nam.setBounds(221, 320, 156, 26);
-        panel.add(nam);*/
+        panel.add(nam);
         
-        JComboBox<String> gradesBox = new JComboBox<>(getModules(studentEmail,username));
-        gradesBox.setBounds(81, 400, 277, 45);
-        panel.add(gradesBox);
-        panel.add(gradesBox, BorderLayout.PAGE_START);
+        
 
         JLabel user = new JLabel("Student's Modules You Teach:");
         user.setBounds(81, 360, 277, 26);
@@ -173,14 +194,13 @@ public class changeGradesTeachers extends JPanel {
         JButton changeGradesPage = new JButton("Add/Modify Grades");
         changeGradesPage.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JPanel menu = null;
-                String selectedEmail =  (String) gradesBox.getSelectedItem();
-                panel.add(menu);
                 
             }
         });
         changeGradesPage.setBounds(608, 360, 307, 35);
         panel.add(changeGradesPage);
+        
+        
 
         JButton backButton = new JButton("Back");
         backButton.addActionListener(new ActionListener() {
@@ -264,6 +284,44 @@ public class changeGradesTeachers extends JPanel {
         String[] arr = new String[list.size()];
         arr = list.toArray(arr);
         return arr;
+	
+    }
+    public ArrayList getGrades(String studentEmail, String moduleID) throws SQLException{
+        ArrayList list = new ArrayList();
+        Connection con = null;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            Statement stmt = null;
+            String usernames = "SELECT * FROM student INNER JOIN "
+                    + "module_grade ON student.email = module_grade.email INNER"
+                    + " JOIN module ON module_grade.module_id = module.module_id"
+                    + " WHERE module.module_id = ? AND student.email = ?";
+            try (PreparedStatement getUsernames = con.prepareStatement(usernames)){
+                getUsernames.setString(1, moduleID);
+                getUsernames.setString(2, studentEmail);
+                ResultSet usernameList = getUsernames.executeQuery();
+                con.commit();
+                
+                usernameList.next(); 
+                list.add(usernameList.getInt("initial_grade"));
+                list.add(usernameList.getInt("resit_grade"));
+                list.add(usernameList.getString("module_name"));
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+        return list;
 	
     }
 

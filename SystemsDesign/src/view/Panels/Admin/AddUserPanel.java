@@ -14,6 +14,8 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 import javax.swing.JButton;
 
@@ -31,7 +33,6 @@ public class AddUserPanel extends JPanel {
 		panel.revalidate();
 		panel.repaint();
 		
-		System.out.println("Should be here");
 		setLayout(null);
 		setBounds(100, 100, 1035, 647);
 		
@@ -60,7 +61,6 @@ public class AddUserPanel extends JPanel {
 		String[] titleOptions = {"Mr", "Ms", "Mrs", "Miss", "Dr."};
 		JComboBox titleComboBox = new JComboBox(titleOptions);
 		titleComboBox.setBounds(170, 161, 109, 23);
-		String titleText = titleComboBox.getSelectedItem().toString();
 		add(titleComboBox);
 		panel.add(titleComboBox);
 		
@@ -95,7 +95,6 @@ public class AddUserPanel extends JPanel {
 		String[] typeOptions = {"Admin", "Registrar", "Teacher", "Student"};
 		JComboBox typeComboBox = new JComboBox(typeOptions);
 		typeComboBox.setBounds(170, 320, 109, 23);
-		String type = typeComboBox.getSelectedItem().toString();
 		add(typeComboBox);
 		panel.add(typeComboBox);
 		
@@ -138,19 +137,26 @@ public class AddUserPanel extends JPanel {
 		addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				setVisible(false);
+				String titleText = titleComboBox.getSelectedItem().toString();
+				String type = typeComboBox.getSelectedItem().toString();
 	    		EventQueue.invokeLater(new Runnable() {
-					public void run() {
+					public void run()  {
 						try {
 							Admins.addUser(usernameText.getText(), titleText, forenameText.getText(), surnameText.getText(), 
 									type, passwordText.getText());
-							JOptionPane.showMessageDialog(mainFrame.getComponent(0), "User Added");
-							JPanel menu = new AdminMenu(panel, mainFrame);
-							AdminMenu.mainComboBox.setSelectedIndex(3);
-							panel.add(menu);
+							if (Admins.duplicateUser) {
+								System.out.println("user exists");
+								JOptionPane.showMessageDialog(mainFrame.getComponent(0), "Username already exists");
+								JPanel backNewUser = new AddUserPanel(panel, mainFrame);
+							}
+							else if (!Admins.duplicateUser) {
+								JOptionPane.showMessageDialog(mainFrame.getComponent(0), "User Added");
+								JPanel menu = new AdminMenu(panel, mainFrame);
+								AdminMenu.mainComboBox.setSelectedIndex(3);
+								panel.add(menu);
+							}
 						} catch (Exception e) {
 							e.printStackTrace();
-							JOptionPane.showMessageDialog(mainFrame.getComponent(0), "User already exists");
-							JPanel backNewUser = new AddUserPanel(panel, mainFrame);
 						}
 					}
 				});

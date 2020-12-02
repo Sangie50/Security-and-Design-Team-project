@@ -190,10 +190,11 @@ public class changeGradesTeachers extends JPanel {
                     public void run() {
                         String selectedModule =  (String) gradesBox.getSelectedItem();
                         String i = inGrade.getText().trim();
+ 
                         Integer inGrade = Integer.parseInt(i);
                         try {
                             System.out.println(inGrade);
-                            Teachers.addGrade(selectedModule, studentEmail, inGrade);
+                            Teachers.updateGrades(selectedModule, studentEmail, inGrade);
                         } catch (SQLException ex) {
                             Logger.getLogger(changeGradesTeachers.class.getName()).log(Level.SEVERE, null, ex);
                         }

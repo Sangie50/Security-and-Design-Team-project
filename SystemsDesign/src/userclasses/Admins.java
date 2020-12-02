@@ -4,6 +4,8 @@ package userclasses;
 import academics.Degrees;
 import academics.Departments;
 import academics.Modules;
+import features.PasswordGen;
+
 import java.sql.*;
 import java.util.*;
 
@@ -45,7 +47,9 @@ public class Admins extends Users{
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "INSERT INTO user VALUES (?,?,?,?,?,?)";
+            String salt = PasswordGen.getSalt(30);
+            String pw = PasswordGen.generateSecurePassword(password, salt);
+            String preparedStmt = "INSERT INTO user VALUES (?,?,?,?,?,?,?)";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
                 stmt = con.createStatement();
                 updateStmt.setString(1, username);
@@ -53,7 +57,8 @@ public class Admins extends Users{
                 updateStmt.setString(3, forename);
                 updateStmt.setString(4, lastname);
                 updateStmt.setString(5, accountType);
-                updateStmt.setString(6, password);
+                updateStmt.setString(6, pw);
+                updateStmt.setString(7, salt);
                 updateStmt.executeUpdate();
                 con.commit();
             }

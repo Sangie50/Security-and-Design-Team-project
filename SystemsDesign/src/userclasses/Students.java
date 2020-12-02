@@ -1,6 +1,8 @@
 package userclasses;
 import java.sql.*;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.sql.Date;
 
@@ -95,12 +97,20 @@ public class Students extends Users{
      }
   }
   
+  public String getEmail() {
+	  	return email;
+	  }
+  
   public Date getstartDate() {
 	  return startDate;
   }
 	  
   public Date getEndDate() {
 	  return endDate;
+  }
+  
+  public int getTotalCredits() {
+	  return totalCredits;
   }
   
   public int getRegistrationId() throws SQLException {
@@ -141,6 +151,7 @@ public class Students extends Users{
   public String getDegreeId() {
 	  return degreeId;
   }
+  
 	  
 
   public static String emailGen(String surname, String forename, String username) throws SQLException{
@@ -202,9 +213,7 @@ public class Students extends Users{
     return email;
   }
   
-  public String getEmail() {
-  	return email;
-  }
+
   
 
   public List<String> displayAllModules(String email, String levelOfStudy) throws SQLException {
@@ -218,7 +227,6 @@ public class Students extends Users{
   public ArrayList<ArrayList<String>> displayStudentView(String email) throws SQLException {
 	  ArrayList<ArrayList<String>> list= new ArrayList<ArrayList<String>>();
 
-	  System.out.println("DISPLAY STUDENT STUFF...");
 	  Connection con = null; 
 		 try {
 	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
@@ -244,6 +252,57 @@ public class Students extends Users{
 		      	 		row.add(Integer.toString(rs.getInt(5)));	//credits worth
 		      	 		row.add(rs.getString(6));					//department id
 		      	 		row.add(Integer.toString(rs.getInt(7)));	//pass grade
+		      	 		list.add(row);
+		 
+				    }
+		      }
+		            catch (SQLException ex) {
+		                ex.printStackTrace();
+		            }
+		            finally {
+		                if (stmt != null) stmt.close();
+		            }
+		        }
+		        catch (Exception ex) {
+		            ex.printStackTrace();
+		        }
+		        finally {
+		            if (con != null) con.close();
+		        }		
+		 System.out.println(list);
+	  return list;
+  }
+  
+  public ArrayList<ArrayList<String>> displayStudentDetails(String email) throws SQLException {
+	  ArrayList<ArrayList<String>> list= new ArrayList<ArrayList<String>>();
+	  DateFormat df = new SimpleDateFormat("dd/MM/yyyy"); 
+	  Connection con = null; 
+		 try {
+	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+		      con.setAutoCommit(false);
+		      Statement stmt = null;
+		      String studentViewTable ="SELECT user.username, user.forename, user.surname, user.account_type,"
+		      		+ "student.difficulty, student.total_credits, student.start_date, student.end_date, degree.degree_id, "
+		      		+ "degree.degree_name FROM user LEFT JOIN(student, degree) ON (user.username = student.username AND "
+		      		+ " student.degree_id = degree.degree_id) WHERE email = ?";
+		      
+		      ResultSet rs;
+
+		      try (PreparedStatement pstmt = con.prepareStatement(studentViewTable)){
+		    	  	pstmt.setString(1, email);
+				    rs = pstmt.executeQuery();  					
+		      	 	while (rs.next()) {
+		      		    ArrayList<String> row = new ArrayList<String>();
+		      	 		row.add(rs.getString("username"));
+		      	 		row.add(rs.getString("forename"));     	 		
+		      	 		row.add(rs.getString("surname"));	
+		      	 		row.add(rs.getString("account_type"));	
+		      	 		row.add(rs.getString("difficulty"));
+		      	 		row.add(Integer.toString(rs.getInt("total_credits")));
+		      	 		row.add(df.format(rs.getDate("start_date")));	
+		      	 		row.add(df.format(rs.getDate("end_date")));
+		      	 		row.add(rs.getString("degree_id"));
+		      	 		row.add(rs.getString("degree_name"));
 		      	 		list.add(row);
 		      	 		System.out.println(row);
 		 

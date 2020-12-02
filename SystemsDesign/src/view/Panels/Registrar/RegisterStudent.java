@@ -31,6 +31,7 @@ import userclasses.Students;
 import userclasses.Users.UserTypes;
 import view.Frames.LoginFrame;
 import view.Frames.RegistrarFrame;
+import view.Panels.AbstractPanel;
 
 import javax.swing.JRadioButton;
 import javax.swing.JComboBox;
@@ -39,8 +40,8 @@ import javax.swing.JFrame;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class RegisterStudent extends JPanel {
-	private JTable table;
+public class RegisterStudent extends AbstractPanel {
+
 	private JTextField degreeId;
 	private JTextField personalTutor;
 	String notif = "";
@@ -281,18 +282,5 @@ public class RegisterStudent extends JPanel {
 		});
 		
 
-	}
-	
-
-	
-	
-	
-	public Date convertDate(String day, String month, String year) {
-		DecimalFormat formatter = new DecimalFormat("00");
-		String dd = year + "-" + formatter.format(Integer.parseInt(month)) + "-" + formatter.format(Integer.parseInt(day));
-		System.out.println(dd);
-		Date date = Date.valueOf(dd);
-
-		return date;
 	}
 }

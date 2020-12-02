@@ -455,4 +455,120 @@ public class Registrars extends Users {
 //		 }
 		 return ar;
 	 }
+	 
+	 public void updateStartDate(String email, Date date) throws SQLException {
+		 Connection con = null; 
+		 try {
+	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+	            con.setAutoCommit(false);
+	            Statement stmt = null;
+	            String startDate = "UPDATE student SET start_date = ? WHERE email = ?";
+	            try (PreparedStatement setStartDate = con.prepareStatement(startDate)){
+	                setStartDate.setDate(1, date);
+	            	setStartDate.setString(2, email);
+	                setStartDate.executeUpdate();
+	                con.commit();
+	            }
+	            catch (SQLException ex) {
+	                ex.printStackTrace();
+	            }
+	            finally {
+	                if (stmt != null) stmt.close();
+	            }
+	        }
+	        catch (Exception ex) {
+	            ex.printStackTrace();
+	        }
+	        finally {
+	            if (con != null) con.close();
+	        }		
+		 
+	 }
+	 
+	 public void updateEndDate(String email, Date date) throws SQLException {
+		 Connection con = null; 
+		 try {
+	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+	            con.setAutoCommit(false);
+	            Statement stmt = null;
+	            String endDate = "UPDATE student SET start_date = ? WHERE email = ?";
+	            try (PreparedStatement setEndDate = con.prepareStatement(endDate)){
+	                setEndDate.setDate(1, date);
+	                setEndDate.setString(2, email);
+	                setEndDate.executeUpdate();
+	                con.commit();
+	            }
+	            catch (SQLException ex) {
+	                ex.printStackTrace();
+	            }
+	            finally {
+	                if (stmt != null) stmt.close();
+	            }
+	        }
+	        catch (Exception ex) {
+	            ex.printStackTrace();
+	        }
+	        finally {
+	            if (con != null) con.close();
+	        }		
+		 
+	 }
+	 
+	 public void updateDifficulty(String email, String diff) throws SQLException {
+		 Connection con = null; 
+		 try {
+	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+	            con.setAutoCommit(false);
+	            Statement stmt = null;
+	            String difficulty = "UPDATE student SET difficulty = ? WHERE email = ?";
+	            try (PreparedStatement setDifficulty = con.prepareStatement(difficulty)){
+	            	setDifficulty.setString(1, diff);
+	            	setDifficulty.setString(2, email);
+	            	setDifficulty.executeUpdate();
+	                con.commit();
+	            }
+	            catch (SQLException ex) {
+	                ex.printStackTrace();
+	            }
+	            finally {
+	                if (stmt != null) stmt.close();
+	            }
+	        }
+	        catch (Exception ex) {
+	            ex.printStackTrace();
+	        }
+	        finally {
+	            if (con != null) con.close();
+	        }		
+		 
+	 }
+	 
+	 public void updateDegreeId(String email, String deg) throws SQLException {
+		 Connection con = null; 
+		 LinkedHashSet<String> m = new LinkedHashSet<String>();
+		 try {
+	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+	            con.setAutoCommit(false);
+	            Statement stmt = null;
+	            String degree = "UPDATE student SET degree_id = ? WHERE email = ?";
+	            try (PreparedStatement setDegree = con.prepareStatement(degree)){
+	            	setDegree.setString(1, deg);
+	            	setDegree.setString(2, email);
+	            	setDegree.executeUpdate();
+	                con.commit();
+	            }
+	            catch (SQLException ex) {
+	                ex.printStackTrace();
+	            }
+	            finally {
+	                if (stmt != null) stmt.close();
+	            }
+	        }
+	        catch (Exception ex) {
+	            ex.printStackTrace();
+	        }
+	        finally {
+	            if (con != null) con.close();
+	        }		
+	 }
 }

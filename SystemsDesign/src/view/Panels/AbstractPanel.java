@@ -21,11 +21,13 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -224,6 +226,15 @@ public abstract class AbstractPanel extends JPanel{
         arr = list.toArray(arr);
         return arr;
 	
+	}
+	
+	public Date convertDate(String day, String month, String year) {
+		DecimalFormat formatter = new DecimalFormat("00");
+		String dd = year + "-" + formatter.format(Integer.parseInt(month)) + "-" + formatter.format(Integer.parseInt(day));
+		System.out.println(dd);
+		Date date = Date.valueOf(dd);
+
+		return date;
 	}
 	
 }

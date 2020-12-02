@@ -5,9 +5,13 @@ import academics.Degrees;
 import academics.Departments;
 import academics.Modules;
 import features.PasswordGen;
+import view.Panels.Admin.AddUserPanel;
 
 import java.sql.*;
 import java.util.*;
+
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /*
 What needs doing (methods):
@@ -31,6 +35,8 @@ Attributes to add
 inherits from user class
 */
 public class Admins extends Users{
+	public static final int DUPLICATE_DATA_ENTRY = 1062;
+	public static boolean duplicateUser = false;
     // For in class testing
     /*
     public static void main(String[] args) throws Exception {
@@ -43,6 +49,7 @@ public class Admins extends Users{
     
     public static void addUser(String username, String title, String forename, String lastname, String accountType, String password) throws SQLException {
         Connection con = null;
+        duplicateUser = false;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
@@ -63,7 +70,12 @@ public class Admins extends Users{
                 con.commit();
             }
             catch (SQLException ex) {
-                ex.printStackTrace();
+            	if (ex.getErrorCode() == DUPLICATE_DATA_ENTRY) {
+            		duplicateUser = true;
+            	}
+            	else{
+            		ex.printStackTrace();
+            	}
             }
             finally {
                 if (stmt != null) stmt.close();
@@ -141,6 +153,7 @@ public class Admins extends Users{
                 con.commit();
             }
             catch (SQLException ex) {
+            	
                 ex.printStackTrace();
             }
             finally {

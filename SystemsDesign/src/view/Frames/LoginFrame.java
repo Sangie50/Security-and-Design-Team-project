@@ -50,30 +50,44 @@ public class LoginFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public LoginFrame() {
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("Username");
-		lblNewLabel.setBounds(21, 33, 117, 47);
-		contentPane.add(lblNewLabel);
+		//labels
+		
+		JLabel usernameLabel = new JLabel("Username");
+		usernameLabel.setBounds(21, 33, 117, 47);
+		contentPane.add(usernameLabel);
+		
+		JLabel passwordLabel = new JLabel("Password");
+		passwordLabel.setBounds(21, 78, 101, 74);
+		contentPane.add(passwordLabel);
+		//-----------------------------------
+		
+		
+		//text fields
 		
 		passwordBox = new JPasswordField(20);
 		passwordBox.setBounds(143, 96, 207, 38);
 		contentPane.add(passwordBox);
 		passwordBox.setColumns(10);
-		
-		JLabel lblNewLabel_1 = new JLabel("Password");
-		lblNewLabel_1.setBounds(21, 78, 101, 74);
-		contentPane.add(lblNewLabel_1);
-		
+
 		loginBox = new JTextField();
 		loginBox.setBounds(143, 37, 207, 38);
 		contentPane.add(loginBox);
 		loginBox.setColumns(5);
+		
+		//-----------------------------------
+		
+		
+		
+		//buttons
 		
 		JButton loginButton = new JButton("Login");
 		loginButton.addActionListener(new ActionListener() {
@@ -97,8 +111,16 @@ public class LoginFrame extends JFrame {
 		JButton registerButton = new JButton("Register");
 		registerButton.setBounds(209, 155, 117, 38);
 		contentPane.add(registerButton);
+		//-----------------------------------
 	}
 
+	/**
+	 * Validates whether the user's login details are correct
+	 * @param username
+	 * @param password
+	 * @return
+	 * @throws SQLException
+	 */
 	public String loginValidation(JTextField username, JPasswordField password) throws SQLException {
 		String un = username.getText();
 		String pw = String.valueOf(password.getPassword());
@@ -116,15 +138,12 @@ public class LoginFrame extends JFrame {
 	              updateStmt.setString(1, un);
 	              ResultSet checkpw = updateStmt.executeQuery();
 	              con.commit();
-//	              System.out.println("Result set size: " + checkpw.getFetchSize());
-//	              System.out.println("username: " + un + " password: " + pw);
-	          
+
 		          while (checkpw.next()) {
 				        type = checkpw.getString(5);
 		        	    rightpw = checkpw.getString(6);
 				        salt = checkpw.getString(7);
 		          }
-//	              System.out.println(rightpw + " " + salt);
 
 	              boolean passwordMatch = PasswordGen.verifyUserPassword(pw, rightpw, salt);
 	              if (passwordMatch) {

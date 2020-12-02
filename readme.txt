@@ -1,3 +1,0 @@
-readme 
-ok 
-thank you

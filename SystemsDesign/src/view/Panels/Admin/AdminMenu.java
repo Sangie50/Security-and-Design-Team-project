@@ -34,6 +34,7 @@ public class AdminMenu extends JPanel {
 	private static JTable degreeTable;
 	private static JTable userTable;
 	public static JComboBox<String> mainComboBox;
+	public static String[][] userContent;
 	
 	/**
 	 * Create the panel.
@@ -96,7 +97,6 @@ public class AdminMenu extends JPanel {
 	    JScrollPane user_sp = new JScrollPane(userTable());
 	    user_sp.setBounds(15, 134, 500, 500); 
 	    user_sp.setBorder(BorderFactory.createEmptyBorder());
-	    
 	    
 	    mainComboBox = new JComboBox<>(options);
 	    mainComboBox.setBounds(119, 70, 121, 26);
@@ -164,6 +164,23 @@ public class AdminMenu extends JPanel {
 			}
 		});
 		contentPane.add(newButton);
+		
+		
+		JButton removeButton = new JButton("Remove");
+		removeButton.setBounds(500, 69, 80, 29);
+		removeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				String selectedOption = (String) mainComboBox.getSelectedItem();
+		        if (selectedOption.equals("Users")) {
+					RemoveUserPanel removeUser = new RemoveUserPanel(contentPane, mainFrame);
+					System.out.println("should change panel now");
+					
+		        }
+			    
+			}
+		});
+		
+		contentPane.add(removeButton);
 	
 	}
 	
@@ -264,18 +281,18 @@ public class AdminMenu extends JPanel {
 	public static JTable userTable() throws SQLException{
 		List<String> userList = Admins.viewAllUsers();
 		int arraySize = userList.size();
-		String[][] content = new String[arraySize][5];
+		userContent = new String[arraySize][5];
 		for (int i = 0; i<userList.size(); i++) {
 			String user = userList.get(i);
 			String[] cells = user.split(";");
 			for (int j = 0; j < cells.length; j++) {
-				content[i][j] = cells[j];
+				userContent[i][j] = cells[j];
 			}
 		}	
 		
 		String[] header = {"Username", "Title", "Forename", "Surname", "Account Type"};
 	    
-	    userTable = new JTable(content, header);
+	    userTable = new JTable(userContent, header);
 	    userTable.setEnabled(false);
 	    
 	    userTable.getColumnModel().getColumn(0).setPreferredWidth(20);
@@ -285,7 +302,7 @@ public class AdminMenu extends JPanel {
 	    userTable.getColumnModel().getColumn(4).setPreferredWidth(30);
 	    
 	    
-	    
+	    userTable.setRowSelectionAllowed(true);
 	    userTable.getTableHeader().setReorderingAllowed(false);    	
 	    userTable.setBackground(UIManager.getColor("Button.background"));
 	    return userTable;

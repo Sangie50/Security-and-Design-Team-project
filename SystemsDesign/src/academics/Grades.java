@@ -53,7 +53,7 @@ public class Grades { //create a constructor
 		      ResultSet rs;
 		      try (PreparedStatement pstmt = con.prepareStatement(getCurrentLevelOfStudy)){
 				      	rs = pstmt.executeQuery();        
-				      	currentlevelOfStudy = rs.getString(3);      
+				      	currentlevelOfStudy = rs.getString(1);      
 				      	
 				      	rs.close();                       
 				      	pstmt.close();                    
@@ -82,7 +82,7 @@ public class Grades { //create a constructor
 			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 		      con.setAutoCommit(false);
 		      Statement stmt = null;
-		      String getModuleId = String.format("SELECT module_id FROM module_grade INNER JOIN degree ON module_grade.degree_id = degree.degree_id WHERE email = '%s' AND entry_level = '%s' ", email, levelOfStudy);
+		      String getModuleId = String.format("SELECT module_id FROM module_grade INNER JOIN degree ON module_grade.module_id = degree.module_id WHERE email = '%s' AND entry_level = '%s' ", email, levelOfStudy);
 		      String moduleId;
 		      ResultSet rs;
 		      try (PreparedStatement pstmt = con.prepareStatement(getModuleId)){
@@ -357,12 +357,13 @@ public class Grades { //create a constructor
 			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 		      con.setAutoCommit(false);
 		      Statement stmt = null;
-		      String getLast_level = String.format("SELECT last_level FROM year_grade WHERE email = %s ", email);
+		      String getLast_level = String.format("SELECT last_level FROM degree INNER JOIN student ON degree.degree_id = student.degree_id WHERE email = ?");
 		      ResultSet rs;
 		      try (PreparedStatement pstmt = con.prepareStatement(getLast_level)){
+                                        pstmt.setString(1, email);
 				      	rs = pstmt.executeQuery();        // Get the result table from the query  3 
 				      	while (rs.next()) {               // Position the cursor                  4 
-					      	 lastLevel = rs.getString("current_level_of_study");        // Retrieve the sixth column value
+					      	 lastLevel = rs.getString("last_level");        // Retrieve the sixth column value
 				      	}
 				      	
 				      	rs.close();                       

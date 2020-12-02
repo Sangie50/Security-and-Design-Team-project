@@ -125,7 +125,7 @@ public class TeacherMenu extends JPanel {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String usernames = "SELECT student.email FROM student INNER JOIN "
+            String usernames = "SELECT DISTINCT student.email FROM student INNER JOIN "
                     + "module_grade ON student.email = module_grade.email INNER"
                     + " JOIN module ON module_grade.module_id = module.module_id"
                     + " INNER JOIN module_teacher ON module.module_id = "
@@ -138,9 +138,10 @@ public class TeacherMenu extends JPanel {
                 con.commit();
                 
                 while (usernameList.next()) {
-                	list.add(usernameList.getString("email"));	
+                	list.add(usernameList.getString("email"));
+                        
                 }
-                
+                usernameList.close();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();

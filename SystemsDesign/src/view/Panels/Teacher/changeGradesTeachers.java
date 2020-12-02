@@ -185,30 +185,31 @@ public class changeGradesTeachers extends JPanel {
         JButton addInitial = new JButton("Modify Initial Grade");
         addInitial.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String selectedModule =  (String) gradesBox.getSelectedItem();
-                String i = inGrade.getText().trim();
-                if("".equals(i)){
-                    i = "0";
-                }
-                Integer inGrade = Integer.parseInt(i);
-                try {
-                    Teachers.addGrade(selectedModule, studentEmail, inGrade);
-                } catch (SQLException ex) {
-                    Logger.getLogger(changeGradesTeachers.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                //View the changes
-                ArrayList list = null;
-                try {
-                    list = getGrades(studentEmail, selectedModule);
-                } catch (SQLException ex) {
-                    Logger.getLogger(changeGradesTeachers.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                Integer initialGrade = (int)list.get(0);
-                Integer resitGrade = (int)list.get(1);
-                String moduleName = (String)list.get(2);
-                in.setText(""+initialGrade+"");
-                re.setText(""+resitGrade+"");
-                nam.setText(moduleName);
+                EventQueue.invokeLater(new Runnable() {
+                    public void run() {
+                        String selectedModule =  (String) gradesBox.getSelectedItem();
+                        String i = inGrade.getText().trim();
+                        Integer inGrade = Integer.parseInt(i);
+                        try {
+                            Teachers.addGrade(selectedModule, studentEmail, inGrade);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(changeGradesTeachers.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        //View the changes
+                        ArrayList list = null;
+                        try {
+                            list = getGrades(studentEmail, selectedModule);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(changeGradesTeachers.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        Integer initialGrade = (int)list.get(0);
+                        Integer resitGrade = (int)list.get(1);
+                        String moduleName = (String)list.get(2);
+                        in.setText(""+initialGrade+"");
+                        re.setText(""+resitGrade+"");
+                        nam.setText(moduleName);
+                    }
+                });
             }
         });
         addInitial.setBounds(608, 240, 307, 35);

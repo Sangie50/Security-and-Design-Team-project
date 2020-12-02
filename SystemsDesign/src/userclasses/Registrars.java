@@ -249,17 +249,19 @@ public class Registrars extends Users {
 	        }	
 	 }
 	 
-	 public void deleteModule(String moduleId) throws SQLException {
+	 public void deleteModule(String email, String moduleId) throws SQLException {
 		 Connection con = null; 
 		 try {
 	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
-	            String preparedStmt = "DELETE FROM module_grade WHERE module_id = ?";
+	            String preparedStmt = "DELETE FROM module_grade WHERE email = ? AND module_id = ?";
 	            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
-	                updateStmt.setString(1, moduleId);
+	            	updateStmt.setString(1, email);
+	                updateStmt.setString(2, moduleId);
 	                updateStmt.execute();
 	                con.commit();   
+	                System.out.println("Deleted");
 	            }
 	            catch (SQLException ex) {
 	                ex.printStackTrace();
@@ -311,27 +313,29 @@ public class Registrars extends Users {
 	        }			 
 	 }
 	 
-	 public void checkCredits(String moduleId, String email, String entryLevel) throws SQLException{
+	 public int checkCredits(String email) throws SQLException{
 		 Connection con = null; 
+		 int totalCredits = 0;
+		 
 		 try {
 	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
-	            String credit = "SELECT creditWorth FROM module WHERE moduleId = ?";
+	            String credit = "SELECT credit_worth FROM module LEFT JOIN module_grade ON "
+	            		+ "module.module_id = module_grade.module_id WHERE email = ?";
 	            try (PreparedStatement updateCredit = con.prepareStatement(credit)){
-	            	int totalCredits = 0;
-	                updateCredit.setString(1, moduleId);
+	            	updateCredit.setString(1, email);
 	                //check whether undergrad or postgrad
 	                ResultSet maxCredits = updateCredit.executeQuery();
                 	while (maxCredits.next()) totalCredits += maxCredits.getInt(1);
-                	if (entryLevel.equals("U")) {
-	                	if (totalCredits != 120) System.err.println("Credits do not sum to 120. Invalid module selections.");
-	                	else System.out.println("Credits sum to 120.");
-                	}
-                	else {
-                		if(totalCredits != 180) System.err.println("Credits do not sum to 180. Invalid module selections");
-                		else System.out.println("Credits sum to 180");
-                	}
+//                	if (entryLevel.equals("U")) {
+//	                	if (totalCredits != 120) System.err.println("Credits do not sum to 120. Invalid module selections.");
+//	                	else System.out.println("Credits sum to 120.");
+//                	}
+//                	else {
+//                		if(totalCredits != 180) System.err.println("Credits do not sum to 180. Invalid module selections");
+//                		else System.out.println("Credits sum to 180");
+//                	}
 	            }
 	            catch (SQLException ex) {
 	                ex.printStackTrace();
@@ -346,7 +350,38 @@ public class Registrars extends Users {
 	        finally {
 	            if (con != null) con.close();
 	        }		
+		 return totalCredits;
+	 }
+	 
+	 public int getModuleCredits(String moduleId) throws SQLException {
+		 Connection con = null; 
+		 int totalCredits = 0;
 		 
+		 try {
+	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+	            con.setAutoCommit(false);
+	            Statement stmt = null;
+	            String credit = "SELECT credit_worth FROM module WHERE module_id = ?";
+	            try (PreparedStatement updateCredit = con.prepareStatement(credit)){
+	            	updateCredit.setString(1, moduleId);
+	                //check whether undergrad or postgrad
+	                ResultSet maxCredits = updateCredit.executeQuery();
+                	while (maxCredits.next()) totalCredits = maxCredits.getInt(1);
+	            }
+	            catch (SQLException ex) {
+	                ex.printStackTrace();
+	            }
+	            finally {
+	                if (stmt != null) stmt.close();
+	            }
+	        }
+	        catch (Exception ex) {
+	            ex.printStackTrace();
+	        }
+	        finally {
+	            if (con != null) con.close();
+	        }		
+		 return totalCredits;
 	 }
 	 
 
@@ -387,7 +422,7 @@ public class Registrars extends Users {
 		 return ar;
 	 }
 	 
-	 public static String[] getOptionalModulesList(String email) throws SQLException {
+	 public String[] getOptionalModulesList(String email) throws SQLException {
 		 Connection con = null; 
 		 LinkedHashSet<String> m = new LinkedHashSet<String>();
 		 try {
@@ -399,10 +434,9 @@ public class Registrars extends Users {
 	                modulesList.setString(1, email);
 	                ResultSet modulesSet = modulesList.executeQuery();
                 	while (modulesSet.next()) {
-                		m.add(modulesSet.getString("core_modules.module_id"));
+                		m.add(modulesSet.getString("module_id"));
                 	}
            		 System.out.println(m);
-
 	            }
 	            catch (SQLException ex) {
 	                ex.printStackTrace();

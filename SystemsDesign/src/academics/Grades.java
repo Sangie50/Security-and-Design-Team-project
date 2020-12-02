@@ -357,12 +357,12 @@ public class Grades { //create a constructor
 			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 		      con.setAutoCommit(false);
 		      Statement stmt = null;
-		      String getLast_level = String.format("SELECT last_level FROM degree WHERE degree_id = %s ", degreeId);
+		      String getLast_level = String.format("SELECT last_level FROM year_grade WHERE email = %s ", email);
 		      ResultSet rs;
 		      try (PreparedStatement pstmt = con.prepareStatement(getLast_level)){
 				      	rs = pstmt.executeQuery();        // Get the result table from the query  3 
 				      	while (rs.next()) {               // Position the cursor                  4 
-					      	 lastLevel = rs.getString(6);        // Retrieve the sixth column value
+					      	 lastLevel = rs.getString("current_level_of_study");        // Retrieve the sixth column value
 				      	}
 				      	
 				      	rs.close();                       

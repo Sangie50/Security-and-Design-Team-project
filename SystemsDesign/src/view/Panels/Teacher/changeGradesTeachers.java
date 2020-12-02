@@ -162,14 +162,15 @@ public class changeGradesTeachers extends JPanel {
         panel.add(nam);
         
         
-        
         JTextField inGrade = new JTextField();
         inGrade.setBounds(608, 200, 307, 35);
+        add(inGrade);
         panel.add(inGrade);
         inGrade.setColumns(10);
         
         JTextField reGrade = new JTextField();
         reGrade.setBounds(608, 320, 307, 35);
+        add(reGrade);
         panel.add(reGrade);
         reGrade.setColumns(10);
 
@@ -191,6 +192,7 @@ public class changeGradesTeachers extends JPanel {
                         String i = inGrade.getText().trim();
                         Integer inGrade = Integer.parseInt(i);
                         try {
+                            System.out.println(inGrade);
                             Teachers.addGrade(selectedModule, studentEmail, inGrade);
                         } catch (SQLException ex) {
                             Logger.getLogger(changeGradesTeachers.class.getName()).log(Level.SEVERE, null, ex);
@@ -218,32 +220,36 @@ public class changeGradesTeachers extends JPanel {
         JButton addResit = new JButton("Modify Resit Grades");
         addResit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String selectedModule =  (String) gradesBox.getSelectedItem();
-                String r = reGrade.getText().trim();
-                if("".equals(r)){
-                    r = "0";
-                }
-                Integer reGrade = Integer.parseInt(r);
-                
-                try {
-                    Teachers.addResitGrades(selectedModule, studentEmail, reGrade);
-                } catch (SQLException ex) {
-                    Logger.getLogger(changeGradesTeachers.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                EventQueue.invokeLater(new Runnable() {
+                    public void run() {
+                        String selectedModule =  (String) gradesBox.getSelectedItem();
+                        String r = reGrade.getText().trim();
+                        if("".equals(r)){
+                            r = "0";
+                        }
+                        Integer reGrade = Integer.parseInt(r);
 
-                //View the changes
-                ArrayList list = null;
-                try {
-                    list = getGrades(studentEmail, selectedModule);
-                } catch (SQLException ex) {
-                    Logger.getLogger(changeGradesTeachers.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                Integer initialGrade = (int)list.get(0);
-                Integer resitGrade = (int)list.get(1);
-                String moduleName = (String)list.get(2);
-                in.setText(""+initialGrade+"");
-                re.setText(""+resitGrade+"");
-                nam.setText(moduleName);
+                        try {
+                            Teachers.addResitGrades(selectedModule, studentEmail, reGrade);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(changeGradesTeachers.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                        //View the changes
+                        ArrayList list = null;
+                        try {
+                            list = getGrades(studentEmail, selectedModule);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(changeGradesTeachers.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        Integer initialGrade = (int)list.get(0);
+                        Integer resitGrade = (int)list.get(1);
+                        String moduleName = (String)list.get(2);
+                        in.setText(""+initialGrade+"");
+                        re.setText(""+resitGrade+"");
+                        nam.setText(moduleName);
+                    }
+                });
             }
         });
         addResit.setBounds(608, 360, 307, 35);

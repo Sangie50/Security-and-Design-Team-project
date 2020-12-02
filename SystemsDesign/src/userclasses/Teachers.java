@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.*;
 //Teacher class
 
-import userclasses.Users.UserTypes;
+import userclasses.Users.*;
 
 /*
 Methods:

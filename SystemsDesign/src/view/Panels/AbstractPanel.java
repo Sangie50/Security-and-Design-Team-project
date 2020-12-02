@@ -192,7 +192,7 @@ public abstract class AbstractPanel extends JPanel{
 	    }
 	}
 	
-	public static String[] getUsernames() throws SQLException{
+	public String[] getUsernames() throws SQLException{
 		ArrayList<String> list = new ArrayList<String>();
 		Connection con = null;
         try {
@@ -235,6 +235,78 @@ public abstract class AbstractPanel extends JPanel{
 		Date date = Date.valueOf(dd);
 
 		return date;
+	}
+	
+	public String[] getModuleId() throws SQLException {
+		ArrayList<String> list = new ArrayList<String>();
+		Connection con = null;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            Statement stmt = null;
+            String usernames = "SELECT module_id FROM module";
+            try (PreparedStatement getUsernames = con.prepareStatement(usernames)){
+                ResultSet usernameList = getUsernames.executeQuery();
+                con.commit();
+                
+                while (usernameList.next()) {
+                	list.add(usernameList.getString("module_id"));	
+                }
+                
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+        String[] moduleId = new String[list.size()];
+        moduleId = list.toArray(moduleId);
+        return moduleId;
+	
+	}
+	
+	public String[] getDegreeId() throws SQLException {
+		ArrayList<String> list = new ArrayList<String>();
+		Connection con = null;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            Statement stmt = null;
+            String usernames = "SELECT degree_id FROM degree";
+            try (PreparedStatement getUsernames = con.prepareStatement(usernames)){
+                ResultSet usernameList = getUsernames.executeQuery();
+                con.commit();
+                
+                while (usernameList.next()) {
+                	list.add(usernameList.getString("degree_id"));	
+                }
+                
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+        String[] degreeId = new String[list.size()];
+        degreeId = list.toArray(degreeId);
+        return degreeId;
+	
 	}
 	
 }

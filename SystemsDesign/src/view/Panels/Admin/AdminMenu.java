@@ -171,11 +171,16 @@ public class AdminMenu extends JPanel {
 		removeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				String selectedOption = (String) mainComboBox.getSelectedItem();
-		        if (selectedOption.equals("Users")) {
-					RemoveUserPanel removeUser = new RemoveUserPanel(contentPane, mainFrame);
-					System.out.println("should change panel now");
-					
+				if (selectedOption.equals("Degrees")) {
+					RemoveDegreePanel removeDegree = new RemoveDegreePanel(contentPane, mainFrame);					
 		        }
+				else if (selectedOption.equals("Modules")) {
+					RemoveModulePanel removeModule = new RemoveModulePanel(contentPane, mainFrame);					
+		        }
+				else if (selectedOption.equals("Users")) {
+					RemoveUserPanel removeUser = new RemoveUserPanel(contentPane, mainFrame);					
+		        }
+		        
 			    
 			}
 		});

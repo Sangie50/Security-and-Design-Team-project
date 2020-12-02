@@ -2,6 +2,8 @@ package userclasses;
 import java.sql.*;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import features.PasswordGen;
 
@@ -13,6 +15,7 @@ public class Users {
 	String accountType;
 	String password;
 	String salt = PasswordGen.getSalt(30);
+	
 	
 	public enum UserTypes {
 		ADMIN ("Admin"),
@@ -98,8 +101,10 @@ public class Users {
 	        		 }
 	            	}          	  	               
 	            }
-	            catch (SQLException ex) {
-	                ex.printStackTrace();
+	            catch (SQLException ex) {     
+
+	       		System.out.println("Error: Duplicate data detected ERROR CODE: " + ex.getErrorCode());
+	            	
 	            }
 	            finally {
 	                if (stmt != null) stmt.close();
@@ -135,6 +140,12 @@ public class Users {
 	
 	public String getPassword() {
 		return password;
+	}
+	
+	private String matchPattern(final String string, final String pattern) {
+	    final Pattern p = Pattern.compile(pattern);
+	    final Matcher m = p.matcher(string);	
+	    return string;
 	}
 	
 }

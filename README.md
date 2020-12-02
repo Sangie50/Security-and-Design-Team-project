@@ -1,4 +1,4 @@
-# COM 2008 Systems Design and Security Assignment 1
+c# COM 2008 Systems Design and Security Assignment 1
 ## Team 028
 
 To launch software is in the root folder of the src, called _"launchSoftware.java"_. There are 4 types of premade user types to access the different functionalities of the software depending on the user.
@@ -6,7 +6,7 @@ To launch software is in the root folder of the src, called _"launchSoftware.jav
 | User type | Username  | Password |
 |-----------|-----------|----------|
 | Student   | nameless  | password | 
-| Teacher   | teacher   | password |
+| Teacher   | ordinary  | password |
 | Admin     | normal    | password |
 | Registrar | registrar | password | 
 
@@ -21,3 +21,4 @@ Within each functionality, the registrar is provided with a form to fill to upda
 ## Admin
 
 ## Teacher
+The teacher account can view students taking the modules they teach. They can select the student's email to view the information of the modules they take; module name, initial mark and resit mark. They can edit the student's initial and resit mark separately.

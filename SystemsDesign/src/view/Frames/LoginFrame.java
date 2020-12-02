@@ -1,16 +1,21 @@
 package view.Frames;
 
+import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 
 import features.PasswordGen;
 import userclasses.Users.UserTypes;
 
 import javax.swing.JTextField;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import java.awt.event.ActionListener;
@@ -29,6 +34,9 @@ public class LoginFrame extends JFrame {
 	private JPanel contentPane;
 	private JTextField loginBox;
 	private JPasswordField passwordBox;
+	private JLabel error;
+	
+	private static final Color BLUE = new java.awt.Color(102, 153, 255);
 
 	/**
 	 * Launch the application.
@@ -54,32 +62,44 @@ public class LoginFrame extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		
+		TitledBorder title;
+		Border line = BorderFactory.createLineBorder(BLUE);
 		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		title = BorderFactory.createTitledBorder(line, "Login");
+		title.setTitleFont(new Font("Yu Gothic", Font.PLAIN, 13));
+		contentPane.setBorder(title);
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
 		//labels
 		
 		JLabel usernameLabel = new JLabel("Username");
-		usernameLabel.setBounds(21, 33, 117, 47);
+		usernameLabel.setBounds(21, 43, 117, 47);
+		usernameLabel.setFont(new Font("Yu Gothic", Font.PLAIN, 18));
 		contentPane.add(usernameLabel);
 		
 		JLabel passwordLabel = new JLabel("Password");
-		passwordLabel.setBounds(21, 78, 101, 74);
+		passwordLabel.setBounds(21, 88, 101, 74);
+		passwordLabel.setFont(new Font("Yu Gothic", Font.PLAIN, 18));
 		contentPane.add(passwordLabel);
+		
+		error = new JLabel();
+		error.setBounds(21,200, 301, 74);
+		error.setFont(new Font("Yu Gothic", Font.PLAIN, 15));
+		error.setForeground(Color.RED);
+		contentPane.add(error);
 		//-----------------------------------
 		
 		
 		//text fields
 		
 		passwordBox = new JPasswordField(20);
-		passwordBox.setBounds(143, 96, 207, 38);
+		passwordBox.setBounds(143, 106, 207, 38);
 		contentPane.add(passwordBox);
 		passwordBox.setColumns(10);
 
 		loginBox = new JTextField();
-		loginBox.setBounds(143, 37, 207, 38);
+		loginBox.setBounds(143, 47, 207, 38);
 		contentPane.add(loginBox);
 		loginBox.setColumns(5);
 		
@@ -90,14 +110,26 @@ public class LoginFrame extends JFrame {
 		//buttons
 		
 		JButton loginButton = new JButton("Login");
+		loginButton.setFont(new Font("Yu Gothic", Font.BOLD, 15));
+		loginButton.setBackground(BLUE);
+		loginButton.setOpaque(true);
+		loginButton.setBounds(160, 175, 117, 38);
+		loginButton.setBorderPainted(false);
+		loginButton.setFocusPainted(false);
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Logging in sequence...");
 			  	try {
-			  		String isUser = loginValidation(loginBox, passwordBox);
-			  		setVisible(false);
-			  		launchFrames(isUser, loginBox.getText());                    
-			  		System.out.println("TYPE: " + isUser);
+			  		if (loginBox.getText().isEmpty()) {
+						error.setText("*Username field is empty.");
+						setVisible(true);
+					}
+			  		else {
+			  			String isUser = loginValidation(loginBox, passwordBox);
+				  		setVisible(false);
+				  		launchFrames(isUser, loginBox.getText());                    
+				  		System.out.println("TYPE: " + isUser);
+			  		}
+			  		
 				} 
 			   	catch (SQLException e1) {
 					e1.printStackTrace();
@@ -105,12 +137,9 @@ public class LoginFrame extends JFrame {
 			}
 			
 		});
-		loginButton.setBounds(44, 155, 117, 38);
+		
 		contentPane.add(loginButton);
 		
-		JButton registerButton = new JButton("Register");
-		registerButton.setBounds(209, 155, 117, 38);
-		contentPane.add(registerButton);
 		//-----------------------------------
 	}
 
@@ -129,6 +158,7 @@ public class LoginFrame extends JFrame {
 		String type = "";
 		
 		Connection con = null; 
+		
 		try {
 	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	          con.setAutoCommit(false);

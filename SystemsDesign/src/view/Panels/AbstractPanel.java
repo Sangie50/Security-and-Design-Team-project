@@ -192,7 +192,7 @@ public abstract class AbstractPanel extends JPanel{
 	    }
 	}
 	
-	public String[] getUsernames() throws SQLException{
+	public static String[] getUsernames() throws SQLException{
 		ArrayList<String> list = new ArrayList<String>();
 		Connection con = null;
         try {

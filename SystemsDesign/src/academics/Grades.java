@@ -74,7 +74,8 @@ public class Grades { //create a constructor
           finally {
               if (con != null) con.close();
           }		
-		  return currentlevelOfStudy;
+		  return currentlevelOfStudy;   
+				      	
 	}	
 	   
         
@@ -377,10 +378,10 @@ public class Grades { //create a constructor
 		    	  
 		          while (rs.next()) {               
 			          lastLevel = rs.getString("last_level");
-		      	  }
 				      	
-		      	  rs.close();                       
-		      	  pstmt.close();  
+		          }
+		          rs.close();                       
+		      	  pstmt.close();
 				      	
 			   }
               catch (SQLException ex) {

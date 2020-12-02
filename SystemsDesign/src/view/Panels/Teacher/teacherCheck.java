@@ -77,6 +77,7 @@ public class teacherCheck extends JPanel {
                     tutor = rs.getString("personal_tutor");
                     resitYear = rs.getBoolean("resit_year");
                 }
+                rs.close();
             }
             catch (SQLException ex) {
                 ex.printStackTrace();

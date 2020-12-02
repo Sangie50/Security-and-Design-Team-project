@@ -73,12 +73,9 @@ public class TeacherMenu extends JPanel {
                 
             }
         });
-        changeGradesPage.setBounds(608, 163, 307, 35);
+        changeGradesPage.setBounds(608, 277, 307, 35);
         contentPane.add(changeGradesPage);
 
-        JButton modulesPage = new JButton("Add/ remove modules");
-        modulesPage.setBounds(608, 247, 307, 35);
-        contentPane.add(modulesPage);
 	
         JButton logoutButton = new JButton("Logout");
         logoutButton.addActionListener(new ActionListener() {

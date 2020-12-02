@@ -131,31 +131,6 @@ public class changeGradesTeachers extends JPanel {
         na.setBounds(21, 320, 148, 26);
         panel.add(na); 
         
-        JComboBox<String> gradesBox = new JComboBox<>(getModules(studentEmail,username));
-        gradesBox.setBounds(81, 400, 277, 45);
-        panel.add(gradesBox);
-        panel.add(gradesBox, BorderLayout.PAGE_START);
-        
-        JButton viewGrades = new JButton("View Grades");
-        viewGrades.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    String selectedModule =  (String) gradesBox.getSelectedItem();
-                    ArrayList list = new ArrayList();
-                    list = getGrades(studentEmail, selectedModule);
-                    Integer initialGrade = (int)list.get(0);
-                    Integer resitGrade = (int)list.get(1);
-                    Integer moduleName = (int)list.get(2);
-                } catch (SQLException ex) {
-                    Logger.getLogger(changeGradesTeachers.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-        viewGrades.setBounds(608, 200, 307, 35);
-        panel.add(viewGrades);
-        
-        
-        
 
         JLabel email = new JLabel(studentEmail);
         email.setBounds(221, 80, 156, 26);
@@ -200,7 +175,31 @@ public class changeGradesTeachers extends JPanel {
         changeGradesPage.setBounds(608, 360, 307, 35);
         panel.add(changeGradesPage);
         
+        JComboBox<String> gradesBox = new JComboBox<>(getModules(studentEmail,username));
+        gradesBox.setBounds(81, 400, 277, 45);
+        panel.add(gradesBox);
+        panel.add(gradesBox, BorderLayout.PAGE_START);
         
+        JButton viewGrades = new JButton("View Grades");
+        viewGrades.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    String selectedModule =  (String) gradesBox.getSelectedItem();
+                    ArrayList list = new ArrayList();
+                    list = getGrades(studentEmail, selectedModule);
+                    Integer initialGrade = (int)list.get(0);
+                    Integer resitGrade = (int)list.get(1);
+                    String moduleName = (String)list.get(2);
+                    in.setText(""+initialGrade+"");
+                    re.setText(""+resitGrade+"");
+                    nam.setText(moduleName);
+                } catch (SQLException ex) {
+                    Logger.getLogger(changeGradesTeachers.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        viewGrades.setBounds(608, 200, 307, 35);
+        panel.add(viewGrades);
 
         JButton backButton = new JButton("Back");
         backButton.addActionListener(new ActionListener() {

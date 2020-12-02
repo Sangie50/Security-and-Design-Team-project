@@ -384,6 +384,7 @@ public class Grades { //create a constructor
 		        }	
 		 return lastLevel;
 	}
+        
 	public static Double getResitYearGrade(String email, String levelOfStudy) throws SQLException {
 		Double resitYearGrade = null;
 		Connection con = null; 
@@ -415,6 +416,7 @@ public class Grades { //create a constructor
 		        }	
 		 return resitYearGrade;
 	}
+        
 	public static Double getFinalDegreeGrade(String email) throws SQLException{
 		String entryLevel = getEntryLevel(email);
 		String lastLevel = getLastLevelOfStudy(email);
@@ -448,6 +450,7 @@ public class Grades { //create a constructor
 		}
 		return finalGrade;
 	}
+        
 	public static String degradeDegreeId(String email) throws SQLException {
 		String currentDegree = Students.getDegreeName(email);
 		String degreeName = currentDegree.substring(currentDegree.indexOf(' ') + 1);

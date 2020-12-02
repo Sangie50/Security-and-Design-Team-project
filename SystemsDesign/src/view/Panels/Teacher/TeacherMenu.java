@@ -75,6 +75,23 @@ public class TeacherMenu extends JPanel {
         });
         changeGradesPage.setBounds(608, 277, 307, 35);
         contentPane.add(changeGradesPage);
+        
+        JButton check = new JButton("Check Student Degree");
+        check.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JPanel menu = null;
+                try {
+                    String selectedEmail =  (String) emailBox.getSelectedItem();
+                    menu = new teacherCheck(contentPane, username, selectedEmail, mainFrame);
+                    contentPane.add(menu);
+                } catch (SQLException ex) {
+                    Logger.getLogger(TeacherMenu.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+            }
+        });
+        check.setBounds(608, 320, 307, 35);
+        contentPane.add(check);
 
 	
         JButton logoutButton = new JButton("Logout");

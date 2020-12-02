@@ -1,5 +1,6 @@
 package view.Panels.Teacher;
 
+import java.awt.BorderLayout;
 import view.Panels.Teacher.TeacherMenu;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -24,6 +25,9 @@ import javax.swing.JRadioButton;
 import javax.swing.JComboBox;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 
 public class changeGradesTeachers extends JPanel {
@@ -38,7 +42,7 @@ public class changeGradesTeachers extends JPanel {
  * @param studentEmail
      * @throws SQLException 
      */
-    public changeGradesTeachers(JPanel panel, String username, String studentEmail) throws SQLException {
+    public changeGradesTeachers(JPanel panel, String username, String studentEmail, JFrame mainFrame) throws SQLException {
         panel.removeAll();
         panel.revalidate();
         panel.repaint();
@@ -115,7 +119,7 @@ public class changeGradesTeachers extends JPanel {
         tut.setBounds(21, 200, 148, 26);
         panel.add(tut);
         
-        JLabel ini = new JLabel("Initial Grade:");
+        /*JLabel ini = new JLabel("Initial Grade:");
         ini.setBounds(21, 240, 148, 26);
         panel.add(ini);
         
@@ -125,7 +129,7 @@ public class changeGradesTeachers extends JPanel {
         
         JLabel na = new JLabel("Module Name:");
         na.setBounds(21, 320, 148, 26);
-        panel.add(na);
+        panel.add(na); */
         
         
 
@@ -145,7 +149,7 @@ public class changeGradesTeachers extends JPanel {
         tuto.setBounds(221, 200, 156, 26);
         panel.add(tuto);
         
-        JLabel in = new JLabel(""+initialGrade+"");
+        /*JLabel in = new JLabel(""+initialGrade+"");
         in.setBounds(221, 240, 156, 26);
         panel.add(in);
         
@@ -155,91 +159,28 @@ public class changeGradesTeachers extends JPanel {
         
         JLabel nam = new JLabel(moduleName);
         nam.setBounds(221, 320, 156, 26);
-        panel.add(nam);
+        panel.add(nam);*/
+        
+        JComboBox<String> gradesBox = new JComboBox<>(getModules(studentEmail,username));
+        gradesBox.setBounds(81, 400, 277, 45);
+        panel.add(gradesBox);
+        panel.add(gradesBox, BorderLayout.PAGE_START);
 
-        /*JButton addStudent = new JButton("Add Student");
-        addStudent.setBounds(20, 576, 202, 35);
-        panel.add(addStudent);
-
-        JButton removeStudent = new JButton("Remove Student");
-        removeStudent.setBounds(409, 576, 202, 35);
-        panel.add(removeStudent);
-
-        degreeId = new JTextField();
-        degreeId.setBounds(221, 248, 186, 32);
-        panel.add(degreeId);
-        degreeId.setColumns(10);
-
-        JLabel degreeLabel = new JLabel("Degree ID:");
-        degreeLabel.setBounds(21, 251, 179, 26);
-        panel.add(degreeLabel);
-
-        JLabel creditsLabel = new JLabel("Total Credits:");
-        creditsLabel.setBounds(21, 298, 179, 26);
-        panel.add(creditsLabel);
-
-        JLabel difficultyLabel = new JLabel("Difficulty:");
-        difficultyLabel.setBounds(21, 345, 92, 26);
-        panel.add(difficultyLabel);
-
-        JLabel startDateLabel = new JLabel("Start Date:");
-        startDateLabel.setBounds(21, 392, 179, 26);
-        panel.add(startDateLabel);
-
-        JLabel endDateLabel = new JLabel("End Date:");
-        endDateLabel.setBounds(21, 439, 179, 26);
-        panel.add(endDateLabel);
-
-        JLabel personalTutorLabel = new JLabel("Personal Tutor:");
-        personalTutorLabel.setBounds(21, 486, 179, 26);
-        panel.add(personalTutorLabel);
-
-        JRadioButton undergradCredits = new JRadioButton("120");
-        undergradCredits.setBounds(221, 294, 186, 35);
-        panel.add(undergradCredits);
-
-        JRadioButton postgradCredits = new JRadioButton("180");
-        postgradCredits.setBounds(410, 294, 201, 35);
-        panel.add(postgradCredits);
-
-
-        String[] difficultyLevels = {"MEng", "BEng", "MSc", "BSc", "MPsy", "BPsy"};
-        JComboBox<String> difficulty = new JComboBox<>(difficultyLevels);
-        difficulty.setBounds(221, 342, 186, 32);
-        panel.add(difficulty);
-
-
-        JLabel instruction = new JLabel("Fill in the form below for adding a student. Otherwise, click \"Remove Student\".");
-        instruction.setBounds(21, 201, 854, 26);
-        panel.add(instruction);
-        JComboBox startDay = new JComboBox();
-        startDay.setBounds(221, 389, 67, 32);
-        panel.add(startDay);
-
-        JComboBox startMonth = new JComboBox();
-        startMonth.setBounds(321, 389, 109, 32);
-        panel.add(startMonth);
-
-        JComboBox startYear = new JComboBox();
-        startYear.setBounds(458, 389, 109, 32);
-        panel.add(startYear);
-
-        JComboBox endDay = new JComboBox();
-        endDay.setBounds(221, 436, 67, 32);
-        panel.add(endDay);
-
-        JComboBox endMonth = new JComboBox();
-        endMonth.setBounds(321, 436, 109, 32);
-        panel.add(endMonth);
-
-        JComboBox endYear = new JComboBox();
-        endYear.setBounds(458, 436, 109, 32);
-        panel.add(endYear);
-
-        personalTutor = new JTextField();
-        personalTutor.setBounds(221, 483, 186, 32);
-        panel.add(personalTutor);
-        personalTutor.setColumns(10); */
+        JLabel user = new JLabel("Student's Modules You Teach:");
+        user.setBounds(81, 360, 277, 26);
+        panel.add(user);
+        
+        JButton changeGradesPage = new JButton("Add/Modify Grades");
+        changeGradesPage.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JPanel menu = null;
+                String selectedEmail =  (String) gradesBox.getSelectedItem();
+                panel.add(menu);
+                
+            }
+        });
+        changeGradesPage.setBounds(608, 360, 307, 35);
+        panel.add(changeGradesPage);
 
         JButton backButton = new JButton("Back");
         backButton.addActionListener(new ActionListener() {
@@ -248,7 +189,8 @@ public class changeGradesTeachers extends JPanel {
                 EventQueue.invokeLater(new Runnable() {
                     public void run() {
                         try {
-                            JPanel menu = new TeacherMenu(panel, username);
+                            mainFrame.setVisible(false);
+                            JPanel menu = new TeacherMenu(panel, username, mainFrame);
                             panel.add(menu);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -260,7 +202,7 @@ public class changeGradesTeachers extends JPanel {
         backButton.setBounds(620, 50, 141, 35);
         panel.add(backButton);
         
-/*        JButton logoutButton = new JButton("Logout");
+        JButton logoutButton = new JButton("Logout");
         logoutButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
@@ -277,173 +219,52 @@ public class changeGradesTeachers extends JPanel {
             }
         });
         logoutButton.setBounds(620, 576, 141, 35);
-        panel.add(logoutButton); */
+        panel.add(logoutButton); 
         
-		
-
-
-//
-//		     try {
-//		         con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
-//		         con.setAutoCommit(false);
-//
-//		         String accType = "SELECT account_type FROM user WHERE username = ?";
-//		         try (PreparedStatement checkAccType = con.prepareStatement(accType)){
-//		        	 checkAccType.setString(1, name);
-//		             ResultSet rs = checkAccType.executeQuery();
-//		             con.commit();
-//		              
-//		             while (rs.next()) {
-//			             type = rs.getString(1);
-//
-//		             }
-//		             
-//		         }
-//		         catch (SQLException ex) {
-//		             ex.printStackTrace();
-//		         }
-//		         finally {
-//		             if (stmt != null) stmt.close();
-//		         }
-//		     }
-//		     catch (Exception ex) {
-//		         ex.printStackTrace();
-//		     }
-//		     finally {
-//		         if (con != null) con.close();
-//		     }
-//		
-//		
-//		JScrollPane scrollPane = new JScrollPane();
-//		scrollPane.setBounds(221,5,2,2);
-//		add(scrollPane);
-//
-//		JLabel infoLabel = new JLabel("User Information");
-//		infoLabel.setFont(new Font("Tahoma", Font.BOLD, 21));
-//		infoLabel.setBounds(21, 21, 202, 26);
-//		add(infoLabel);
-//		
-//		JLabel accountTypeLabel = new JLabel("Account Type:");
-//		accountTypeLabel.setBounds(21, 68, 202, 26);
-//		add(accountTypeLabel);
-//		
-//		JLabel usernameLabel = new JLabel("Username:");
-//		usernameLabel.setBounds(21, 115, 148, 26);
-//		add(usernameLabel);
-//		
-//		JLabel accountType = new JLabel(type);
-//		accountType.setBounds(221, 68, 156, 26);
-//		add(accountType);
-//		
-//		JLabel username = new JLabel(name);
-//		username.setBounds(221, 115, 156, 26);
-//		add(username);
-//		
-//		JButton addStudent = new JButton("Add Student");
-//		addStudent.setBounds(20, 576, 202, 35);
-//		add(addStudent);
-//		
-//		JButton removeStudent = new JButton("Remove Student");
-//		removeStudent.setBounds(409, 576, 202, 35);
-//		add(removeStudent);
-//		
-//		degreeId = new JTextField();
-//		degreeId.setBounds(221, 248, 186, 32);
-//		add(degreeId);
-//		degreeId.setColumns(10);
-//		
-//		JLabel degreeLabel = new JLabel("Degree ID:");
-//		degreeLabel.setBounds(21, 251, 179, 26);
-//		add(degreeLabel);
-//		
-//		JLabel creditsLabel = new JLabel("Total Credits:");
-//		creditsLabel.setBounds(21, 298, 179, 26);
-//		add(creditsLabel);
-//		
-//		JLabel difficultyLabel = new JLabel("Difficulty:");
-//		difficultyLabel.setBounds(21, 345, 92, 26);
-//		add(difficultyLabel);
-//		
-//		JLabel startDateLabel = new JLabel("Start Date:");
-//		startDateLabel.setBounds(21, 392, 179, 26);
-//		add(startDateLabel);
-//		
-//		JLabel endDateLabel = new JLabel("End Date:");
-//		endDateLabel.setBounds(21, 439, 179, 26);
-//		add(endDateLabel);
-//		
-//		JLabel personalTutorLabel = new JLabel("Personal Tutor:");
-//		personalTutorLabel.setBounds(21, 486, 179, 26);
-//		add(personalTutorLabel);
-//		
-//		JRadioButton undergradCredits = new JRadioButton("120");
-//		undergradCredits.setBounds(221, 294, 186, 35);
-//		add(undergradCredits);
-//		
-//		JRadioButton postgradCredits = new JRadioButton("180");
-//		postgradCredits.setBounds(410, 294, 201, 35);
-//		add(postgradCredits);
-//		
-////		
-////		String[] difficultyLevels = {"MEng", "BEng", "MSc", "BSc", "MPsy", "BPsy"};
-////		JComboBox<String> difficulty = new JComboBox<>(difficultyLevels);
-////		difficulty.setBounds(221, 342, 186, 32);
-////		add(difficulty);
-//
-//		
-//		JLabel instruction = new JLabel("Fill in the form below for adding a student. Otherwise, click \"Remove Student\".");
-//		instruction.setBounds(21, 201, 854, 26);
-//		add(instruction);
-//		
-//		JComboBox startDay = new JComboBox();
-//		startDay.setBounds(221, 389, 67, 32);
-//		add(startDay);
-//		
-//		JComboBox startMonth = new JComboBox();
-//		startMonth.setBounds(321, 389, 109, 32);
-//		add(startMonth);
-//		
-//		JComboBox startYear = new JComboBox();
-//		startYear.setBounds(458, 389, 109, 32);
-//		add(startYear);
-//		
-//		JComboBox endDay = new JComboBox();
-//		endDay.setBounds(221, 436, 67, 32);
-//		add(endDay);
-//		
-//		JComboBox endMonth = new JComboBox();
-//		endMonth.setBounds(321, 436, 109, 32);
-//		add(endMonth);
-//		
-//		JComboBox endYear = new JComboBox();
-//		endYear.setBounds(458, 436, 109, 32);
-//		add(endYear);
-//		
-//		personalTutor = new JTextField();
-//		personalTutor.setBounds(221, 483, 186, 32);
-//		add(personalTutor);
-//		personalTutor.setColumns(10);
-//		
-//		JButton backButton = new JButton("Back");
-//		backButton.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				setVisible(false);
-//	    		EventQueue.invokeLater(new Runnable() {
-//					public void run() {
-//						try {
-//							RegistrarFrame frame = new RegistrarFrame();
-//							frame.setVisible(true);
-//						} catch (Exception e) {
-//							e.printStackTrace();
-//						}
-//					}
-//				});
-//			}
-//		});
-//		backButton.setBounds(873, 17, 141, 35);
-//		add(backButton);
-
-
 
 	}
+    public String[] getModules(String studentEmail, String username) throws SQLException{
+        ArrayList<String> list = new ArrayList<String>();
+        Connection con = null;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            Statement stmt = null;
+            String usernames = "SELECT * FROM student INNER JOIN "
+                    + "module_grade ON student.email = module_grade.email INNER"
+                    + " JOIN module ON module_grade.module_id = module.module_id"
+                    + " INNER JOIN module_teacher ON module.module_id = "
+                    + "module_teacher.module_id INNER JOIN teacher ON "
+                    + "module_teacher.employee_no = teacher.employee_no WHERE"
+                    + " teacher.username = ? AND student.email = ?";
+            try (PreparedStatement getUsernames = con.prepareStatement(usernames)){
+                getUsernames.setString(1, username);
+                getUsernames.setString(2, studentEmail);
+                ResultSet usernameList = getUsernames.executeQuery();
+                con.commit();
+                
+                while (usernameList.next()) {
+                	list.add(usernameList.getString("module_id"));	
+                }
+                
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+        String[] arr = new String[list.size()];
+        arr = list.toArray(arr);
+        return arr;
+	
+    }
+
 }

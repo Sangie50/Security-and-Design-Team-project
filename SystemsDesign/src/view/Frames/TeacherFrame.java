@@ -61,8 +61,9 @@ public class TeacherFrame extends JFrame {
         setContentPane(contentPane);
         contentPane.setLayout(null);
         
-        JPanel menu = new TeacherMenu(contentPane, username);
-
+        
+        JPanel menu = new TeacherMenu(contentPane, username,this);
+        /*
         JButton logoutButton = new JButton("Logout");
         logoutButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -80,7 +81,7 @@ public class TeacherFrame extends JFrame {
             }
         });
         logoutButton.setBounds(795, 550, 141, 35);
-        contentPane.add(logoutButton);
+        contentPane.add(logoutButton);*/
 
     }
 }

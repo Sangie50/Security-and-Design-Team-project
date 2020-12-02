@@ -37,7 +37,7 @@ public class TeacherMenu extends JPanel {
      * @param username
      * @throws SQLException 
      */
-    public TeacherMenu(JPanel contentPane, String username) throws SQLException {
+    public TeacherMenu(JPanel contentPane, String username, JFrame mainFrame) throws SQLException {
         contentPane.removeAll();
         contentPane.revalidate();
         contentPane.repaint();
@@ -65,7 +65,7 @@ public class TeacherMenu extends JPanel {
                 JPanel menu = null;
                 try {
                     String selectedEmail =  (String) emailBox.getSelectedItem();
-                    menu = new changeGradesTeachers(contentPane, username, selectedEmail);
+                    menu = new changeGradesTeachers(contentPane, username, selectedEmail, mainFrame);
                     contentPane.add(menu);
                 } catch (SQLException ex) {
                     Logger.getLogger(TeacherMenu.class.getName()).log(Level.SEVERE, null, ex);
@@ -87,6 +87,7 @@ public class TeacherMenu extends JPanel {
                 EventQueue.invokeLater(new Runnable() {
                     public void run() {
                         try {
+                            mainFrame.setVisible(false);
                             LoginFrame frame = new LoginFrame();
                             frame.setVisible(true);
                         } catch (Exception e) {
@@ -144,6 +145,6 @@ public class TeacherMenu extends JPanel {
         arr = list.toArray(arr);
         return arr;
 	
-	}
+    }
 
 }

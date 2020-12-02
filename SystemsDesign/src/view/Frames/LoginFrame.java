@@ -37,6 +37,9 @@ public class LoginFrame extends JFrame {
 	private JLabel error;
 	
 	private static final Color BLUE = new java.awt.Color(102, 153, 255);
+	private static final Font BORDER_FONT = new Font("Yu Gothic", Font.BOLD, 13);
+	private static final Font LABEL_FONT = new Font("Yu Gothic", Font.PLAIN, 18);
+	private static final Font ERROR_FONT = new Font("Yu Gothic", Font.PLAIN, 13);
 
 	/**
 	 * Launch the application.
@@ -66,7 +69,7 @@ public class LoginFrame extends JFrame {
 		Border line = BorderFactory.createLineBorder(BLUE);
 		contentPane = new JPanel();
 		title = BorderFactory.createTitledBorder(line, "Login");
-		title.setTitleFont(new Font("Yu Gothic", Font.PLAIN, 13));
+		title.setTitleFont(BORDER_FONT);
 		contentPane.setBorder(title);
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -75,17 +78,17 @@ public class LoginFrame extends JFrame {
 		
 		JLabel usernameLabel = new JLabel("Username");
 		usernameLabel.setBounds(21, 43, 117, 47);
-		usernameLabel.setFont(new Font("Yu Gothic", Font.PLAIN, 18));
+		usernameLabel.setFont(LABEL_FONT);
 		contentPane.add(usernameLabel);
 		
 		JLabel passwordLabel = new JLabel("Password");
 		passwordLabel.setBounds(21, 88, 101, 74);
-		passwordLabel.setFont(new Font("Yu Gothic", Font.PLAIN, 18));
+		passwordLabel.setFont(LABEL_FONT);
 		contentPane.add(passwordLabel);
 		
 		error = new JLabel();
-		error.setBounds(21,200, 301, 74);
-		error.setFont(new Font("Yu Gothic", Font.PLAIN, 15));
+		error.setBounds(21,200, 401, 74);
+		error.setFont(ERROR_FONT);
 		error.setForeground(Color.RED);
 		contentPane.add(error);
 		//-----------------------------------
@@ -110,7 +113,7 @@ public class LoginFrame extends JFrame {
 		//buttons
 		
 		JButton loginButton = new JButton("Login");
-		loginButton.setFont(new Font("Yu Gothic", Font.BOLD, 15));
+		loginButton.setFont(BORDER_FONT);
 		loginButton.setBackground(BLUE);
 		loginButton.setOpaque(true);
 		loginButton.setBounds(160, 175, 117, 38);
@@ -119,8 +122,8 @@ public class LoginFrame extends JFrame {
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			  	try {
-			  		if (loginBox.getText().isEmpty()) {
-						error.setText("*Username field is empty.");
+			  		if (loginBox.getText().isEmpty() || passwordBox.getText().isEmpty()) {
+						error.setText("*Username or password field is empty.");
 						setVisible(true);
 					}
 			  		else {

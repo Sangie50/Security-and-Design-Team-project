@@ -42,7 +42,11 @@ public class StudentMenu extends AbstractPanel{
 	
 	private JTable modulesTable;
 	private DefaultTableModel model = new DefaultTableModel();
-	private static JScrollPane scroll;
+	private JScrollPane scroll;
+	private static final Font LABEL_FONT = new Font("Yu Gothic", Font.PLAIN, 18);
+
+	private static final Font TITLE_FONT = new Font("Yu Gothic", Font.BOLD, 21);
+
 
 	/**
 	 * Create the panel.
@@ -52,7 +56,7 @@ public class StudentMenu extends AbstractPanel{
 		Students student = getStudent(username);
 	
 		JLabel title = new JLabel("Student Page");
-		title.setFont(title.getFont().deriveFont(title.getFont().getStyle() | Font.BOLD));
+		title.setFont(TITLE_FONT);
 		title.setBounds(413, 21, 224, 71);
 		contentPane.add(title);
 		

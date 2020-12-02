@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import userclasses.Teachers;
 
 public class changeGradesTeachers extends JPanel {
 //    private JTable table;
@@ -157,28 +158,95 @@ public class changeGradesTeachers extends JPanel {
         panel.add(re);
         
         JLabel nam = new JLabel(moduleName);
-        nam.setBounds(221, 320, 156, 26);
+        nam.setBounds(221, 320, 450, 26);
         panel.add(nam);
         
         
+        
+        JTextField inGrade = new JTextField();
+        inGrade.setBounds(608, 200, 307, 35);
+        panel.add(inGrade);
+        inGrade.setColumns(10);
+        
+        JTextField reGrade = new JTextField();
+        reGrade.setBounds(608, 320, 307, 35);
+        panel.add(reGrade);
+        reGrade.setColumns(10);
 
         JLabel user = new JLabel("Student's Modules You Teach:");
         user.setBounds(81, 360, 277, 26);
         panel.add(user);
         
-        JButton changeGradesPage = new JButton("Add/Modify Grades");
-        changeGradesPage.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                
-            }
-        });
-        changeGradesPage.setBounds(608, 360, 307, 35);
-        panel.add(changeGradesPage);
-        
         JComboBox<String> gradesBox = new JComboBox<>(getModules(studentEmail,username));
         gradesBox.setBounds(81, 400, 277, 45);
         panel.add(gradesBox);
         panel.add(gradesBox, BorderLayout.PAGE_START);
+        
+        JButton addInitial = new JButton("Modify Initial Grade");
+        addInitial.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String selectedModule =  (String) gradesBox.getSelectedItem();
+                String i = inGrade.getText().trim();
+                if("".equals(i)){
+                    i = "0";
+                }
+                Integer inGrade = Integer.parseInt(i);
+                try {
+                    Teachers.addGrade(selectedModule, studentEmail, inGrade);
+                } catch (SQLException ex) {
+                    Logger.getLogger(changeGradesTeachers.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                //View the changes
+                ArrayList list = null;
+                try {
+                    list = getGrades(studentEmail, selectedModule);
+                } catch (SQLException ex) {
+                    Logger.getLogger(changeGradesTeachers.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                Integer initialGrade = (int)list.get(0);
+                Integer resitGrade = (int)list.get(1);
+                String moduleName = (String)list.get(2);
+                in.setText(""+initialGrade+"");
+                re.setText(""+resitGrade+"");
+                nam.setText(moduleName);
+            }
+        });
+        addInitial.setBounds(608, 240, 307, 35);
+        panel.add(addInitial);
+        
+        JButton addResit = new JButton("Modify Resit Grades");
+        addResit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String selectedModule =  (String) gradesBox.getSelectedItem();
+                String r = reGrade.getText().trim();
+                if("".equals(r)){
+                    r = "0";
+                }
+                Integer reGrade = Integer.parseInt(r);
+                
+                try {
+                    Teachers.addResitGrades(selectedModule, studentEmail, reGrade);
+                } catch (SQLException ex) {
+                    Logger.getLogger(changeGradesTeachers.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                //View the changes
+                ArrayList list = null;
+                try {
+                    list = getGrades(studentEmail, selectedModule);
+                } catch (SQLException ex) {
+                    Logger.getLogger(changeGradesTeachers.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                Integer initialGrade = (int)list.get(0);
+                Integer resitGrade = (int)list.get(1);
+                String moduleName = (String)list.get(2);
+                in.setText(""+initialGrade+"");
+                re.setText(""+resitGrade+"");
+                nam.setText(moduleName);
+            }
+        });
+        addResit.setBounds(608, 360, 307, 35);
+        panel.add(addResit);
         
         JButton viewGrades = new JButton("View Grades");
         viewGrades.addActionListener(new ActionListener() {
@@ -198,7 +266,7 @@ public class changeGradesTeachers extends JPanel {
                 }
             }
         });
-        viewGrades.setBounds(608, 200, 307, 35);
+        viewGrades.setBounds(100, 480, 150, 26);
         panel.add(viewGrades);
 
         JButton backButton = new JButton("Back");
@@ -208,7 +276,7 @@ public class changeGradesTeachers extends JPanel {
                 EventQueue.invokeLater(new Runnable() {
                     public void run() {
                         try {
-                            mainFrame.setVisible(false);
+                            
                             JPanel menu = new TeacherMenu(panel, username, mainFrame);
                             panel.add(menu);
                         } catch (Exception e) {
@@ -228,6 +296,7 @@ public class changeGradesTeachers extends JPanel {
                 EventQueue.invokeLater(new Runnable() {
                     public void run() {
                         try {
+                            mainFrame.setVisible(false);
                             LoginFrame frame = new LoginFrame();
                             frame.setVisible(true);
                         } catch (Exception e) {

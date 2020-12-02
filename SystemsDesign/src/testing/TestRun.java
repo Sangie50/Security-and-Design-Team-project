@@ -103,7 +103,7 @@ public class TestRun {
         
         
         
-        
+        Grades.degreeClassification(email);
         /*Teachers.updateGrades("COM1001", email,75);
         Teachers.updateGrades("COM1002", email,75);
         Teachers.updateGrades("COM1003", email,75);
@@ -113,7 +113,7 @@ public class TestRun {
         Teachers.updateGrades("COM1009", email,75);
         Teachers.updateGrades("FCE1001", email,75);*/
         
-        // registrar; generic, admin; normal, teacher; ordinary
+        // registrar; registrar, admin; normal, teacher; ordinary
         
         /*Users teacher = new Users("ordinary", "Mr", "Incredibly", "Generic", "password");
         Admins.updatePermission("ordinary", UserTypes.TEACHER.toString());

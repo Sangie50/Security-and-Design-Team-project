@@ -163,8 +163,11 @@ public class TestRun {
 //    	Boolean pass = Grades.yearPassed("SmithJohnny01", "1");
 //    	System.out.println(pass);
     	
-    	int entry = Grades.getResitYearGrade("SmithJohnny01", "1");
-    	System.out.println(entry);
+        //String period = Students.generatePeriodOfStudy("SmithJon01");
+        //System.out.println(period);
+        
+    	//int entry = Grades.getResitYearGrade("SmithJohnny01", "1");
+    	//System.out.println(entry);
         
         
         

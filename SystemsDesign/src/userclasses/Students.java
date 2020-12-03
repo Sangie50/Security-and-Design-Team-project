@@ -565,7 +565,10 @@ public boolean getResitYear() throws SQLException {
 		      try (PreparedStatement pstmt = con.prepareStatement(getdegree)){
 				  pstmt.setString(1, email);    	
 		    	  rs = pstmt.executeQuery();        // Get the result table from the query  3 
-				      	degreeId = rs.getString(4);        // Retrieve the fourth column value
+				  
+		    	  while (rs.next()) {
+			    	  degreeId = rs.getString("degree_id");        // Retrieve the fourth column value
+		    	  }
 					      
 				      	rs.close();                       // Close the ResultSet                  5 
 				      	pstmt.close();                    
@@ -594,12 +597,16 @@ public boolean getResitYear() throws SQLException {
 			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 		      con.setAutoCommit(false);
 		      Statement stmt = null;
-		      String getdegree = String.format("SELECT degree_name FROM degree WHERE degree_id = %s ", degreeId) ;
+		      String getdegree = "SELECT degree_name FROM degree WHERE degree_id = ? ";
 		      ResultSet rs;
 		      try (PreparedStatement pstmt = con.prepareStatement(getdegree)){
 				  pstmt.setString(1, degreeId);    	
-		    	  rs = pstmt.executeQuery();        // Get the result table from the query  3 
-				      	degreeName = rs.getString(5);        // Retrieve the fifth column value
+		    	  rs = pstmt.executeQuery();   
+		    	  // Get the result table from the query  3 
+				  while (rs.next()) {
+			    	  degreeName = rs.getString("degree_name");        // Retrieve the fifth column value
+
+				  }
 				      	rs.close();                       // Close the ResultSet                  5 
 				      	pstmt.close();                    
 				          }

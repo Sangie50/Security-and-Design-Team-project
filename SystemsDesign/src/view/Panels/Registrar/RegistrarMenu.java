@@ -81,12 +81,7 @@ public class RegistrarMenu extends AbstractPanel {
 		//-------------------
 		
 		//buttons 
-	
-		JButton checkModulePage = new JButton("Check module sum");
-		checkModulePage.setBounds(608, 425, 307, 35);
-		contentPane.add(checkModulePage);
-		
-		
+
 		
 		JButton logout = new JButton("Logout");
 		logout.setBounds(608, 525, 307, 35);
@@ -134,7 +129,7 @@ public class RegistrarMenu extends AbstractPanel {
 			public void actionPerformed(ActionEvent e) {
 				JPanel modules = null;
 				try {
-					if (isStudent((String) usernameBox.getSelectedItem())) {
+					if (isType((String) usernameBox.getSelectedItem(), UserTypes.STUDENT.toString())) {
 						
 					try {
 						modules = new ChangeModules(contentPane, (String) usernameBox.getSelectedItem(), mainFrame, registrar);
@@ -162,7 +157,7 @@ public class RegistrarMenu extends AbstractPanel {
 		checkRegisterPage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					if (isStudent((String) usernameBox.getSelectedItem())) {
+					if (isType((String) usernameBox.getSelectedItem(), UserTypes.STUDENT.toString())) {
 						try {
 							JPanel register = new CheckRegistered(contentPane, (String) usernameBox.getSelectedItem(), mainFrame, registrar);
 						} catch (SQLException e1) {
@@ -171,7 +166,7 @@ public class RegistrarMenu extends AbstractPanel {
 						}
 					}
 					else {
-						error.setText("Cannot check registration of a non-student account.");
+						error.setText("*Cannot check registration of a non-student account.");
 					}
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
@@ -180,6 +175,31 @@ public class RegistrarMenu extends AbstractPanel {
 				
 			}
 		});
+		
+		JButton teacherPage = new JButton("Add/remove teacher");
+		teacherPage.setBounds(608, 425, 307, 35);
+		contentPane.add(teacherPage);
+		teacherPage.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			try {
+				if (isType((String) usernameBox.getSelectedItem(), UserTypes.TEACHER.toString())) {
+					try {
+						JPanel addTeacher = new TeacherModule(contentPane, (String) usernameBox.getSelectedItem(), mainFrame, registrar);
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+				else {
+					error.setText("*Cannot assign to a non-teacher account.");
+				}
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				}
+			}
+		});
+		
 		
 			
 		//------------------
@@ -191,41 +211,5 @@ public class RegistrarMenu extends AbstractPanel {
 		
 	}
 
-	
-	
-	
-	public boolean isStudent(String username) throws SQLException {
-		Connection con = null;
-		String accountType = "";
-        try {
-            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
-            con.setAutoCommit(false);
-            Statement stmt = null;
-            String type = "SELECT account_type FROM user WHERE username = ?";
-            try (PreparedStatement getType = con.prepareStatement(type)){
-            	getType.setString(1, username);
-                ResultSet types = getType.executeQuery();
-                con.commit();
-                
-                while (types.next()) {
-                	accountType = types.getString("account_type");	
-                }
-                
-            }
-            catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-            finally {
-                if (stmt != null) stmt.close();
-            }
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        finally {
-            if (con != null) con.close();
-        }
-    	return accountType.equals(UserTypes.STUDENT.toString());
 
-	}
 }

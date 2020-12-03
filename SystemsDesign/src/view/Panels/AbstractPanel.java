@@ -13,6 +13,7 @@ import javax.swing.table.DefaultTableModel;
 import userclasses.Admins;
 import userclasses.Registrars;
 import userclasses.Students;
+import userclasses.Teachers;
 import userclasses.Users.UserTypes;
 
 import javax.swing.JComboBox;
@@ -172,6 +173,62 @@ public abstract class AbstractPanel extends JPanel{
 			return registrar;
 		}
 	 
+	public Teachers getTeacher(String username) throws SQLException {
+		  System.out.println("Executing getting teacher...");
+		  Teachers teacher = null;
+		  Connection con = null; 
+
+		  String title = "";
+		  String surname = "";
+		  String forename = "";
+		  String password = "";
+	      String departmentId = "";
+	
+			try {
+		          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+		          System.out.println("Connected to database...");
+		          con.setAutoCommit(false);
+		          Statement stmt = null;
+		          String getInfo = "SELECT employee_no, department_id, user.title, user.surname, "
+		          		+ "user.forename, user.password FROM teacher LEFT JOIN user ON "
+		          		+ "user.username = teacher.username WHERE teacher.username = ?";
+		          
+		          try (PreparedStatement teacherInfo = con.prepareStatement(getInfo)){
+		        	  System.out.println("Executing prepared statements...");
+		              teacherInfo.setString(1, username);
+		              ResultSet info = teacherInfo.executeQuery();
+		              con.commit();
+		          
+			          while (info.next()) {
+					        departmentId = info.getString("department_id");	
+					        title = info.getString("title");
+					        surname = info.getString("surname");
+					        forename = info.getString("forename");
+					        password = info.getString("password");
+			          }
+	
+			          teacher = new Teachers(username, title, surname, forename, password, departmentId);
+	
+				      System.out.println("Teacher info retrieved!");
+		                
+		           }
+		           catch (SQLException ex) {
+		                ex.printStackTrace();
+		            }
+		            finally {
+		                if (stmt != null) stmt.close();
+		            }
+		        }
+		        catch (Exception ex) {
+		            ex.printStackTrace();
+		        }
+		        finally {
+		            if (con != null) con.close();
+		        }	
+			return teacher;
+		}
+	
+	
 	public void insertStudentsTable(String username, String email, DefaultTableModel model) throws SQLException {
 		String[] headers = { "Module ID", "Initial Grade", "Resit Grade", "Module Name", "Credits Worth", "Department ID" , "Pass Grade"};
 
@@ -235,6 +292,44 @@ public abstract class AbstractPanel extends JPanel{
 		Date date = Date.valueOf(dd);
 
 		return date;
+	}
+	
+	
+	
+	
+	public boolean isType(String username, String accType) throws SQLException {
+		Connection con = null;
+		String accountType = "";
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            Statement stmt = null;
+            String type = "SELECT account_type FROM user WHERE username = ?";
+            try (PreparedStatement getType = con.prepareStatement(type)){
+            	getType.setString(1, username);
+                ResultSet types = getType.executeQuery();
+                con.commit();
+                
+                while (types.next()) {
+                	accountType = types.getString("account_type");	
+                }
+                
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+    	return accountType.equals(accType);
+
 	}
 	
 }

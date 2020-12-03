@@ -43,6 +43,137 @@ public class Students extends Users{
   	addStudent(username, degreeId, totalCredits, difficulty, startDate, endDate, personalTutor);
 
   }
+  
+  public String getEmail() {
+	  	return email;
+	  }
+
+public Date getstartDate() {
+	  return startDate;
+}
+	  
+public Date getEndDate() {
+	  return endDate;
+}
+
+public int getTotalCredits() {
+	  return totalCredits;
+}
+
+public String getDegreeId() {
+	  return degreeId;
+}
+
+public String getPersonalTutor() {
+	return personalTutor;
+}
+
+public int getRegistrationId() throws SQLException {
+	  Connection con = null;
+    Statement stmt = null;
+
+	     try {
+	         con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+	         con.setAutoCommit(false);
+
+	         String regId = "SELECT registration_id FROM student WHERE username = ?";
+	         try (PreparedStatement checkRegId = con.prepareStatement(regId)){
+	        	 checkRegId.setString(1, username);
+	             ResultSet rs = checkRegId.executeQuery();
+	             con.commit();
+	              
+	             while (rs.next()) {
+		             registrationId = rs.getInt(1);
+		         }
+	             
+	         }
+	         catch (SQLException ex) {
+	             ex.printStackTrace();
+	         }
+	         finally {
+	             if (stmt != null) stmt.close();
+	         }
+	     }
+	     catch (Exception ex) {
+	         ex.printStackTrace();
+	     }
+	     finally {
+	         if (con != null) con.close();
+	     }
+	  return registrationId;
+}
+
+public int getInitialGrade() throws SQLException {
+	Connection con = null;
+    Statement stmt = null;
+    int initialGrade = 0;
+
+	     try {
+	         con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+	         con.setAutoCommit(false);
+
+	         String initGrade = "SELECT initial_grade FROM module_grade WHERE email = ?";
+	         try (PreparedStatement getInit = con.prepareStatement(initGrade)){
+	        	 getInit.setString(1, email);
+	             ResultSet rs = getInit.executeQuery();
+	             con.commit();
+	              
+	             while (rs.next()) {
+		             initialGrade = rs.getInt(1);
+		         }
+	             
+	         }
+	         catch (SQLException ex) {
+	             ex.printStackTrace();
+	         }
+	         finally {
+	             if (stmt != null) stmt.close();
+	         }
+	     }
+	     catch (Exception ex) {
+	         ex.printStackTrace();
+	     }
+	     finally {
+	         if (con != null) con.close();
+	     }
+	  return initialGrade;
+}
+
+public int getResitGrade() throws SQLException {
+	Connection con = null;
+    Statement stmt = null;
+    int resitGrade = 0;
+
+	     try {
+	         con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+	         con.setAutoCommit(false);
+
+	         String reGrade = "SELECT resit_grade FROM module_grade WHERE email = ?";
+	         try (PreparedStatement getRe = con.prepareStatement(reGrade)){
+	        	 getRe.setString(1, email);
+	             ResultSet rs = getRe.executeQuery();
+	             con.commit();
+	              
+	             while (rs.next()) {
+		             resitGrade = rs.getInt(1);
+		         }
+	             
+	         }
+	         catch (SQLException ex) {
+	             ex.printStackTrace();
+	         }
+	         finally {
+	             if (stmt != null) stmt.close();
+	         }
+	     }
+	     catch (Exception ex) {
+	         ex.printStackTrace();
+	     }
+	     finally {
+	         if (con != null) con.close();
+	     }
+	  return resitGrade;
+}
   public void addStudent(String username, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor ) throws SQLException {
         
   	 Connection con = null;
@@ -97,61 +228,7 @@ public class Students extends Users{
      }
   }
   
-  public String getEmail() {
-	  	return email;
-	  }
-  
-  public Date getstartDate() {
-	  return startDate;
-  }
-	  
-  public Date getEndDate() {
-	  return endDate;
-  }
-  
-  public int getTotalCredits() {
-	  return totalCredits;
-  }
-  
-  public int getRegistrationId() throws SQLException {
-	  Connection con = null;
-      Statement stmt = null;
 
-	     try {
-	         con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
-	         con.setAutoCommit(false);
-
-	         String regId = "SELECT registration_id FROM student WHERE username = ?";
-	         try (PreparedStatement checkRegId = con.prepareStatement(regId)){
-	        	 checkRegId.setString(1, username);
-	             ResultSet rs = checkRegId.executeQuery();
-	             con.commit();
-	              
-	             while (rs.next()) {
-		             registrationId = rs.getInt(1);
-		         }
-	             
-	         }
-	         catch (SQLException ex) {
-	             ex.printStackTrace();
-	         }
-	         finally {
-	             if (stmt != null) stmt.close();
-	         }
-	     }
-	     catch (Exception ex) {
-	         ex.printStackTrace();
-	     }
-	     finally {
-	         if (con != null) con.close();
-	     }
-	  return registrationId;
-  }
-  
-  public String getDegreeId() {
-	  return degreeId;
-  }
-  
 	  
 
   public static String emailGen(String surname, String forename, String username) throws SQLException{
@@ -371,44 +448,14 @@ public class Students extends Users{
   	}
 	 }
   
-  public void displayPersonalTutor(String email) throws SQLException {
-		 Connection con = null; 
-		 try {
-				 	con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
-		      con.setAutoCommit(false);
-		      Statement stmt = null;
-		      String getpt = "SELECT personal_tutor FROM student WHERE email = ? " ;
-		      String personalTutor;
-		      ResultSet rs;
-		      try (PreparedStatement pstmt = con.prepareStatement(getpt)){
-				      	rs = pstmt.executeQuery();        // Get the result table from the query  3 
-				      	personalTutor = rs.getString(9);        // Retrieve the ninth column value
-					      System.out.println("Personal tutor = " + personalTutor); // Print the column values
-				      	
-				      	rs.close();                       // Close the ResultSet                  5 
-				      	pstmt.close();                    
-				          }
-		            catch (SQLException ex) {
-		                ex.printStackTrace();
-		            }
-		            finally {
-		                if (stmt != null) stmt.close();
-		            }
-		        }
-		        catch (Exception ex) {
-		            ex.printStackTrace();
-		        }
-		        finally {
-		            if (con != null) con.close();
-		        }		 
-	 }
+ 
 	 
   
   public static String getDegreeId(String email) throws SQLException {
   	 String degreeId = null;
 		 Connection con = null; 
 		 try {
-				 	con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 		      con.setAutoCommit(false);
 		      Statement stmt = null;
 		      String getdegree = "SELECT degree_id FROM student WHERE email = ? " ;
@@ -440,7 +487,7 @@ public class Students extends Users{
 	  String degreeId = getDegreeId(email);
 	  Connection con = null; 
 		 try {
-			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 		      con.setAutoCommit(false);
 		      Statement stmt = null;
 		      String getdegree = String.format("SELECT degree_name FROM degree WHERE degree_id = %s ", degreeId) ;
@@ -466,6 +513,7 @@ public class Students extends Users{
 		        }	
 	 return degreeName;
   }
+  
   public void displayDegree(String email) throws SQLException {
   	String degreeName = getDegreeName(email);
     String degreeId = getDegreeId(email);
@@ -475,7 +523,7 @@ public class Students extends Users{
   public void displayTotalGrade(String email) throws SQLException {
 		 Connection con = null; 
 		 try {
-			con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+			con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 		      con.setAutoCommit(false);
 		      Statement stmt = null;
 		      String getTg = "SELECT overall_grade FROM year_grade WHERE email = ? " ;
@@ -507,7 +555,7 @@ public class Students extends Users{
 	  Boolean progress_to_next_level = null;
 	  Connection con = null; 
 		 try {
-			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 		      con.setAutoCommit(false);
 		      Statement stmt = null;
 		      String getProgress = "SELECT progress_to_next_level FROM year_grade WHERE email = ? " ;

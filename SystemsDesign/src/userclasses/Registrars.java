@@ -111,10 +111,10 @@ public class Registrars extends Users {
 				             password = rs.getString("password");
 
 			             }
-			             new Students(username, title, surname, forename, password,
+			             Students student = new Students(username, title, surname, forename, password,
 			            		degreeId, totalCredits, difficulty, startDate, endDate, personalTutor);
 			             Admins.updatePermission(username, UserTypes.STUDENT.toString());
-			             System.out.println("new student created!");
+			             System.out.println("new student created! " + student.getEmail());
 			         }
 			         catch (SQLException ex) {
 			             ex.printStackTrace();

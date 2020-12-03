@@ -29,7 +29,11 @@ import java.awt.event.ActionEvent;
 
 public class TeacherFrame extends JFrame {
 
-    private JPanel contentPane;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 434234123L;
+	private JPanel contentPane;
 
     /**
      * Launch the application.
@@ -53,6 +57,7 @@ public class TeacherFrame extends JFrame {
      * @throws SQLException 
      */
     public TeacherFrame(String username) throws SQLException {
+    	
         this.username = username;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 1035, 650);
@@ -62,7 +67,7 @@ public class TeacherFrame extends JFrame {
         contentPane.setLayout(null);
         
         
-        JPanel menu = new TeacherMenu(contentPane, username,this);
+        JPanel menu = new TeacherMenu(contentPane, username, this);
         /*
         JButton logoutButton = new JButton("Logout");
         logoutButton.addActionListener(new ActionListener() {

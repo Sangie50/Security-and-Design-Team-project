@@ -126,11 +126,11 @@ public class TeacherMenu extends AbstractPanel {
                 EventQueue.invokeLater(new Runnable() {
                     public void run() {
                         try {
-                            mainFrame.setVisible(false);
-                            LoginFrame frame = new LoginFrame();
-                            frame.setVisible(true);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                            String selectedUsername =  (String) usernameBox.getSelectedItem();
+                            JPanel progress = new WeightedMeanGrade(contentPane, selectedUsername, mainFrame, teacher);
+                            contentPane.add(progress);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(TeacherMenu.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 });
@@ -138,6 +138,27 @@ public class TeacherMenu extends AbstractPanel {
         });
         logoutButton.setBounds(620, 576, 141, 35);
         contentPane.add(logoutButton); 
+        
+        JButton progressStudent = new JButton("Progress Student");
+        progressStudent.setBounds(608, 363, 307, 35);
+        contentPane.add(progressStudent);
+        progressStudent.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setVisible(false);
+                EventQueue.invokeLater(new Runnable() {
+                    public void run() {
+                    	JPanel progress = null;
+                        try {
+                            String selectedUsername =  (String) usernameBox.getSelectedItem();
+                            progress = new WeightedMeanGrade(contentPane, selectedUsername, mainFrame, teacher);
+                            contentPane.add(progress);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(TeacherMenu.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                });
+            }
+        });
         
     }
     //-----------------------------------------

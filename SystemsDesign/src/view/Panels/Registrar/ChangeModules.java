@@ -108,6 +108,7 @@ public class ChangeModules extends AbstractPanel{
 		contentPane.add(optionalModulesList);
 		
 		System.out.println("Student email: " + student.getEmail());
+		System.out.println(studentUsername);
 		JComboBox<String> existingModulesList = new JComboBox<>(registrar.getModulesList(student.getEmail()));
 		existingModulesList.setBounds(719, 471, 247, 32);
 		contentPane.add(existingModulesList);

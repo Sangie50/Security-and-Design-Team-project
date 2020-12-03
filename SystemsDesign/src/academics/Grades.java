@@ -678,14 +678,15 @@ public class Grades { //create a constructor
 	
 	public static String degreeClassification(String email) throws SQLException{
 		//check if they have completed their degree
-		String degreeName = Students.getDegreeName(email);
-		String degreeTitle = degreeName.substring(0, degreeName.indexOf(' '));
-		double degreeGrade = getFinalDegreeGrade(email);
-		Integer dissertationMarks = getDissertationMarks(email);
 		String classification = null;
-		String lastLevel = getLastLevelOfStudy(email);
+		
 		try {
+			String degreeName = Students.getDegreeName(email);
+			String degreeTitle = degreeName.substring(0, degreeName.indexOf(' '));
+			double degreeGrade = getFinalDegreeGrade(email);
+			Integer dissertationMarks = getDissertationMarks(email);
 			
+			String lastLevel = getLastLevelOfStudy(email);
 			if (lastLevel == String.valueOf(LevelsOfStudy.BACHELORS)) {
 				if (degreeGrade >= 69.5) {
 					classification = "first class";

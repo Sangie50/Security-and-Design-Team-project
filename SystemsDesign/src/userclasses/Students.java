@@ -43,6 +43,76 @@ public class Students extends Users{
   	
 
   }
+  public void addStudent(String username, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor ) throws SQLException {
+	     System.out.println("This is add STUDENT");
+	  	 Connection con = null;
+	  	 boolean preExisting = false;
+	     try {
+	         con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+	         con.setAutoCommit(false);
+	         Statement stmt = null;
+	         String gradeTable = "INSERT INTO year_grade(email, level_of_study,"
+	         		+ " period_of_study, current_level_of_study) VALUES (?,?,?,?)";
+	         String checkExisting = "SELECT username, email FROM student WHERE username = ?";
+	         String preparedStmt = "INSERT INTO student(email, username, resit_year, degree_id, "
+	         		+ "total_credits, difficulty, start_date, end_date, personal_tutor)"
+	         		+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	         try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt);
+	        		 PreparedStatement checkStmt = con.prepareStatement(checkExisting);
+	        		 PreparedStatement update = con.prepareStatement(gradeTable)){
+	        	 checkStmt.setString(1, username);
+	        	 ResultSet existingUsers = checkStmt.executeQuery();
+	        	 con.commit();
+	        	 
+	        	 while (existingUsers.next()) {
+	        		 if (username.equals(existingUsers.getString("username"))) {
+	        			 this.email = existingUsers.getString("email");
+	        			 System.out.println("email" + this.email);
+	        			 preExisting = true;
+	        			 System.err.println("Student/username already exists.");
+	        		 }
+	        		 
+	        	 }
+	        	 if (preExisting == false) {
+	        		 System.out.println("inside not preexisting");
+	        		 email = emailGen(surname, forename);
+	    			 updateStmt.setString(1, email);
+	                 updateStmt.setString(2, username);
+	                 updateStmt.setBoolean(3, false);
+	                 updateStmt.setString(4, degreeId);
+	                 updateStmt.setInt(5, totalCredits); 
+	                 updateStmt.setString(6, difficulty);
+	                 updateStmt.setDate(7, startDate);
+	                 updateStmt.setDate(8, endDate);
+	                 updateStmt.setString(9, personalTutor);
+	                 
+	                 updateStmt.executeUpdate();
+	                 
+	                 update.setString(1, email);
+	                 update.setString(2, "1");
+	                 update.setString(3, "A");
+	                 update.setString(4, "1");
+	                 update.executeUpdate();
+	                 System.out.println("Hello");
+	                 con.commit();
+	        	 }
+	        	 
+	             
+	         }
+	         catch (SQLException ex) {
+	             ex.printStackTrace();
+	         }
+	         finally {
+	             if (stmt != null) stmt.close();
+	         }
+	     }
+	     catch (Exception ex) {
+	         ex.printStackTrace();
+	     }
+	     finally {
+	         if (con != null) con.close();
+	     }
+	  }
   
   public String getEmail() {
 	  	return email;
@@ -212,78 +282,12 @@ public boolean getResitYear() throws SQLException {
 	  return resitYear;
 }
 
-public void addStudent(String username, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor ) throws SQLException {
-     System.out.println("This is add STUDENT");
-  	 Connection con = null;
-  	 boolean preExisting = false;
-     try {
-         con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
-         con.setAutoCommit(false);
-         Statement stmt = null;
-         String gradeTable = "INSERT INTO year_grade(email, level_of_study,"
-         		+ " period_of_study, current_level_of_study) VALUES (?,?,?,?)";
-         String checkExisting = "SELECT username, email FROM student WHERE username = ?";
-         String preparedStmt = "INSERT INTO student(email, username, resit_year, degree_id, "
-         		+ "total_credits, difficulty, start_date, end_date, personal_tutor)"
-         		+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-         try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt);
-        		 PreparedStatement checkStmt = con.prepareStatement(checkExisting);
-        		 PreparedStatement update = con.prepareStatement(gradeTable)){
-        	 checkStmt.setString(1, username);
-        	 ResultSet existingUsers = checkStmt.executeQuery();
-        	 con.commit();
-        	 
-        	 while (existingUsers.next()) {
-        		 if (username.equals(existingUsers.getString("username"))) {
-        			 email = existingUsers.getString("email");
-        			 preExisting = true;
-        			 System.err.println("Student/username already exists.");
-        		 }
-        	 }
-        	 if (!preExisting) {
-        		 email = emailGen(surname, forename, username);
-    			 updateStmt.setString(1, email);
-                 updateStmt.setString(2, username);
-                 updateStmt.setBoolean(3, false);
-                 updateStmt.setString(4, degreeId);
-                 updateStmt.setInt(5, totalCredits); 
-                 updateStmt.setString(6, difficulty);
-                 updateStmt.setDate(7, startDate);
-                 updateStmt.setDate(8, endDate);
-                 updateStmt.setString(9, personalTutor);
-                 
-                 updateStmt.executeUpdate();
-                 
-                 update.setString(1, email);
-                 update.setString(2, "1");
-                 update.setString(3, "A");
-                 update.setString(4, "1");
-                 update.executeUpdate();
-                 System.out.println("Hello");
-                 con.commit();
-        	 }
-        	 
-             
-         }
-         catch (SQLException ex) {
-             ex.printStackTrace();
-         }
-         finally {
-             if (stmt != null) stmt.close();
-         }
-     }
-     catch (Exception ex) {
-         ex.printStackTrace();
-     }
-     finally {
-         if (con != null) con.close();
-     }
-  }
+
   
 
 	  
 
-  public static String emailGen(String surname, String forename, String username) throws SQLException{
+  public String emailGen(String surname, String forename) throws SQLException{
     String initials = forename.substring(0,1).toUpperCase();
     int a = 1;
     String rest = "@sheff.ac.uk";
@@ -454,6 +458,47 @@ public void addStudent(String username, String degreeId, int totalCredits, Strin
 	  return list;
   }
   
+  
+  public String[] getAllLevelsOfStudy(String email) throws SQLException {
+	  ArrayList<String> list = new ArrayList<String>();
+	  Connection con = null; 
+		 try {
+	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+		      con.setAutoCommit(false);
+		      Statement stmt = null;
+		      String levels ="SELECT level_of_study FROM year_grade WHERE email = ?";
+		      
+		      ResultSet rs;
+
+		      try (PreparedStatement pstmt = con.prepareStatement(levels)){
+		    	  	pstmt.setString(1, email);
+				    rs = pstmt.executeQuery();  					
+		      	 	while (rs.next()) {
+		      		    list.add(rs.getString("level_of_study"));
+				    }
+		      }
+		            catch (SQLException ex) {
+		                ex.printStackTrace();
+		            }
+		            finally {
+		                if (stmt != null) stmt.close();
+		            }
+		        }
+		        catch (Exception ex) {
+		            ex.printStackTrace();
+		        }
+		        finally {
+		            if (con != null) con.close();
+		        }		
+		 String[] arr = new String[list.size()];
+		 for (int i = 0; i < list.size(); i++) {
+			 arr[i] = list.get(i);
+		 }
+	 	System.out.println(list);
+
+	  return arr;
+  }
+  
   public static List<Integer> moduleCredits(String email, String levelOfStudy, List<String> moduleList) throws SQLException{
   	List<Integer> creditsList = new ArrayList<>();
   	for(int i =0; i < moduleList.size(); i++) {
@@ -518,7 +563,8 @@ public void addStudent(String username, String degreeId, int totalCredits, Strin
 		      String getdegree = "SELECT degree_id FROM student WHERE email = ? " ;
 		      ResultSet rs;
 		      try (PreparedStatement pstmt = con.prepareStatement(getdegree)){
-				      	rs = pstmt.executeQuery();        // Get the result table from the query  3 
+				  pstmt.setString(1, email);    	
+		    	  rs = pstmt.executeQuery();        // Get the result table from the query  3 
 				      	degreeId = rs.getString(4);        // Retrieve the fourth column value
 					      
 				      	rs.close();                       // Close the ResultSet                  5 
@@ -531,8 +577,9 @@ public void addStudent(String username, String degreeId, int totalCredits, Strin
 		                if (stmt != null) stmt.close();
 		            }
 		        }
-		        catch (Exception ex) {
-		            ex.printStackTrace();
+		        catch (SQLException ex) {
+		            System.err.println("Error code: " + ex.getErrorCode() 
+		            + "// Not enough data entered for student to display info.");
 		        }
 		        finally {
 		            if (con != null) con.close();
@@ -550,7 +597,8 @@ public void addStudent(String username, String degreeId, int totalCredits, Strin
 		      String getdegree = String.format("SELECT degree_name FROM degree WHERE degree_id = %s ", degreeId) ;
 		      ResultSet rs;
 		      try (PreparedStatement pstmt = con.prepareStatement(getdegree)){
-				      	rs = pstmt.executeQuery();        // Get the result table from the query  3 
+				  pstmt.setString(1, degreeId);    	
+		    	  rs = pstmt.executeQuery();        // Get the result table from the query  3 
 				      	degreeName = rs.getString(5);        // Retrieve the fifth column value
 				      	rs.close();                       // Close the ResultSet                  5 
 				      	pstmt.close();                    

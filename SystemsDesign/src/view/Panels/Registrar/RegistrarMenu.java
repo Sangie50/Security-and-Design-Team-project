@@ -136,7 +136,7 @@ public class RegistrarMenu extends AbstractPanel {
 				JPanel modules = null;
 				try {
 					if (isType((String) usernameBox.getSelectedItem(), UserTypes.STUDENT.toString())) {
-						
+						System.out.println("Username: " + (String) usernameBox.getSelectedItem() +  "of type: " + UserTypes.STUDENT.toString());
 					try {
 						modules = new ChangeModules(contentPane, (String) usernameBox.getSelectedItem(), mainFrame, registrar);
 					} catch (SQLException e1) {

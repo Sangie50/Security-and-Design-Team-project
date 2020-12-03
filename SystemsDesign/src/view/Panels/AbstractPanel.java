@@ -105,10 +105,25 @@ public abstract class AbstractPanel extends JPanel{
 				        accountType = info.getString("account_type");
 				        password = info.getString("password");
 		          }
-
 		          user = new Users(username,title, surname, forename, password);
-
-			      System.out.println("User info retrieved!");
+		          String updateType = "";
+		          if (accountType.equals(UserTypes.STUDENT.toString())) {
+			          updateType = UserTypes.STUDENT.toString();
+		          }
+		          else if (accountType.equals(UserTypes.TEACHER.toString())) {
+		        	  updateType = UserTypes.TEACHER.toString();
+		          }
+		          else if (accountType.equals(UserTypes.REGISTRAR.toString())) {
+		        	  updateType = UserTypes.REGISTRAR.toString();
+		          }
+		          else if (accountType.equals(UserTypes.ADMIN.toString())){
+		        	  updateType = UserTypes.ADMIN.toString();
+		          }
+		          else if (accountType.equals(UserTypes.UNASSIGNED.toString())){
+		        	  updateType = UserTypes.UNASSIGNED.toString();
+		          }
+		          user.setAccountType(updateType);
+			      System.out.println("User accountType: " + accountType);
 	                
 	           }
 	           catch (SQLException ex) {
@@ -170,7 +185,7 @@ public abstract class AbstractPanel extends JPanel{
 					        password = info.getString("password");
 			          }
 
-			          student = new Students(username,title, surname, forename, password, degree, credits, difficulty, startDate, endDate, personalTutor);
+			          student = new Students(username, title, surname, forename, password, degree, credits, difficulty, startDate, endDate, personalTutor);
 
 				      System.out.println("Student info retrieved!");
 		                

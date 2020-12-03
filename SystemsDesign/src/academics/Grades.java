@@ -44,6 +44,7 @@ public class Grades { //create a constructor
 	    	return this.action;
 	    }
 	}
+	
 	public static String getDegreeId(String email) throws SQLException {
 		String degreeId = null;
 		Connection con = null; 
@@ -81,6 +82,7 @@ public class Grades { //create a constructor
 		return degreeId;
 		
 	}
+	
 	public static String getDeptId(String email) throws SQLException {
 		String degreeId = getDegreeId(email);
 		String deptId = null;
@@ -645,66 +647,73 @@ public class Grades { //create a constructor
 		Integer dissertationMarks = getDissertationMarks(email);
 		String classification = null;
 		String lastLevel = getLastLevelOfStudy(email);
-		if (lastLevel == String.valueOf(LevelsOfStudy.BACHELORS)) {
-			if (degreeGrade >= 69.5) {
-				classification = "first class";
+		try {
+			
+			if (lastLevel == String.valueOf(LevelsOfStudy.BACHELORS)) {
+				if (degreeGrade >= 69.5) {
+					classification = "first class";
+				}
+				else if (degreeGrade >= 59.5 && degreeGrade <= 69.4) {
+					classification = "upper second";
+				} 
+				else if (degreeGrade >= 49.5 && degreeGrade <= 59.4) {
+					classification = "lower second";
+				}
+				else if (degreeGrade >= 44.5 && degreeGrade <= 49.4) {
+					classification = "third class";
+				}
+				else if (degreeGrade >= 39.5 && degreeGrade <= 44.4) {
+					classification = "pass (non-honours)";
+				}
+				else if (degreeGrade < 39.5) {
+					classification = "fail";
+				}
 			}
-			else if (degreeGrade >= 59.5 && degreeGrade <= 69.4) {
-				classification = "upper second";
-			} 
-			else if (degreeGrade >= 49.5 && degreeGrade <= 59.4) {
-				classification = "lower second";
+			else if (lastLevel == String.valueOf(LevelsOfStudy.MASTERS)) {
+				if (degreeGrade >= 69.5) {
+					classification = "first class";
+				}
+				else if (degreeGrade >= 59.5 && degreeGrade <= 69.4) {
+					classification = "upper second";
+				}
+				else if (degreeGrade >= 49.5 && degreeGrade <= 59.4) {
+					classification = "lower second";
+				}
+				else if (degreeGrade < 49.4) {
+					classification = "fail";
+				}
 			}
-			else if (degreeGrade >= 44.5 && degreeGrade <= 49.4) {
-				classification = "third class";
+			else if (lastLevel == String.valueOf(LevelsOfStudy.PG) && dissertationMarks >= 49.5) {
+				if (degreeGrade >= 69.5) {
+					classification = "distinction";
+				}
+				else if (degreeGrade >= 59.5 && degreeGrade <= 69.4) {
+					classification = "merit";
+				}
+				else if (degreeGrade >= 49.5 && degreeGrade <= 59.4) {
+					classification = "pass";
+				}
+				else if (degreeGrade < 49.4) {
+					classification = "fail";
+				}
 			}
-			else if (degreeGrade >= 39.5 && degreeGrade <= 44.4) {
-				classification = "pass (non-honours)";
+			else if (lastLevel == String.valueOf(LevelsOfStudy.PG) && dissertationMarks < 49.5) {
+				if (degreeGrade >= 49.5) {
+					String degradedDegreeId = degradeDegreeId(email);
+					updateDegree(email, degradedDegreeId);
+					classification = "pass";
+				}
 			}
-			else if (degreeGrade < 39.5) {
-				classification = "fail";
+			else if (degreeTitle == "PGCert") {
+				if (degreeGrade >= 49.5) {
+					classification = "pass";
+				}
 			}
 		}
-		else if (lastLevel == String.valueOf(LevelsOfStudy.MASTERS)) {
-			if (degreeGrade >= 69.5) {
-				classification = "first class";
-			}
-			else if (degreeGrade >= 59.5 && degreeGrade <= 69.4) {
-				classification = "upper second";
-			}
-			else if (degreeGrade >= 49.5 && degreeGrade <= 59.4) {
-				classification = "lower second";
-			}
-			else if (degreeGrade < 49.4) {
-				classification = "fail";
-			}
+		catch (SQLException e){
+			System.err.println("Not enough student data to display info.");
 		}
-		else if (lastLevel == String.valueOf(LevelsOfStudy.PG) && dissertationMarks >= 49.5) {
-			if (degreeGrade >= 69.5) {
-				classification = "distinction";
-			}
-			else if (degreeGrade >= 59.5 && degreeGrade <= 69.4) {
-				classification = "merit";
-			}
-			else if (degreeGrade >= 49.5 && degreeGrade <= 59.4) {
-				classification = "pass";
-			}
-			else if (degreeGrade < 49.4) {
-				classification = "fail";
-			}
-		}
-		else if (lastLevel == String.valueOf(LevelsOfStudy.PG) && dissertationMarks < 49.5) {
-			if (degreeGrade >= 49.5) {
-				String degradedDegreeId = degradeDegreeId(email);
-				updateDegree(email, degradedDegreeId);
-				classification = "pass";
-			}
-		}
-		else if (degreeTitle == "PGCert") {
-			if (degreeGrade >= 49.5) {
-				classification = "pass";
-			}
-		}
+		
 		return classification;
 	}
 	
@@ -821,4 +830,37 @@ public class Grades { //create a constructor
 		
 	}
 	
+	public static String getStudentDifficulty(String email) throws SQLException {
+		Connection con = null;
+		String difficulty = "";
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            Statement stmt = null;
+            String diff = "SELECT difficulty FROM student WHERE email = ?";
+            try (PreparedStatement getDiff = con.prepareStatement(diff)){
+                getDiff.setString(1, email);
+                ResultSet difficult = getDiff.executeQuery();
+                con.commit();
+                
+                while(difficult.next()) {
+                    difficulty = difficult.getString("difficulty");
+                }
+          
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+        return difficulty.substring(0,1);
+	}
 }

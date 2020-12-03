@@ -46,7 +46,7 @@ public class CheckRegistered extends AbstractPanel {
 		contentPane.removeAll();
 		contentPane.revalidate();
 		contentPane.repaint();
-		setBounds(100, 100, 1035, 647);
+		setBounds(PANEL_SIZE);
 		setLayout(null);
 		
 		//DEFAULT

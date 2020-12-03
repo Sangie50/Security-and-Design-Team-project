@@ -138,7 +138,7 @@ public class RegisterStudent extends AbstractPanel {
 		credits.add(undergradCredits);
 		credits.add(postgradCredits);
 		
-		String[] difficultyLevels = {"MEng", "BEng", "MSc", "BSc", "MPsy", "BPsy"};
+		String[] difficultyLevels = {"MEng", "BEng", "MSc", "BSc", "MPsy", "BPsy","BA"};
 		JComboBox<String> difficulty = new JComboBox<>(difficultyLevels);
 		difficulty.setBounds(221, 342, 186, 32);
 		panel.add(difficulty);

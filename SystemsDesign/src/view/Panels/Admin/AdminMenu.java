@@ -1,6 +1,9 @@
 package view.Panels.Admin;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -78,25 +81,54 @@ public class AdminMenu extends JPanel {
 		});
 		contentPane.add(logoutButton);
 		
-		
 	    
 	    JScrollPane dept_sp = new JScrollPane(deptTable());
-	    dept_sp.setBounds(15, 134, 400, 500);
+	    dept_sp.setBounds(35, 134, 400, 500);
 	    dept_sp.setBorder(BorderFactory.createEmptyBorder());
 	    contentPane.add(dept_sp);
 	    
 		
 		JScrollPane degree_sp = new JScrollPane(degreeTable());
-	    degree_sp.setBounds(15, 134, 700, 500); 
+	    degree_sp.setBounds(35, 134, 700, 500); 
 	    degree_sp.setBorder(BorderFactory.createEmptyBorder());
 	    
 	    JScrollPane module_sp = new JScrollPane(moduleTable());
-	    module_sp.setBounds(15, 134, 900, 500); 
+	    module_sp.setBounds(35, 134, 900, 500); 
 	    module_sp.setBorder(BorderFactory.createEmptyBorder());
 	    
 	    JScrollPane user_sp = new JScrollPane(userTable());
-	    user_sp.setBounds(15, 134, 500, 500); 
+	    user_sp.setBounds(35, 134, 500, 500); 
 	    user_sp.setBorder(BorderFactory.createEmptyBorder());
+	    
+	    JButton addOtherDeptButton = new JButton("Add Secondary Department");
+		addOtherDeptButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AddOtherDeptPanel otherDept = new AddOtherDeptPanel(contentPane, mainFrame);
+			}
+		});
+		addOtherDeptButton.setLayout(new FlowLayout(FlowLayout.LEFT));
+		addOtherDeptButton.setBounds(35, 495, 220, 29);
+		contentPane.add(addOtherDeptButton, BorderLayout.SOUTH);
+		
+		JButton setCoreModuleButton = new JButton("Set Core Module");
+		setCoreModuleButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SetCoreModulePanel coreMod = new SetCoreModulePanel(contentPane, mainFrame);
+			}
+		});
+		setCoreModuleButton.setLayout(new FlowLayout(FlowLayout.LEFT));
+		setCoreModuleButton.setBounds(35, 495, 200, 29);
+		contentPane.add(setCoreModuleButton, BorderLayout.SOUTH);
+		
+		JButton updatePermButton = new JButton("Change Account Type");
+		updatePermButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				UpdatePermissionPanel upPerm = new UpdatePermissionPanel(contentPane, mainFrame);
+			}
+		});
+		updatePermButton.setLayout(new FlowLayout(FlowLayout.LEFT));
+		updatePermButton.setBounds(35, 495, 220, 29);
+		contentPane.add(updatePermButton, BorderLayout.SOUTH);
 	    
 	    mainComboBox = new JComboBox<>(options);
 	    mainComboBox.setBounds(119, 70, 121, 26);
@@ -116,6 +148,7 @@ public class AdminMenu extends JPanel {
 	            	dept_sp.setVisible(true);
 	            	dept_sp.setBorder(BorderFactory.createEmptyBorder());
 					contentPane.add(dept_sp);
+					
 	            } 
 	            else if (selectedOption.equals("Degrees")) {
 	            	dept_sp.setVisible(false);
@@ -123,6 +156,10 @@ public class AdminMenu extends JPanel {
 	            	user_sp.setVisible(false);
 	            	contentPane.add(degree_sp);
 	            	degree_sp.setVisible(true);
+	            	setCoreModuleButton.setVisible(false);
+	            	updatePermButton.setVisible(false);
+	            	addOtherDeptButton.setVisible(true);
+	            	
 	        	}
 	            else if (selectedOption.equals("Modules")) {
 	            	dept_sp.setVisible(false);
@@ -130,6 +167,9 @@ public class AdminMenu extends JPanel {
 	            	user_sp.setVisible(false);
 	            	contentPane.add(module_sp);
 	            	module_sp.setVisible(true);
+	            	addOtherDeptButton.setVisible(false);
+	            	updatePermButton.setVisible(false);
+	            	setCoreModuleButton.setVisible(true);
 				}
 	            else if (selectedOption.equals("Users")) {
 	            	dept_sp.setVisible(false);
@@ -137,6 +177,10 @@ public class AdminMenu extends JPanel {
 	            	module_sp.setVisible(false);
 	            	contentPane.add(user_sp);
 	            	user_sp.setVisible(true);
+	            	addOtherDeptButton.setVisible(false);
+	            	setCoreModuleButton.setVisible(false);
+	            	updatePermButton.setVisible(true);
+	            	
 	            }
 	        }
 	    });
@@ -171,7 +215,10 @@ public class AdminMenu extends JPanel {
 		removeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				String selectedOption = (String) mainComboBox.getSelectedItem();
-				if (selectedOption.equals("Degrees")) {
+				if (selectedOption.equals("Departments")) {
+					RemoveDeptPanel removeDept = new RemoveDeptPanel(contentPane, mainFrame);					
+		        }
+				else if (selectedOption.equals("Degrees")) {
 					RemoveDegreePanel removeDegree = new RemoveDegreePanel(contentPane, mainFrame);					
 		        }
 				else if (selectedOption.equals("Modules")) {

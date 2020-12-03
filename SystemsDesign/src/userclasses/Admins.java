@@ -249,17 +249,17 @@ public class Admins extends Users{
         }
     }
     
-    public static void setCoreModule(String moduleID, String departmentID, String levelOfStudy) throws SQLException {
+    public static void setCoreModule(String moduleID, String degreeID, String levelOfStudy) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "INSERT INTO core_modules VALUES (?,?,?)";
+            String preparedStmt = "INSERT INTO core_modules(module_id, degree_id, level_of_study) VALUES (?,?,?)";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
                 stmt = con.createStatement();
                 updateStmt.setString(1, moduleID);
-                updateStmt.setString(2, departmentID);
+                updateStmt.setString(2, degreeID);
                 updateStmt.setString(3, levelOfStudy);
                 updateStmt.executeUpdate();
                 con.commit();

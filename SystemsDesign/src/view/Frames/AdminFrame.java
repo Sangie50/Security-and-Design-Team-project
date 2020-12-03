@@ -70,6 +70,9 @@ public class AdminFrame extends JFrame {
 		contentPane.setLayout(null);
 		
 		AdminMenu adminMenu = new AdminMenu(contentPane, this);
+		adminMenu.setBounds(0, 0, 0, 0);
 		contentPane.add(adminMenu);
+		
+		
 	}
 }

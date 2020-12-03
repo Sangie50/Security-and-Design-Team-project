@@ -15,7 +15,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import view.Panels.AbstractPanel;
 
-public class RemoveUserPanel extends JPanel {
+public class RemoveUserPanel extends AbstractPanel {
 	private String[] options;
 	/**
 	 * Create the panel.
@@ -44,7 +44,7 @@ public class RemoveUserPanel extends JPanel {
 		panel.add(instruction);
 		
 		try {
-			options = AbstractPanel.getUsernames();
+			options = getAllUsernames();
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

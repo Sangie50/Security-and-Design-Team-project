@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 import userclasses.Admins;
 import view.Panels.AbstractPanel;
 
-public class RemoveModulePanel extends JPanel {
+public class RemoveModulePanel extends AbstractPanel {
 	private String[] options;
 	/**
 	 * Create the panel.
@@ -43,7 +43,7 @@ public class RemoveModulePanel extends JPanel {
 		panel.add(instruction);
 		
 		try {
-			options = AbstractPanel.getModuleId();
+			options = getModuleId();
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

@@ -40,9 +40,6 @@ public class AddDeptPanel extends JPanel {
 		heading.setFont(new Font("Tahoma", Font.BOLD, 21));
 		panel.add(heading);
 		
-		System.out.println("Should be here..");
-
-		
 		JLabel deptId = new JLabel("Department ID");
 		deptId.setBounds(48, 93, 131, 20);
 		panel.add(deptId);

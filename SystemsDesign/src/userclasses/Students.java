@@ -282,6 +282,65 @@ public boolean getResitYear() throws SQLException {
 	  return resitYear;
 }
 
+public java.util.Date convertFromSQLDateToJAVADate(java.sql.Date sqlDate) {
+    java.util.Date javaDate = null;
+    if (sqlDate != null) {
+        javaDate = new Date(sqlDate.getTime());
+    }
+    return javaDate;
+}
+
+public String generatePeriodOfStudy(String email) throws SQLException{
+    String periodOfStudy = "";
+    java.util.Date startDate;
+    java.util.Date endDate;
+    Date start;
+    Date end;
+    int registrationID; 
+    String levelOfStudy;
+        Connection con = null;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            Statement stmt = null;
+            String preparedStmt = "SELECT registration_id, start_date, end_date, level_of_study FROM year_grade INNER JOIN student ON year_grade.email = student.email WHERE year_grade.email = ?";
+            try (PreparedStatement selstmt = con.prepareStatement(preparedStmt)){
+                selstmt.setString(1, email);
+                ResultSet another = selstmt.executeQuery();
+                con.commit();
+                if (another.next()){
+                    registrationID = another.getInt("registration_id");
+                    start = another.getDate("start_date");
+                    end = another.getDate("end_date");
+                    levelOfStudy = another.getString("level_of_study");
+
+                    System.out.println("Dates are: " + start+" " +end);
+                    startDate = convertFromSQLDateToJAVADate(start);
+                    endDate = convertFromSQLDateToJAVADate(end);
+
+                    String pattern = "ddMMyyyy";
+                    DateFormat df = new SimpleDateFormat(pattern);
+                    String sDate = df.format(startDate);
+                    String eDate = df.format(endDate);
+                    System.out.println("Dates are: " + sDate+" " +eDate);
+                    
+                    periodOfStudy = "A"+sDate+eDate+levelOfStudy+registrationID;
+                }
+            }
+            catch (SQLException ex) {
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+    return periodOfStudy;
+}
 
   
 

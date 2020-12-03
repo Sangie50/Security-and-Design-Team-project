@@ -112,54 +112,54 @@ public class changeGradesTeachers extends JPanel {
         idLabel.setBounds(21, 120, 148, 26);
         panel.add(idLabel);
         
-        JLabel cred = new JLabel("Credits:");
-        cred.setBounds(21, 160, 202, 26);
-        panel.add(cred);
+        JLabel creditsLabel = new JLabel("Credits:");
+        creditsLabel.setBounds(21, 160, 202, 26);
+        panel.add(creditsLabel);
 
-        JLabel tut = new JLabel("Tutor:");
-        tut.setBounds(21, 200, 148, 26);
-        panel.add(tut);
+        JLabel tutorLabel = new JLabel("Tutor:");
+        tutorLabel.setBounds(21, 200, 148, 26);
+        panel.add(tutorLabel);
         
-        JLabel ini = new JLabel("Initial Grade:");
-        ini.setBounds(21, 240, 148, 26);
-        panel.add(ini);
+        JLabel initialGradeLabel = new JLabel("Initial Grade:");
+        initialGradeLabel.setBounds(21, 240, 148, 26);
+        panel.add(initialGradeLabel);
         
-        JLabel res = new JLabel("Resit Grade:");
-        res.setBounds(21, 280, 148, 26);
-        panel.add(res);
+        JLabel resitGradeLabel = new JLabel("Resit Grade:");
+        resitGradeLabel.setBounds(21, 280, 148, 26);
+        panel.add(resitGradeLabel);
         
-        JLabel na = new JLabel("Module Name:");
-        na.setBounds(21, 320, 148, 26);
-        panel.add(na); 
+        JLabel moduleNameLabel = new JLabel("Module Name:");
+        moduleNameLabel.setBounds(21, 320, 148, 26);
+        panel.add(moduleNameLabel); 
         
 
         JLabel email = new JLabel(studentEmail);
         email.setBounds(221, 80, 156, 26);
         panel.add(email);
 
-        JLabel degreeid = new JLabel(degreeID);
-        degreeid.setBounds(221, 120, 156, 26);
-        panel.add(degreeid);
+        JLabel degreeId = new JLabel(degreeID);
+        degreeId.setBounds(221, 120, 156, 26);
+        panel.add(degreeId);
         
-        JLabel credi = new JLabel("'"+credits+"'");
-        credi.setBounds(221, 160, 156, 26);
-        panel.add(credi);
+        JLabel creditsText = new JLabel("'"+credits+"'");
+        creditsText.setBounds(221, 160, 156, 26);
+        panel.add(creditsText);
 
-        JLabel tuto = new JLabel(tutor);
-        tuto.setBounds(221, 200, 156, 26);
-        panel.add(tuto);
+        JLabel tutorText = new JLabel(tutor);
+        tutorText.setBounds(221, 200, 156, 26);
+        panel.add(tutorText);
         
-        JLabel in = new JLabel(""+initialGrade+"");
-        in.setBounds(221, 240, 156, 26);
-        panel.add(in);
+        JLabel initialGradeText = new JLabel(""+initialGrade+"");
+        initialGradeText.setBounds(221, 240, 156, 26);
+        panel.add(initialGradeText);
         
-        JLabel re = new JLabel(""+resitGrade+"");
-        re.setBounds(221, 280, 156, 26);
-        panel.add(re);
+        JLabel resitGradeText = new JLabel(""+resitGrade+"");
+        resitGradeText.setBounds(221, 280, 156, 26);
+        panel.add(resitGradeText);
         
-        JLabel nam = new JLabel(moduleName);
-        nam.setBounds(221, 320, 450, 26);
-        panel.add(nam);
+        JLabel moduleNameText = new JLabel(moduleName);
+        moduleNameText.setBounds(221, 320, 450, 26);
+        panel.add(moduleNameText);
         
         
         JTextField inGrade = new JTextField();
@@ -208,9 +208,9 @@ public class changeGradesTeachers extends JPanel {
                         Integer initialGrade = (int)list.get(0);
                         Integer resitGrade = (int)list.get(1);
                         String moduleName = (String)list.get(2);
-                        in.setText(""+initialGrade+"");
-                        re.setText(""+resitGrade+"");
-                        nam.setText(moduleName);
+                        initialGradeText.setText(""+initialGrade+"");
+                        resitGradeText.setText(""+resitGrade+"");
+                        moduleNameText.setText(moduleName);
                     }
                 });
             }
@@ -246,9 +246,9 @@ public class changeGradesTeachers extends JPanel {
                         Integer initialGrade = (int)list.get(0);
                         Integer resitGrade = (int)list.get(1);
                         String moduleName = (String)list.get(2);
-                        in.setText(""+initialGrade+"");
-                        re.setText(""+resitGrade+"");
-                        nam.setText(moduleName);
+                        initialGradeText.setText(""+initialGrade+"");
+                        resitGradeText.setText(""+resitGrade+"");
+                        moduleNameText.setText(moduleName);
                     }
                 });
             }
@@ -266,9 +266,9 @@ public class changeGradesTeachers extends JPanel {
                     Integer initialGrade = (int)list.get(0);
                     Integer resitGrade = (int)list.get(1);
                     String moduleName = (String)list.get(2);
-                    in.setText(""+initialGrade+"");
-                    re.setText(""+resitGrade+"");
-                    nam.setText(moduleName);
+                    initialGradeText.setText(""+initialGrade+"");
+                    resitGradeText.setText(""+resitGrade+"");
+                    moduleNameText.setText(moduleName);
                 } catch (SQLException ex) {
                     Logger.getLogger(changeGradesTeachers.class.getName()).log(Level.SEVERE, null, ex);
                 }

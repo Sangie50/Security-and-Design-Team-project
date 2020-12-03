@@ -249,7 +249,7 @@ public abstract class AbstractPanel extends JPanel{
 	    }
 	}
 	
-	public static String[] getUsernames() throws SQLException{
+	public String[] getUsernames() throws SQLException{
 		ArrayList<String> list = new ArrayList<String>();
 		Connection con = null;
         try {
@@ -294,24 +294,56 @@ public abstract class AbstractPanel extends JPanel{
 		return date;
 	}
 	
-	
-	
-	
+
 	public boolean isType(String username, String accType) throws SQLException {
 		Connection con = null;
-		String accountType = "";
+		String userType = "";
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
             String type = "SELECT account_type FROM user WHERE username = ?";
             try (PreparedStatement getType = con.prepareStatement(type)){
-            	getType.setString(1, username);
-                ResultSet types = getType.executeQuery();
+                getType.setString(1, username);
+            	ResultSet rs = getType.executeQuery();
                 con.commit();
                 
-                while (types.next()) {
-                	accountType = types.getString("account_type");	
+                while (rs.next()) {
+                	userType = rs.getString("account_type");
+                }
+                
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();      
+            }
+
+		return accType.equals(userType);
+	}
+	
+	public String[] getModuleId() throws SQLException {
+		ArrayList<String> list = new ArrayList<String>();
+		Connection con = null;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            Statement stmt = null;
+            String usernames = "SELECT module_id FROM module";
+            try (PreparedStatement getUsernames = con.prepareStatement(usernames)){
+                ResultSet usernameList = getUsernames.executeQuery();
+                con.commit();
+                
+                while (usernameList.next()) {
+                	list.add(usernameList.getString("module_id"));	
                 }
                 
             }
@@ -328,8 +360,49 @@ public abstract class AbstractPanel extends JPanel{
         finally {
             if (con != null) con.close();
         }
-    	return accountType.equals(accType);
+        String[] moduleId = new String[list.size()];
+        moduleId = list.toArray(moduleId);
+        return moduleId;
+	
+	}
+	
+	public String[] getDegreeId() throws SQLException {
+		ArrayList<String> list = new ArrayList<String>();
+		Connection con = null;
+		
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            Statement stmt = null;
+            
+            String usernames = "SELECT degree_id FROM degree";
+            try (PreparedStatement getUsernames = con.prepareStatement(usernames)){
+                ResultSet usernameList = getUsernames.executeQuery();
+                con.commit();
+                
+                while (usernameList.next()) {
+                	list.add(usernameList.getString("degree_id"));	
+                }
+                
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
 
+        String[] degreeId = new String[list.size()];
+        degreeId = list.toArray(degreeId);
+        return degreeId;
+	
 	}
 	
 }

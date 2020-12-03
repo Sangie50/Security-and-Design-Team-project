@@ -21,6 +21,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
 import userclasses.Admins;
 import userclasses.Registrars;
@@ -49,8 +50,13 @@ public class RegistrarMenu extends AbstractPanel {
 		
 		registrar = getRegistrar(registrarUsername);
 		
+		//DEFAULT
+				UIManager.put("Label.font", LABEL_FONT);
+				UIManager.put("Table.font", TABLE_FONT);
+				UIManager.put("TableHeader.font", HEADER_FONT);
+				UIManager.put("Button.font", TABLE_FONT);
+				UIManager.put("ComboBox.font", LABEL_FONT);
 		//labels
-		
 		JLabel title = new JLabel("Registrar Page");
 		title.setBounds(5, 5, 999, 26);
 		title.setFont(title.getFont().deriveFont(title.getFont().getStyle() | Font.BOLD));
@@ -74,7 +80,7 @@ public class RegistrarMenu extends AbstractPanel {
 		//---------------------------
 		
 		//combobox
-			JComboBox<String> usernameBox = new JComboBox<>(getUsernames());
+			JComboBox<String> usernameBox = new JComboBox<>(getAllUsernames());
 			usernameBox.setBounds(81, 291, 277, 45);
 			contentPane.add(usernameBox);
 			contentPane.add(usernameBox, BorderLayout.PAGE_START);

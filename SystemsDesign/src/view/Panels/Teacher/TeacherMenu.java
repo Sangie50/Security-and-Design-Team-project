@@ -21,7 +21,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+
+import userclasses.Teachers;
+import userclasses.Users.UserTypes;
 import view.Frames.LoginFrame;
+import view.Panels.AbstractPanel;
 
 /*
  - View Students 
@@ -29,9 +34,15 @@ import view.Frames.LoginFrame;
  - 
 
 */
-public class TeacherMenu extends JPanel {
+public class TeacherMenu extends AbstractPanel {
     
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 412341325L;
+
+
+	/**
      * Create the panel.
      * @param contentPane
      * @param username
@@ -41,31 +52,45 @@ public class TeacherMenu extends JPanel {
         contentPane.removeAll();
         contentPane.revalidate();
         contentPane.repaint();
+        
+        Teachers teacher = getTeacher(username);
 
+        //DEFAULT
+		UIManager.put("Label.font", LABEL_FONT);
+		UIManager.put("Table.font", TABLE_FONT);
+		UIManager.put("TableHeader.font", HEADER_FONT);
+		UIManager.put("Button.font", TABLE_FONT);
+		UIManager.put("ComboBox.font", LABEL_FONT);
+      		
+        //labels 
         JLabel title = new JLabel("Teacher Page");
         title.setBounds(5, 5, 999, 26);
-        title.setFont(title.getFont().deriveFont(title.getFont().getStyle() | Font.BOLD));
+        title.setFont(TITLE_FONT);
         title.setHorizontalAlignment(SwingConstants.CENTER);
         contentPane.add(title);
-
-
-        JComboBox<String> emailBox = new JComboBox<>(getEmails(username));
-        emailBox.setBounds(81, 291, 277, 45);
-        contentPane.add(emailBox);
-        contentPane.add(emailBox, BorderLayout.PAGE_START);
-        
 
         JLabel user = new JLabel("Emails of students:");
         user.setBounds(81, 248, 277, 26);
         contentPane.add(user);
-
+        //---------------------------------
+        
+        
+        //Combo boxes
+        JComboBox<String> usernameBox = new JComboBox<>(getUsernames(UserTypes.STUDENT.toString()));
+        usernameBox.setBounds(81, 291, 277, 45);
+        contentPane.add(usernameBox);
+        contentPane.add(usernameBox, BorderLayout.PAGE_START);
+        //---------------------------------
+        
+        
+        //buttons      
         JButton changeGradesPage = new JButton("Edit module grades");
         changeGradesPage.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JPanel menu = null;
                 try {
-                    String selectedEmail =  (String) emailBox.getSelectedItem();
-                    menu = new changeGradesTeachers(contentPane, username, selectedEmail, mainFrame);
+                    String selectedUsername =  (String) usernameBox.getSelectedItem();
+                    menu = new changeGradesTeachers(contentPane, username, selectedUsername, mainFrame, teacher);
                     contentPane.add(menu);
                 } catch (SQLException ex) {
                     Logger.getLogger(TeacherMenu.class.getName()).log(Level.SEVERE, null, ex);
@@ -81,8 +106,8 @@ public class TeacherMenu extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 JPanel menu = null;
                 try {
-                    String selectedEmail =  (String) emailBox.getSelectedItem();
-                    menu = new teacherCheck(contentPane, username, selectedEmail, mainFrame);
+                    String selectedUsername =  (String) usernameBox.getSelectedItem();
+                    menu = new teacherCheck(contentPane, username, selectedUsername, mainFrame, teacher);
                     contentPane.add(menu);
                 } catch (SQLException ex) {
                     Logger.getLogger(TeacherMenu.class.getName()).log(Level.SEVERE, null, ex);
@@ -115,51 +140,7 @@ public class TeacherMenu extends JPanel {
         contentPane.add(logoutButton); 
         
     }
+    //-----------------------------------------
 
-	
-	// Gets emails of students that this teacher teaches only
-    public String[] getEmails(String username) throws SQLException{
-        ArrayList<String> list = new ArrayList<String>();
-        Connection con = null;
-        try {
-            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
-            con.setAutoCommit(false);
-            Statement stmt = null;
-            String usernames = "SELECT DISTINCT student.email FROM student INNER JOIN "
-                    + "module_grade ON student.email = module_grade.email INNER"
-                    + " JOIN module ON module_grade.module_id = module.module_id"
-                    + " INNER JOIN module_teacher ON module.module_id = "
-                    + "module_teacher.module_id INNER JOIN teacher ON "
-                    + "module_teacher.employee_no = teacher.employee_no WHERE"
-                    + " teacher.username = ?";
-            try (PreparedStatement getUsernames = con.prepareStatement(usernames)){
-                getUsernames.setString(1, username);
-                ResultSet usernameList = getUsernames.executeQuery();
-                con.commit();
-                
-                while (usernameList.next()) {
-                	list.add(usernameList.getString("email"));
-                        
-                }
-                usernameList.close();
-            }
-            catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-            finally {
-                if (stmt != null) stmt.close();
-            }
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        finally {
-            if (con != null) con.close();
-        }
-        String[] arr = new String[list.size()];
-        arr = list.toArray(arr);
-        return arr;
-	
-    }
 
 }

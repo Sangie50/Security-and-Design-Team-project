@@ -36,6 +36,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
 import userclasses.Students;
 import userclasses.Teachers;
@@ -61,8 +62,14 @@ public class teacherCheck extends AbstractPanel {
         setBounds(100, 100, 1035, 700);
         Students student = getStudent(studentEmail);
 
-        Connection con = null;
-        Statement stmt = null;
+      //DEFAULT
+      		UIManager.put("Label.font", LABEL_FONT);
+      		UIManager.put("Table.font", TABLE_FONT);
+      		UIManager.put("TableHeader.font", HEADER_FONT);
+      		UIManager.put("Button.font", TABLE_FONT);
+      		UIManager.put("ComboBox.font", LABEL_FONT);
+      		
+      	//labels
         
         JLabel title = new JLabel("Teacher Page - " + student.getEmail());
         title.setBounds(5, 5, 999, 26);
@@ -102,7 +109,10 @@ public class teacherCheck extends AbstractPanel {
         JLabel passYearText = new JLabel(String.valueOf(pass));
         passYearText.setBounds(81, 280, 277, 26);
         panel.add(passYearText);
-
+        //----------------------------
+        
+        
+        //buttons
         JButton backButton = new JButton("Back");
         backButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -142,7 +152,7 @@ public class teacherCheck extends AbstractPanel {
         });
         logoutButton.setBounds(620, 576, 141, 35);
         panel.add(logoutButton); 
-        
+        //--------------------------
 
 	}
     

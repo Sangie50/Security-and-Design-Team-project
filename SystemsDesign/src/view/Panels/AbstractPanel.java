@@ -4,8 +4,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Rectangle;
+
 import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
@@ -14,6 +17,7 @@ import userclasses.Admins;
 import userclasses.Registrars;
 import userclasses.Students;
 import userclasses.Teachers;
+import userclasses.Users;
 import userclasses.Users.UserTypes;
 
 import javax.swing.JComboBox;
@@ -40,6 +44,21 @@ public abstract class AbstractPanel extends JPanel{
 	 * 
 	 */
 	private static final long serialVersionUID = 12345678945L;
+	
+	protected static final Rectangle PANEL_SIZE = new Rectangle(100, 100, 1035, 647);
+	protected static final Color BLUE = new java.awt.Color(102, 153, 255);
+
+	protected static final Font BORDER_FONT = new Font("Yu Gothic", Font.BOLD, 13);
+	protected static final Font LABEL_FONT = new Font("Yu Gothic", Font.PLAIN, 15);
+	protected static final Font ERROR_FONT = new Font("Yu Gothic", Font.PLAIN, 13);
+	protected static final Font COMBO_FONT = new Font("Yu Gothic", Font.PLAIN, 13);
+	protected static final Font TITLE_FONT = new Font("Yu Gothic", Font.BOLD, 18);
+	protected static final Font HEADER_FONT = new Font("Yu Gothic", Font.BOLD, 10);
+	protected static final Font TABLE_FONT = new Font("Yu Gothic", Font.PLAIN, 10);
+	protected static final Font BUTTON_FONT = new Font("Yu Gothic", Font.BOLD, 13);
+
+//	private static final Font LABEL_FONT = new Font("Yu Gothic", Font.PLAIN, 18);
+//	private static final Font ERROR_FONT = new Font("Yu Gothic", Font.PLAIN, 13);
 	/**
 	 * 
 	 */
@@ -56,7 +75,59 @@ public abstract class AbstractPanel extends JPanel{
 	 }
 	
 
-	 public Students getStudent(String username) throws SQLException {
+	public Users getUser(String username) throws SQLException {
+		System.out.println("Executing getting user...");
+		Users user = null;
+		Connection con = null; 
+		String title = "";
+		String surname = "";
+		String forename = "";
+		String accountType = "";
+		String password = "";
+		
+
+		try {
+	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+	          System.out.println("Connected to database...");
+	          con.setAutoCommit(false);
+	          Statement stmt = null;
+	          String getInfo = "SELECT * FROM user WHERE username = ?";
+	          
+	          try (PreparedStatement studentInfo = con.prepareStatement(getInfo)){
+	              studentInfo.setString(1, username);
+	              ResultSet info = studentInfo.executeQuery();
+	              con.commit();
+	          
+		          while (info.next()) {
+				        title = info.getString("title");
+				        surname = info.getString("surname");
+				        forename = info.getString("forename");
+				        accountType = info.getString("account_type");
+				        password = info.getString("password");
+		          }
+
+		          user = new Users(username,title, surname, forename, password);
+
+			      System.out.println("User info retrieved!");
+	                
+	           }
+	           catch (SQLException ex) {
+	                ex.printStackTrace();
+	            }
+	            finally {
+	                if (stmt != null) stmt.close();
+	            }
+	        }
+	        catch (Exception ex) {
+	            ex.printStackTrace();
+	        }
+	        finally {
+	            if (con != null) con.close();
+	        }	
+		return user;
+	}
+	
+	public Students getStudent(String username) throws SQLException {
 			System.out.println("Executing getting student...");
 			Students student = null;
 			Connection con = null; 
@@ -249,7 +320,44 @@ public abstract class AbstractPanel extends JPanel{
 	    }
 	}
 	
-	public String[] getUsernames() throws SQLException{
+	public String[] getUsernames(String type) throws SQLException{
+		ArrayList<String> list = new ArrayList<String>();
+		Connection con = null;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            Statement stmt = null;
+            String usernames = "SELECT username FROM user WHERE account_type = ?";
+            try (PreparedStatement getUsernames = con.prepareStatement(usernames)){
+            	getUsernames.setString(1, type);
+                ResultSet usernameList = getUsernames.executeQuery();
+                con.commit();
+                
+                while (usernameList.next()) {
+                	list.add(usernameList.getString("username"));	
+                }
+                
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+        String[] arr = new String[list.size()];
+        arr = list.toArray(arr);
+        return arr;
+	
+	}
+
+	public String[] getAllUsernames() throws SQLException{
 		ArrayList<String> list = new ArrayList<String>();
 		Connection con = null;
         try {

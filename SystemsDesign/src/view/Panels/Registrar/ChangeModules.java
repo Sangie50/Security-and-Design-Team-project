@@ -60,13 +60,19 @@ public class ChangeModules extends AbstractPanel{
 		Students student = getStudent(studentUsername);
 		
 		setLayout(null);
-		setBounds(100, 100, 1035, 647);
+		setBounds(PANEL_SIZE);
 		
-		
+		//DEFAULT
+		UIManager.put("Label.font", LABEL_FONT);
+		UIManager.put("Table.font", TABLE_FONT);
+		UIManager.put("TableHeader.font", HEADER_FONT);
+		UIManager.put("Button.font", TABLE_FONT);
+		UIManager.put("ComboBox.font", LABEL_FONT);
 
 		//labels
+
 		JLabel title = new JLabel("Add or remove optional modules");
-		title.setFont(title.getFont().deriveFont(title.getFont().getStyle() | Font.BOLD));
+		title.setFont(TITLE_FONT);
 		title.setBounds(21, 21, 425, 26);
 		contentPane.add(title);
 		
@@ -93,12 +99,10 @@ public class ChangeModules extends AbstractPanel{
 		JLabel removeModuleLabel = new JLabel("Remove module:");
 		removeModuleLabel.setBounds(719, 424, 176, 26);
 		contentPane.add(removeModuleLabel);
-		
 		//-----------------------------
 		
 			
 		//Combo box
-		
 		JComboBox<String> optionalModulesList = new JComboBox<>(registrar.getOptionalModulesList(student.getEmail()));
 		optionalModulesList.setBounds(719, 248, 247, 32);
 		contentPane.add(optionalModulesList);
@@ -111,6 +115,8 @@ public class ChangeModules extends AbstractPanel{
 		//--------------
 		
 		//table	
+	
+
 		modulesTable = new JTable(model);
 //		modulesTable.setBounds(21, 127, 677, 499);
 		modulesTable.setBackground(UIManager.getColor("Button.background"));
@@ -130,12 +136,11 @@ public class ChangeModules extends AbstractPanel{
 	    modulesTable.getColumnModel().getColumn(4).setPreferredWidth(2);
 	    modulesTable.getColumnModel().getColumn(5).setPreferredWidth(2);
 	    modulesTable.getColumnModel().getColumn(6).setPreferredWidth(1);
-
-		
 		//--------------
 	    
 	  //buttons
-	    
+
+
 	  		JButton addModuleButton = new JButton("Add module");
 	  		addModuleButton.setBounds(719, 301, 247, 35);
 	  		addModuleButton.addActionListener(new ActionListener() {
@@ -143,16 +148,20 @@ public class ChangeModules extends AbstractPanel{
 	  				try {
 	  					int moduleCredit = registrar.getModuleCredits((String) optionalModulesList.getSelectedItem());
 	  				    int calculateCredit = student.getTotalCredits() - registrar.getModuleCredits((String) optionalModulesList.getSelectedItem()) - moduleCredit;
-	  				    if (calculateCredit > 0) {
+	  				    if (calculateCredit >=  0) {
 	  				    	registrar.linkModuleToStudent(student.getEmail(), (String) optionalModulesList.getSelectedItem());
 							model.setRowCount(0);
 							insertStudentsTable(studentUsername, student.getEmail(), model);
-							credits.setText(Integer.toString(calculateCredit));
+							credits.setText(Integer.toString(student.getTotalCredits() - registrar.getModuleCredits((String) optionalModulesList.getSelectedItem()) - moduleCredit));
 							existingModulesList.removeAllItems();
-							existingModulesList.setModel(new DefaultComboBoxModel(registrar.getModulesList(student.getEmail())));
+							existingModulesList.setModel(new DefaultComboBoxModel<>(registrar.getModulesList(student.getEmail())));
+							contentPane.revalidate();
+							contentPane.getIgnoreRepaint();
 							JOptionPane.showMessageDialog(mainFrame.getComponent(0), "Module Added.");
 	  				    }
-	  				    else JOptionPane.showMessageDialog(mainFrame.getComponent(0), "Student does not have enough available credits.");
+	  				    else {
+	  				    	JOptionPane.showMessageDialog(mainFrame.getComponent(0), "Student does not have enough available credits.");
+	  				    }
 
 						
 

@@ -49,6 +49,13 @@ public class CheckRegistered extends AbstractPanel {
 		setBounds(100, 100, 1035, 647);
 		setLayout(null);
 		
+		//DEFAULT
+				UIManager.put("Label.font", LABEL_FONT);
+				UIManager.put("Table.font", TABLE_FONT);
+				UIManager.put("TableHeader.font", HEADER_FONT);
+				UIManager.put("Button.font", TABLE_FONT);
+				UIManager.put("ComboBox.font", LABEL_FONT);
+				
 		//labels
 		JLabel title = new JLabel("Check Registration details of ");
 		title.setBounds(364, 5, 307, 26);

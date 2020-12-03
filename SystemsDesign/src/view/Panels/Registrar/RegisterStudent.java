@@ -24,10 +24,12 @@ import java.util.Calendar;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 import userclasses.Admins;
 import userclasses.Registrars;
 import userclasses.Students;
+import userclasses.Users;
 import userclasses.Users.UserTypes;
 import view.Frames.LoginFrame;
 import view.Frames.RegistrarFrame;
@@ -44,7 +46,7 @@ public class RegisterStudent extends AbstractPanel {
 
 	private JTextField degreeId;
 	private JTextField personalTutor;
-	String notif = "";
+	
 
 	/**
 	 * Create the panel.
@@ -57,49 +59,20 @@ public class RegisterStudent extends AbstractPanel {
 		
 		setLayout(null);
 		setBounds(100, 100, 1035, 647);
-		String type = "";
+		Users user = getUser(name);
 	
-		
-		Connection con = null;
-	    Statement stmt = null;
-
-		     try {
-		         con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
-		         con.setAutoCommit(false);
-
-		         String accType = "SELECT account_type FROM user WHERE username = ?";
-		         try (PreparedStatement checkAccType = con.prepareStatement(accType)){
-		        	 checkAccType.setString(1, name);
-		             ResultSet rs = checkAccType.executeQuery();
-		             con.commit();
-		              
-		             while (rs.next()) {
-			             type = rs.getString(1);
-
-		             }
-		             
-		         }
-		         catch (SQLException ex) {
-		             ex.printStackTrace();
-		         }
-		         finally {
-		             if (stmt != null) stmt.close();
-		         }
-		     }
-		     catch (Exception ex) {
-		         ex.printStackTrace();
-		     }
-		     finally {
-		         if (con != null) con.close();
-		     }
-		
+		//DEFAULT
+				UIManager.put("Label.font", LABEL_FONT);
+				UIManager.put("Table.font", TABLE_FONT);
+				UIManager.put("TableHeader.font", HEADER_FONT);
+				UIManager.put("Button.font", TABLE_FONT);
+				UIManager.put("ComboBox.font", LABEL_FONT);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(221,5,2,2);
 		panel.add(scrollPane);
 
 		JLabel infoLabel = new JLabel("User Information");
-		infoLabel.setFont(new Font("Tahoma", Font.BOLD, 21));
 		infoLabel.setBounds(21, 21, 202, 26);
 		panel.add(infoLabel);
 		
@@ -111,7 +84,7 @@ public class RegisterStudent extends AbstractPanel {
 		usernameLabel.setBounds(21, 115, 148, 26);
 		panel.add(usernameLabel);
 		
-		JLabel accountType = new JLabel(type);
+		JLabel accountType = new JLabel(user.getAccountType());
 		accountType.setBounds(221, 68, 156, 26);
 		panel.add(accountType);
 		

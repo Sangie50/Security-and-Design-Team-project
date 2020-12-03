@@ -21,7 +21,6 @@ import userclasses.Students;
  */
 
 public class Grades { //create a constructor
-	String email;
 	static HashMap<String, Integer> gradeForModule;
 	
 	enum LevelsOfStudy {
@@ -49,68 +48,78 @@ public class Grades { //create a constructor
 			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 		      con.setAutoCommit(false);
 		      Statement stmt = null;
-		      String getCurrentLevelOfStudy = String.format("SELECT current_level_of_study FROM year_grade WHERE email = %s" , email);    
-		      ResultSet rs;
+		      String getCurrentLevelOfStudy = "SELECT current_level_of_study FROM year_grade WHERE email = ?";    
+		      
 		      try (PreparedStatement pstmt = con.prepareStatement(getCurrentLevelOfStudy)){
-				      	rs = pstmt.executeQuery();        
-				      	currentlevelOfStudy = rs.getString(1);      
+		          pstmt.setString(1, email);
+    	  	      ResultSet rs = pstmt.executeQuery(); 
+    	  	      con.commit();
+    	  	    
+    	  	      while(rs.next()) {
+    	  	      	currentlevelOfStudy = rs.getString("current_level_of_study");  
+    	  	      }
+		      	  rs.close();                       
+		      	  pstmt.close();                    
+			  }
+              catch (SQLException ex) {
+                  ex.printStackTrace();
+              }
+              finally {
+                  if (stmt != null) stmt.close();
+              }
+		  }
+          catch (Exception ex) {
+              ex.printStackTrace();
+          }
+          finally {
+              if (con != null) con.close();
+          }		
+		  return currentlevelOfStudy;   
 				      	
-				      	rs.close();                       
-				      	pstmt.close();                    
-				          }
-		            catch (SQLException ex) {
-		                ex.printStackTrace();
-		            }
-		            finally {
-		                if (stmt != null) stmt.close();
-		            }
-		        }
-		        catch (Exception ex) {
-		            ex.printStackTrace();
-		        }
-		        finally {
-		            if (con != null) con.close();
-		        }		
-		 return currentlevelOfStudy;
 	}	
 	   
         
 	public static List<String> getModuleList(String email, String levelOfStudy) throws SQLException{
 		List<String> moduleList = new ArrayList<>();
 		Connection con = null; 
-		 try {
-			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
-		      con.setAutoCommit(false);
-		      Statement stmt = null;
-		      String getModuleId = String.format("SELECT module_id FROM module_grade INNER JOIN degree ON module_grade.module_id = degree.module_id WHERE email = '%s' AND entry_level = '%s' ", email, levelOfStudy);
-		      String moduleId;
-		      ResultSet rs;
-		      try (PreparedStatement pstmt = con.prepareStatement(getModuleId)){
-				      	rs = pstmt.executeQuery();        // Get the result table from the query  3 
-				      	while (rs.next()) {               // Position the cursor                  4 
-					      	 moduleId = rs.getString(1);        // Retrieve the first column value
-					      	 moduleList.add(moduleId); 
-				      	}
-				      	
-				      	rs.close();                       
-				      	pstmt.close();  
-				      	
-				          }
-		            catch (SQLException ex) {
-		                ex.printStackTrace();
-		            }
-		            finally {
-		                if (stmt != null) stmt.close();
-		            }
-		        }
-		        catch (Exception ex) {
-		            ex.printStackTrace();
-		        }
-		        finally {
-		            if (con != null) con.close();
-		        }	
+		try {
+		    con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+   	        con.setAutoCommit(false);
+	        Statement stmt = null;
+	        String getModuleId = "SELECT module_id FROM module_grade INNER JOIN degree ON "
+	      	    	+ "module_grade.degree_id = degree.degree_id WHERE email = ? AND entry_level = ?";
+	        String moduleId;
+	        ResultSet rs;
+	        try (PreparedStatement pstmt = con.prepareStatement(getModuleId)){
+	        	pstmt.setString(1, email);
+	        	pstmt.setString(2, levelOfStudy);
+		        rs = pstmt.executeQuery();
+		      	con.commit();
+	      	
+		      	while (rs.next()) {               
+			      	 moduleId = rs.getString("module_id");        
+			      	 moduleList.add(moduleId); 
+		      	}
+		      	
+		      	rs.close();                       
+		      	pstmt.close();  
+			      	
+		   	}
+	        catch (SQLException ex) {
+               ex.printStackTrace();
+            }
+           finally {
+               if (stmt != null) stmt.close();
+           }
+	   }
+       catch (Exception ex) {
+           ex.printStackTrace();
+       } 
+       finally {
+           if (con != null) con.close();
+       }	
 
-		 return moduleList; 
+	   return moduleList; 
 	}
 	
 	public static String getModuleIdFromName(String moduleName, String levelOfStudy) throws SQLException{
@@ -120,12 +129,15 @@ public class Grades { //create a constructor
 			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 		      con.setAutoCommit(false);
 		      Statement stmt = null;
-		      String getModuleId = String.format("SELECT module_id FROM module WHERE module_name = %s AND level_of_study = %s ", moduleName, levelOfStudy);
+		      String getModuleId = "SELECT module_id FROM module WHERE module_name = ? AND level_of_study = ?";
 		      ResultSet rs;
 		      try (PreparedStatement pstmt = con.prepareStatement(getModuleId)){
-				      	rs = pstmt.executeQuery();        // Get the result table from the query  3 
-				      	while (rs.next()) {               // Position the cursor                  4 
-					      	 moduleId = rs.getString(1);        // Retrieve the first column value
+		    	        pstmt.setString(1, moduleName);
+		    	        pstmt.setString(2, levelOfStudy);
+				      	rs = pstmt.executeQuery();
+				      	con.commit();
+				      	while (rs.next()) {             
+					      	 moduleId = rs.getString("module_id");       
 				      	}
 				      	
 				      	rs.close();                       
@@ -159,46 +171,45 @@ public class Grades { //create a constructor
 				  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 			      con.setAutoCommit(false);
 			      Statement stmt = null;
-			      String getInitialGrade = String.format("SELECT inital_grade FROM module_grade WHERE module_id = %s AND email = %s" , moduleCode, email);    
-			      String getResitGrade = String.format("SELECT resit_grade FROM module_grade WHERE module_id = %s AND email = %s" , moduleCode, email);
-			      String resitGradeString;
-			      String initialGradeString;
-			      PreparedStatement pstmt = con.prepareStatement(getInitialGrade);
-			      PreparedStatement pstmt2 = con.prepareStatement(getResitGrade);
-			      ResultSet rs;
-			      ResultSet rs2;
-			      try {
+			      String getGrades = "SELECT inital_grade, resit_grade FROM module_grade WHERE module_id = ? AND email = ?";    
+			      int initialGrade = 0;
+			      int resitGrade = 0;
+			      
+			      try( PreparedStatement gradesInfo = con.prepareStatement(getGrades)){
+		    	      gradesInfo.setString(1, moduleCode);
+		    	      gradesInfo.setString(2, email);
+			    	  ResultSet rs = gradesInfo.executeQuery(); 
+			    	  con.commit();
 			    	  
-				      	rs = pstmt.executeQuery();        // Get the result table from the query  3   
-				      	rs2 = pstmt2.executeQuery();
-				      	initialGradeString = rs.getString(3);        // Retrieve the first column value
-				      	resitGradeString = rs2.getString(4);
-			      	    int initialGrade = Integer.parseInt(initialGradeString);
-			      	    int resitGrade = Integer.parseInt(resitGradeString);
-					      	if (initialGrade >= 40) {
-					      		gradeForModule.put(moduleCode, initialGrade);
-					      	}
-					      	else {
-					      		gradeForModule.put(moduleCode, resitGrade);
-					      	}
-					      	rs.close();                       // Close the ResultSet                  5 
-					      	pstmt.close();                    
-					        }
-			            catch (SQLException ex) {
+			    	  while (rs.next()) {
+			    		  initialGrade = rs.getInt("initial_grade");        
+					      resitGrade = rs.getInt("resit_grade");
+			    	  }
+			    	  
+				      if (initialGrade >= 40) {
+			      		gradeForModule.put(moduleCode, initialGrade);
+				      }
+				      else {
+			      		gradeForModule.put(moduleCode, resitGrade);
+				      }
+				      rs.close();                       
+				      gradesInfo.close();                    
+				   }
+		           catch (SQLException ex) {
 			                ex.printStackTrace();
-			            }
-			            finally {
+			       }
+			       finally {
 			                if (stmt != null) stmt.close();
-			            }
-			        }
-			        catch (Exception ex) {
-			            ex.printStackTrace();
-			        }
-			        finally {
-			            if (con != null) con.close();
-			        }	
-		}
-		 return gradeForModule;
+			       }
+			  }
+	          catch (Exception ex) {
+	              ex.printStackTrace();
+	          }
+	          finally {
+	              if (con != null) con.close();
+	          }	
+		  }
+		  return gradeForModule;
 	}
 	
 	public static HashMap<String, Boolean> passModule(String email, String levelOfStudy) throws SQLException { 
@@ -321,32 +332,33 @@ public class Grades { //create a constructor
 			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 		      con.setAutoCommit(false);
 		      Statement stmt = null;
-		      String getEntry_level = String.format("SELECT entry_level FROM degree WHERE degree_id = %s ", degreeId);
-		      ResultSet rs;
+		      String getEntry_level = "SELECT entry_level FROM degree WHERE degree_id = ?";
+		      
 		      try (PreparedStatement pstmt = con.prepareStatement(getEntry_level)){
-				      	rs = pstmt.executeQuery();        // Get the result table from the query  3 
-				      	while (rs.next()) {               // Position the cursor                  4 
-					      	 entryLevel = rs.getString(3);        // Retrieve the first column value
-				      	}
+		    	  pstmt.setString(1, degreeId);
+		    	  ResultSet rs = pstmt.executeQuery();        
+		      	  while (rs.next()) {                
+			          entryLevel = rs.getString("entry_level");        
+		      	  }
 				      	
-				      	rs.close();                       
-				      	pstmt.close();  
+				  rs.close();                       
+				  pstmt.close();  
 				      	
-				          }
-		            catch (SQLException ex) {
-		                ex.printStackTrace();
-		            }
-		            finally {
-		                if (stmt != null) stmt.close();
-		            }
-		        }
-		        catch (Exception ex) {
-		            ex.printStackTrace();
-		        }
-		        finally {
-		            if (con != null) con.close();
-		        }	
-		 return entryLevel;
+			   }
+              catch (SQLException ex) {
+                  ex.printStackTrace();
+              }
+              finally {
+                  if (stmt != null) stmt.close();
+              }
+		  }
+          catch (Exception ex) {
+              ex.printStackTrace();
+          }
+          finally {
+              if (con != null) con.close();
+          }	
+		  return entryLevel;
 	}
 	
 	public static String getLastLevelOfStudy(String email) throws SQLException{
@@ -357,50 +369,55 @@ public class Grades { //create a constructor
 			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 		      con.setAutoCommit(false);
 		      Statement stmt = null;
-		      String getLast_level = String.format("SELECT last_level FROM degree INNER JOIN student ON degree.degree_id = student.degree_id WHERE email = ?");
-		      ResultSet rs;
+		      String getLast_level = "SELECT last_level FROM year_grade WHERE email = ?";
+		      
 		      try (PreparedStatement pstmt = con.prepareStatement(getLast_level)){
-                                        pstmt.setString(1, email);
-				      	rs = pstmt.executeQuery();        // Get the result table from the query  3 
-				      	while (rs.next()) {               // Position the cursor                  4 
-					      	 lastLevel = rs.getString("last_level");        // Retrieve the sixth column value
-				      	}
+		    	  pstmt.setString(1, email);
+		    	  ResultSet rs = pstmt.executeQuery();  
+		    	  con.commit();
+		    	  
+		          while (rs.next()) {               
+			          lastLevel = rs.getString("last_level");
 				      	
-				      	rs.close();                       
-				      	pstmt.close();  
+		          }
+		          rs.close();                       
+		      	  pstmt.close();
 				      	
-				          }
-		            catch (SQLException ex) {
-		                ex.printStackTrace();
-		            }
-		            finally {
-		                if (stmt != null) stmt.close();
-		            }
-		        }
-		        catch (Exception ex) {
-		            ex.printStackTrace();
-		        }
-		        finally {
-		            if (con != null) con.close();
-		        }	
-		 return lastLevel;
+			   }
+              catch (SQLException ex) {
+                  ex.printStackTrace();
+              }
+              finally {
+                  if (stmt != null) stmt.close();
+              }
+		 }
+          catch (Exception ex) {
+              ex.printStackTrace();
+          }
+          finally {
+              if (con != null) con.close();
+          }	
+		  return lastLevel;
 	}
         
-	public static Double getResitYearGrade(String email, String levelOfStudy) throws SQLException {
-		Double resitYearGrade = null;
+	public static int getResitYearGrade(String email, String levelOfStudy) throws SQLException {
+		int resitYearGrade = 0;
 		Connection con = null; 
 		 try {
 			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
 		      con.setAutoCommit(false);
 		      Statement stmt = null;
-		      String getResitGrade = String.format("SELECT resit_grade FROM year_grade WHERE email = %s", email) ;
-		      ResultSet rs;
+		      String getResitGrade = "SELECT resit_grade FROM year_grade WHERE email = ?";
+		      
 		      try (PreparedStatement pstmt = con.prepareStatement(getResitGrade)){
-				      	rs = pstmt.executeQuery();        // Get the result table from the query  3 
-				      	resitYearGrade = rs.getDouble(7);        // Retrieve the fourth column value
-					      
-				      	rs.close();                       // Close the ResultSet                  5 
-				      	pstmt.close();                    
+		    	  pstmt.setString(1, email);
+		    	  ResultSet rs = pstmt.executeQuery(); 
+		    	  con.commit();
+		    	  while(rs.next()) {
+		    		  resitYearGrade = rs.getInt("resit_grade");     
+		    	  }
+		          rs.close();                      
+		          pstmt.close();                    
 				          }
 		            catch (SQLException ex) {
 		                ex.printStackTrace();
@@ -440,7 +457,7 @@ public class Grades { //create a constructor
 				finalGrade = (year2Grade + year3Grade * 2)/3;
 			}
 			else if(currentLevelOfStudy == String.valueOf(LevelsOfStudy.BACHELORS) && lastYearPassed == false) {
-				Double resitGrade = getResitYearGrade(email, currentLevelOfStudy);
+				int resitGrade = getResitYearGrade(email, currentLevelOfStudy);
 				if (resitGrade >= capResitGrade(email)) {
 					finalGrade = capResitGrade(email);
 				}
@@ -452,6 +469,7 @@ public class Grades { //create a constructor
 		return finalGrade;
 	}
         
+	//when a student fails in their last year and they are awarded the same degree with lower difficulty  --need enough data to test this!!!
 	public static String degradeDegreeId(String email) throws SQLException {
 		String currentDegree = Students.getDegreeName(email);
 		String degreeName = currentDegree.substring(currentDegree.indexOf(' ') + 1);
@@ -462,13 +480,20 @@ public class Grades { //create a constructor
 			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
 		      con.setAutoCommit(false);
 		      Statement stmt = null;
-		      String getdegree = String.format("SELECT degree_id FROM degree WHERE degree_name like '%s'AND (last_level = %s OR last_level = PG)", degreeName, lastLevel) ;
-		      ResultSet rs;
+		      String getdegree = "SELECT degree_id FROM degree WHERE degree_name like ? AND (last_level = ? OR last_level = PG)";
+		      
 		      try (PreparedStatement pstmt = con.prepareStatement(getdegree)){
-				      	rs = pstmt.executeQuery();        // Get the result table from the query  3 
-				      	degreeId = rs.getString(1);        // Retrieve the first column value
-				      	rs.close();                       // Close the ResultSet                  5 
-				      	pstmt.close();                    
+		    	    pstmt.setString(1, degreeName);
+		    	    pstmt.setString(2, email);
+		    	    ResultSet rs = pstmt.executeQuery();   
+		    	    con.commit();
+		    	    
+		    	    while(rs.next()) {
+		    	    	degreeId = rs.getString("degree_id");  
+		    	    }
+			      	      
+			      	rs.close();                      
+			      	pstmt.close();                    
 		      }
 		            catch (SQLException ex) {
 		                ex.printStackTrace();
@@ -602,6 +627,7 @@ public class Grades { //create a constructor
 		return marks;
 	}
 	
+	//when a postgraduate fails and is awarded PGCert instead of MSc
 	public static void pgCert(String email) throws SQLException{
 		String fullDegreeName = Students.getDegreeName(email);
 		String degreeName = fullDegreeName.substring(fullDegreeName.indexOf(' ') + 1);
@@ -633,9 +659,14 @@ public class Grades { //create a constructor
 		            try (PreparedStatement pstmt = con.prepareStatement(getTaughtMod)){
 		            	pstmt.setString(1, passedModule.get(i));
 		            	pstmt.setBoolean(2, true);
-				      	rs = pstmt.executeQuery();        // Get the result table from the query  3 
-				      	passedTaughtModules.add(rs.getString(1));        // Retrieve the fourth column value
-				      	rs.close();                       // Close the ResultSet                  5 
+				      	rs = pstmt.executeQuery();   
+				      	con.commit();
+				      	
+				      	while(rs.next()) {
+				      		passedTaughtModules.add(rs.getString("module_id")); 
+				      	}
+				      	       
+				      	rs.close();                       
 				      	pstmt.close();                    
 				    }
 		            catch (SQLException ex) {
@@ -668,10 +699,11 @@ public class Grades { //create a constructor
 					      String getdegreeId = "SELECT degree_id FROM degree WHERE degree_name = ?" ;
 					      ResultSet rs;
 					      try (PreparedStatement pstmt = con.prepareStatement(getdegreeId)){
-							      	rs = pstmt.executeQuery();        // Get the result table from the query  3 
-							      	updatedDegreeId = rs.getString(1);        // Retrieve the first column value
-							      	rs.close();                       // Close the ResultSet                  5 
-							      	pstmt.close();                    
+					    	    pstmt.setString(1, degreeName);
+						      	rs = pstmt.executeQuery();         
+						      	updatedDegreeId = rs.getString("degree_id");
+						      	rs.close();                       
+						      	pstmt.close();                    
 					      }
 					            catch (SQLException ex) {
 					                ex.printStackTrace();
@@ -693,8 +725,5 @@ public class Grades { //create a constructor
 		}
 		
 	}
-	
-	
-	
 	
 }

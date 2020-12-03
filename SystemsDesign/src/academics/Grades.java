@@ -156,6 +156,43 @@ public class Grades { //create a constructor
 		  return currentlevelOfStudy;   
 				      	
 	}	
+	
+	public static String getPeriodOfStudy(String email) throws SQLException{
+		String periodOfStudy = null;
+		Connection con = null; 
+		 try {
+			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+		      con.setAutoCommit(false);
+		      Statement stmt = null;
+		      String getCurrentLevelOfStudy = "SELECT period_of_study FROM year_grade WHERE email = ?";    
+		      
+		      try (PreparedStatement pstmt = con.prepareStatement(getCurrentLevelOfStudy)){
+		          pstmt.setString(1, email);
+    	  	      ResultSet rs = pstmt.executeQuery(); 
+    	  	      con.commit();
+    	  	    
+    	  	      while(rs.next()) {
+    	  	      	periodOfStudy = rs.getString("period_of_study");  
+    	  	      }
+		      	  rs.close();                       
+		      	  pstmt.close();                    
+			  }
+              catch (SQLException ex) {
+                  ex.printStackTrace();
+              }
+              finally {
+                  if (stmt != null) stmt.close();
+              }
+		  }
+          catch (Exception ex) {
+              ex.printStackTrace();
+          }
+          finally {
+              if (con != null) con.close();
+          }		
+		  return periodOfStudy;   
+				      	
+	}	
 	   
     //list of module id for a student for that level of study
 	public static List<String> getModuleList(String email, String levelOfStudy) throws SQLException{

@@ -31,7 +31,8 @@ public class Students extends Users{
   
   public Students (String username, String title, String surname, String forename, String password, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor) throws SQLException {
   	super(username, title, surname, forename, password);
-    
+  	addStudent(username, degreeId, totalCredits, difficulty, startDate, endDate, personalTutor);
+
     this.password = password;
   	this.degreeId = degreeId;
   	this.totalCredits = totalCredits;
@@ -40,7 +41,6 @@ public class Students extends Users{
   	this.endDate = endDate;
   	this.personalTutor = personalTutor;
   	
-  	addStudent(username, degreeId, totalCredits, difficulty, startDate, endDate, personalTutor);
 
   }
   
@@ -77,6 +77,7 @@ public int getRegistrationId() throws SQLException {
 	         con.setAutoCommit(false);
 
 	         String regId = "SELECT registration_id FROM student WHERE username = ?";
+
 	         try (PreparedStatement checkRegId = con.prepareStatement(regId)){
 	        	 checkRegId.setString(1, username);
 	             ResultSet rs = checkRegId.executeQuery();
@@ -174,17 +175,60 @@ public int getResitGrade() throws SQLException {
 	     }
 	  return resitGrade;
 }
-  public void addStudent(String username, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor ) throws SQLException {
-        
+
+public boolean getResitYear() throws SQLException {
+	Connection con = null;
+    Statement stmt = null;
+    boolean resitYear = false;
+
+	     try {
+	         con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+	         con.setAutoCommit(false);
+
+	         String reGrade = "SELECT resit_year FROM student WHERE email = ?";
+	         try (PreparedStatement getRe = con.prepareStatement(reGrade)){
+	        	 getRe.setString(1, email);
+	             ResultSet rs = getRe.executeQuery();
+	             con.commit();
+	              
+	             while (rs.next()) {
+	            	 resitYear = rs.getBoolean(1);
+		         }
+	             
+	         }
+	         catch (SQLException ex) {
+	             ex.printStackTrace();
+	         }
+	         finally {
+	             if (stmt != null) stmt.close();
+	         }
+	     }
+	     catch (Exception ex) {
+	         ex.printStackTrace();
+	     }
+	     finally {
+	         if (con != null) con.close();
+	     }
+	  return resitYear;
+}
+
+public void addStudent(String username, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor ) throws SQLException {
+     System.out.println("This is add STUDENT");
   	 Connection con = null;
+  	 boolean preExisting = false;
      try {
          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
          con.setAutoCommit(false);
          Statement stmt = null;
+         String gradeTable = "INSERT INTO year_grade(email, level_of_study,"
+         		+ " period_of_study, current_level_of_study) VALUES (?,?,?,?)";
          String checkExisting = "SELECT username, email FROM student WHERE username = ?";
-         String preparedStmt = "INSERT INTO student(email, username, resit_year, degree_id, total_credits, difficulty, start_date, end_date, personal_tutor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+         String preparedStmt = "INSERT INTO student(email, username, resit_year, degree_id, "
+         		+ "total_credits, difficulty, start_date, end_date, personal_tutor)"
+         		+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
          try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt);
-        		 PreparedStatement checkStmt = con.prepareStatement(checkExisting)){
+        		 PreparedStatement checkStmt = con.prepareStatement(checkExisting);
+        		 PreparedStatement update = con.prepareStatement(gradeTable)){
         	 checkStmt.setString(1, username);
         	 ResultSet existingUsers = checkStmt.executeQuery();
         	 con.commit();
@@ -192,25 +236,33 @@ public int getResitGrade() throws SQLException {
         	 while (existingUsers.next()) {
         		 if (username.equals(existingUsers.getString("username"))) {
         			 email = existingUsers.getString("email");
+        			 preExisting = true;
         			 System.err.println("Student/username already exists.");
         		 }
-        		 else {
-        			 email = emailGen(surname, forename, username);
-        			 updateStmt.setString(1, email);
-                     updateStmt.setString(2, username);
-                     updateStmt.setBoolean(3, false);
-                     updateStmt.setString(4, degreeId);
-                     updateStmt.setInt(5, totalCredits); 
-                     updateStmt.setString(6, difficulty);
-                     updateStmt.setDate(7, startDate);
-                     updateStmt.setDate(8, endDate);
-                     updateStmt.setString(9, personalTutor);
-                     
-                     updateStmt.executeUpdate();
-                     con.commit();
-                     
-        		 }
         	 }
+        	 if (!preExisting) {
+        		 email = emailGen(surname, forename, username);
+    			 updateStmt.setString(1, email);
+                 updateStmt.setString(2, username);
+                 updateStmt.setBoolean(3, false);
+                 updateStmt.setString(4, degreeId);
+                 updateStmt.setInt(5, totalCredits); 
+                 updateStmt.setString(6, difficulty);
+                 updateStmt.setDate(7, startDate);
+                 updateStmt.setDate(8, endDate);
+                 updateStmt.setString(9, personalTutor);
+                 
+                 updateStmt.executeUpdate();
+                 
+                 update.setString(1, email);
+                 update.setString(2, "1");
+                 update.setString(3, "A");
+                 update.setString(4, "1");
+                 update.executeUpdate();
+                 System.out.println("Hello");
+                 con.commit();
+        	 }
+        	 
              
          }
          catch (SQLException ex) {

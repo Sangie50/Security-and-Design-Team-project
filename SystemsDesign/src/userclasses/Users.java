@@ -69,7 +69,6 @@ public class Users {
 		this.forename = forename;
 		this.accountType = UserTypes.UNASSIGNED.toString();
 		
-		this.password = PasswordGen.generateSecurePassword(password, salt);
 		
     	Connection con = null;
 	        try {
@@ -89,6 +88,7 @@ public class Users {
 	        			 System.err.println("User/username already exists.");
 	        		 }
 	        		 else {
+	        			this.password = PasswordGen.generateSecurePassword(password, salt);
 	        			updateStmt.setString(1, username);
 	 	                updateStmt.setString(2, title);
 	 	                updateStmt.setString(3, surname);
@@ -142,11 +142,78 @@ public class Users {
 		return password;
 	}
 	
-	private String matchPattern(final String string, final String pattern) {
-	    final Pattern p = Pattern.compile(pattern);
-	    final Matcher m = p.matcher(string);	
-	    return string;
+	public String getAccountType() throws SQLException {
+    	Connection con = null;
+    	
+	        try {
+	        	Statement stmt = null;
+	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+	            con.setAutoCommit(false);
+	            String accountType = "";
+	            String checkExisting = "SELECT account_type FROM user WHERE username = ?";
+
+               
+	            try (PreparedStatement checkStmt = con.prepareStatement(checkExisting)){
+	            	checkStmt.setString(1, username);
+	            	ResultSet existingUsers = checkStmt.executeQuery();
+	            	con.commit();
+	            	while (existingUsers.next()) {
+	            		accountType = existingUsers.getString("account_type");
+	        		 }
+	        		 
+	                    	  	               
+	            }
+	            catch (SQLException ex) {     
+	       		System.out.println("Error: Duplicate data detected ERROR CODE: "
+	            + ex.getErrorCode());
+	            }
+	            finally {
+	                if (stmt != null) stmt.close();
+	            }
+	        
+	        } catch (Exception ex) {
+	            ex.printStackTrace();
+	        }
+	        finally {
+	            if (con != null) con.close();
+	        }
+	        this.accountType = accountType;
+		System.out.println(username + " " + accountType);
+		return accountType;
 	}
+
+	public void setAccountType(String type) throws SQLException {
+		Connection con = null;
+		this.accountType = type;
+        try {
+        	Statement stmt = null;
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            String accountType = "";
+            String checkExisting = "UPDATE user SET account_type = ? WHERE username = ?";
+
+            try (PreparedStatement checkStmt = con.prepareStatement(checkExisting)){
+            	checkStmt.setString(1, type);
+            	checkStmt.setString(2, username);
+            	checkStmt.executeUpdate();
+            	con.commit();        	  	               
+            }
+            catch (SQLException ex) {     
+       		System.out.println("Error: Duplicate data detected ERROR CODE: "
+            + ex.getErrorCode());
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+	}
+	
 	
 }
 	

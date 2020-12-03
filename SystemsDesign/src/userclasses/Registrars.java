@@ -42,7 +42,7 @@ public class Registrars extends Users {
 		}
 	     
 	 
-	 public static void deleteStudent(String username) throws SQLException {
+	 public static void deleteStudent(String username, String email) throws SQLException {
 		 Connection con = null;
 	        try {
 	            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
@@ -50,21 +50,24 @@ public class Registrars extends Users {
 	            Statement stmt = null;
 	            String preparedStmt = "SELECT account_type FROM user WHERE username = ?";
 	            String deleteStmt = "DELETE FROM student WHERE username = ?";
+	            String delYearGrade = "DELETE FROM year_grade WHERE email = ?";
 	            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt);
-	            		PreparedStatement delStmt = con.prepareStatement(deleteStmt)){
+	            		PreparedStatement delStmt = con.prepareStatement(deleteStmt);
+	            		PreparedStatement ygStmt = con.prepareStatement(delYearGrade)){
 	                updateStmt.setString(1, username);
 	                ResultSet type = updateStmt.executeQuery();
 	                while (type.next()) {
 	                	 if (type.getString(1).equals(UserTypes.STUDENT.toString())) {
 	 	                	delStmt.setString(1, username);
 	 	                	delStmt.executeUpdate();
+	 	                	ygStmt.setString(1, email);
+	 	                	ygStmt.executeUpdate();
 	 	                	Admins.updatePermission(username, UserTypes.UNASSIGNED.toString());
 	 						System.out.println("Student deleted");
 	 	                }
 	 	                else System.err.println("Cannot delete a non-student user.");
 	 	                con.commit();
 	                }
-
 	               
 	            }
 	            catch (SQLException ex) {
@@ -82,7 +85,7 @@ public class Registrars extends Users {
 	        }
 	 }
 	 
-	 public static void addStudent(String username, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor) throws SQLException {
+	 public void addStudent(String username, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor) throws SQLException {
 			Connection con = null;
 		    Statement stmt = null;
 		    String title = "";
@@ -199,10 +202,11 @@ public class Registrars extends Users {
 	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
-	            String getModuleId = "INSERT INTO module_grade (module_id, email) VALUES (?,?)";
+	            String getModuleId = "INSERT INTO module_grade (module_id, email, level_of_study) VALUES (?,?,?)";
 	            try (PreparedStatement updateStmt = con.prepareStatement(getModuleId)){
 	                updateStmt.setString(1, moduleId);
 	                updateStmt.setString(2, email);
+	                updateStmt.setInt(3, Integer.parseInt(moduleId.substring(3,4)));
 	                updateStmt.executeUpdate();
 	                con.commit();
 	                }
@@ -221,15 +225,44 @@ public class Registrars extends Users {
 	        }		 
 	 }
 	 
-	 public void linkModuleToTeacher(String employeeNo, String moduleId) throws SQLException {
+	 public void linkModuleToTeacher(int employeeNo, String departmentId, String moduleId) throws SQLException {
 		 Connection con = null; 
 		 try {
 	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
-	            String getModuleId = "INSERT INTO module_teacher (employeeNo, moduleId) VALUES (?,?)";
+	            String getModuleId = "INSERT INTO module_teacher VALUES (?,?,?)";
 	            try (PreparedStatement updateStmt = con.prepareStatement(getModuleId)){
-	                updateStmt.setString(1, employeeNo);
+	                updateStmt.setInt(1, employeeNo);
+	                updateStmt.setString(2, departmentId);
+	                updateStmt.setString(3, moduleId);
+	                updateStmt.executeUpdate();
+	                con.commit();
+	                }
+	            catch (SQLException ex) {
+	                ex.printStackTrace();
+	            }
+	            finally {
+	                if (stmt != null) stmt.close();
+	            }
+	        }
+	        catch (Exception ex) {
+	            ex.printStackTrace();
+	        }
+	        finally {
+	            if (con != null) con.close();
+	        }	
+	 }
+	 
+	 public void unlinkModuleToTeacher(int employeeNo, String moduleId) throws SQLException {
+		 Connection con = null; 
+		 try {
+	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+	            con.setAutoCommit(false);
+	            Statement stmt = null;
+	            String getModuleId = "DELETE FROM module_teacher WHERE employee_no = ? AND module_id = ?";
+	            try (PreparedStatement updateStmt = con.prepareStatement(getModuleId)){
+	                updateStmt.setInt(1, employeeNo);
 	                updateStmt.setString(2, moduleId);
 	                updateStmt.executeUpdate();
 	                con.commit();

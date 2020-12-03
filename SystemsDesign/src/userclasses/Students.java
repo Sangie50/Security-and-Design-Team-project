@@ -281,7 +281,8 @@ public boolean getResitYear() throws SQLException {
 	     }
 	  return resitYear;
 }
-public static java.util.Date convertFromSQLDateToJAVADate(java.sql.Date sqlDate) {
+
+public java.util.Date convertFromSQLDateToJAVADate(java.sql.Date sqlDate) {
     java.util.Date javaDate = null;
     if (sqlDate != null) {
         javaDate = new Date(sqlDate.getTime());
@@ -289,7 +290,7 @@ public static java.util.Date convertFromSQLDateToJAVADate(java.sql.Date sqlDate)
     return javaDate;
 }
 
-public static String generatePeriodOfStudy(String email) throws SQLException{
+public String generatePeriodOfStudy(String email) throws SQLException{
     String periodOfStudy = "";
     java.util.Date startDate;
     java.util.Date endDate;

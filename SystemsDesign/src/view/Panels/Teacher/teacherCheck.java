@@ -2,6 +2,8 @@ package view.Panels.Teacher;
 
 import academics.Grades;
 import java.awt.BorderLayout;
+
+import view.Panels.AbstractPanel;
 import view.Panels.Teacher.TeacherMenu;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -11,11 +13,14 @@ import javax.swing.JLabel;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import javax.swing.JButton;
 import javax.swing.JTextField;
@@ -31,9 +36,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
+
+import userclasses.Students;
 import userclasses.Teachers;
 
-public class teacherCheck extends JPanel {
+public class teacherCheck extends AbstractPanel {
 //    private JTable table;
 //    private JTextField degreeId;
 //    private JTextField personalTutor;
@@ -45,55 +52,19 @@ public class teacherCheck extends JPanel {
  * @param studentEmail
      * @throws SQLException 
      */
-    public teacherCheck(JPanel panel, String username, String studentEmail, JFrame mainFrame) throws SQLException {
+    public teacherCheck(JPanel panel, String username, String studentEmail, JFrame mainFrame, Teachers teacher) throws SQLException {
         panel.removeAll();
         panel.revalidate();
         panel.repaint();
 
         setLayout(null);
         setBounds(100, 100, 1035, 700);
-        String type = "";
+        Students student = getStudent(studentEmail);
 
         Connection con = null;
         Statement stmt = null;
         
-        Integer credits = 0;
-        String tutor = "";
-        Boolean resitYear = false;
-        
-        
-        
-        try {
-            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
-            con.setAutoCommit(false);
-
-            String accType = "SELECT * FROM student WHERE student.email = ?";
-            try (PreparedStatement checkAccType = con.prepareStatement(accType)){
-                checkAccType.setString(1, studentEmail);
-                ResultSet rs = checkAccType.executeQuery();
-                con.commit();
-                while (rs.next()) {
-                    credits = rs.getInt("total_credits");
-                    tutor = rs.getString("personal_tutor");
-                    resitYear = rs.getBoolean("resit_year");
-                }
-                rs.close();
-            }
-            catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-            finally {
-                if (stmt != null) stmt.close();
-            }
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        finally {
-            if (con != null) con.close();
-        }
-        
-        JLabel title = new JLabel("Teacher Page - "+studentEmail);
+        JLabel title = new JLabel("Teacher Page - " + student.getEmail());
         title.setBounds(5, 5, 999, 26);
         title.setFont(title.getFont().deriveFont(title.getFont().getStyle() | Font.BOLD));
         title.setHorizontalAlignment(SwingConstants.CENTER);
@@ -102,28 +73,32 @@ public class teacherCheck extends JPanel {
         JLabel creditLabel = new JLabel("Credits:");
         creditLabel.setBounds(81, 40, 277, 26);
         panel.add(creditLabel);
-        JLabel creditText = new JLabel(""+credits+"");
+        JLabel creditText = new JLabel(Integer.toString(student.getTotalCredits()));
         creditText.setBounds(81, 70, 277, 26);
         panel.add(creditText);
         
         JLabel tutorLabel = new JLabel("Tutor:");
         tutorLabel.setBounds(81, 110, 277, 26);
         panel.add(tutorLabel);
-        JLabel tutorText = new JLabel(tutor);
+        JLabel tutorText = new JLabel(student.getPersonalTutor());
         tutorText.setBounds(81, 140, 277, 26);
         panel.add(tutorText);
+        
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");  
         
         JLabel resitLabel = new JLabel("Resit Year:");
         resitLabel.setBounds(81, 180, 277, 26);
         panel.add(resitLabel);
-        JLabel resitText = new JLabel(""+resitYear+"");
+        
+        JLabel resitText = new JLabel(Boolean.toString(student.getResitYear()));
         resitText.setBounds(81, 210, 277, 26);
         panel.add(resitText);
         
         JLabel passYearLabel = new JLabel("Pass Year:");
         passYearLabel.setBounds(81, 250, 277, 26);
         panel.add(passYearLabel);
-        Boolean pass = getPassYear(studentEmail);
+        
+        Boolean pass = teacher.getPassYear(student.getEmail());
         JLabel passYearText = new JLabel(String.valueOf(pass));
         passYearText.setBounds(81, 280, 277, 26);
         panel.add(passYearText);
@@ -170,9 +145,6 @@ public class teacherCheck extends JPanel {
         
 
 	}
-    public Boolean getPassYear(String studentEmail) throws SQLException{
-        String level = Grades.getLastLevelOfStudy(studentEmail);
-        Boolean passYear = Grades.yearPassed(studentEmail, level);
-        return passYear;
-    }
+    
+
 }

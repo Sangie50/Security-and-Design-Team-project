@@ -637,7 +637,7 @@ public class Admins extends Users{
         }
     }
     
-    public static List<Degrees> viewDegree() throws SQLException {
+    public static List<Degrees> viewAllDegrees() throws SQLException {
         List<Degrees> deg = new ArrayList<Degrees>();
         Connection con = null;
         try {
@@ -717,4 +717,5 @@ public class Admins extends Users{
         }
     }
     
+
 }

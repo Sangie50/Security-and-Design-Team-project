@@ -21,7 +21,7 @@ public class TestRun {
     public static void main(String[] args) throws SQLException {
 //    	Registrars reg = new Registrars("registrar", "ms", "balding", "senna", "password");
 //        Users nameless = new Users("name", "ms", "a", "a", "password"); // creates an unassigned user
-        //Users name = new Users("nameless", "ms", "a", "a", "password");
+        Users name = new Users("work", "ms", "a", "a", "password");
 
         
         /*

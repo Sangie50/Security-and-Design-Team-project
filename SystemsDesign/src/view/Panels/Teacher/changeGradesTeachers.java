@@ -20,6 +20,7 @@ import java.sql.Statement;
 
 import javax.swing.JButton;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 import view.Frames.LoginFrame;
 
@@ -55,6 +56,14 @@ public class changeGradesTeachers extends AbstractPanel {
         setLayout(null);
         setBounds(100, 100, 1035, 700);
         
+        //DEFAULT
+      	UIManager.put("Label.font", LABEL_FONT);
+      	UIManager.put("Table.font", TABLE_FONT);
+      	UIManager.put("TableHeader.font", HEADER_FONT);
+      	UIManager.put("Button.font", TABLE_FONT);
+      	UIManager.put("ComboBox.font", LABEL_FONT);
+      		
+      	//settings
         Students student = getStudent(studentEmail);
 
 
@@ -62,6 +71,7 @@ public class changeGradesTeachers extends AbstractPanel {
         scrollPane.setBounds(221,5,2,2);
         panel.add(scrollPane);
 
+        
         //label
         JLabel infoLabel = new JLabel("Student Information");
         infoLabel.setFont(new Font("Tahoma", Font.BOLD, 21));

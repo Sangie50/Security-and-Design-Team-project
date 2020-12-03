@@ -472,9 +472,9 @@ public class Teachers extends Users{
   	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
   		      con.setAutoCommit(false);
   		      Statement stmt = null;
-  		      String studentViewTable ="SELECT module.module_id, module_name, initial_grade, resit_grade"
-  		      		+ " FROM module_grade LEFT JOIN module ON module_grade.module_id = module.module_id"
-  		      		+ " WHERE email = ? AND level_of_study = ? ";
+  		      String studentViewTable ="SELECT module.module_id, module_name, initial_grade, resit_grade,"
+  		      		+ " module.pass_grade FROM module_grade LEFT JOIN module "
+  		      		+ "ON module_grade.module_id = module.module_id WHERE email = ? AND level_of_study = ? ";
   		      
   		      ResultSet rs;
 
@@ -486,11 +486,12 @@ public class Teachers extends Users{
   					
   		      	 	while (rs.next()) {
   		      		    ArrayList<String> row = new ArrayList<String>();
-  		      	 		row.add(rs.getString("module_id"));				//module id
-  		      	 		row.add(rs.getString("module_name"));	   		//module name
-  		      	 		row.add(rs.getString("department_id"));			//department id	   
+  		      	 		row.add(rs.getString("module_id"));				
+  		      	 		row.add(rs.getString("module_name"));	   		
+  		      	 		row.add(rs.getString("initial_grade"));	
+  		      	 		row.add(rs.getString("resit_grade"));
+  		      	 		row.add(rs.getString("pass_grade"));
   		      	 		list.add(row);
-  		 
   				    }
   		      }
   		            catch (SQLException ex) {
@@ -639,10 +640,72 @@ public class Teachers extends Users{
         return list;
 	
     }
+    public boolean isPostGrad(String email) throws SQLException {
+   	 Connection con = null;
+   	 boolean isPostGrad = false;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            Statement stmt = null;
+            String entryLevel = "SELECT entry_level FROM degree LEFT JOIN student ON"
+            		+ " student.degree_id = degree.degree_id WHERE student.email = ?";
+            try (PreparedStatement getLevel = con.prepareStatement(entryLevel)){
+            	getLevel.setString(1, email);
+                ResultSet level = getLevel.executeQuery();
+                con.commit();
+                
+                while(level.next()) {
+                    if(level.getString("entry_level").equals("PG")) isPostGrad = true;
+                }
+          
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+        return isPostGrad;
+   }
     
     public Boolean getPassYear(String studentEmail) throws SQLException{
         String level = Grades.getLastLevelOfStudy(studentEmail);
         Boolean passYear = Grades.yearPassed(studentEmail, level);
         return passYear;
     }
+    
+   
+
+	public String displayNextLevel(String email, String levelOfStudy) throws SQLException {
+		 String level = Grades.getCurrentLevelOfStudy(email);
+		 String nextLevel = "";
+		 Boolean yearPassed = Grades.yearPassed(email, levelOfStudy);
+		 Boolean isPostGrad = isPostGrad(email);
+		 if (yearPassed) {
+			 int currLevel = Integer.parseInt(level);
+			 String difficulty = Grades.getStudentDifficulty(email);
+			 if (difficulty.equals("M") && currLevel == 4 && !isPostGrad) {
+				 nextLevel = "Graduate";
+			 }
+			 else if (difficulty.equals("B") && currLevel == 3 && !isPostGrad) {
+				 nextLevel = "Graduate";
+			 }
+			 else if (isPostGrad) {
+				 nextLevel = "Graduate";
+			 }
+			 else {
+				 nextLevel = Integer.toString(currLevel++);
+			 }
+		 }
+		 
+		 return nextLevel;		 
+		 
+	}
 }

@@ -85,6 +85,7 @@ public class RegisterStudent extends AbstractPanel {
 		panel.add(usernameLabel);
 		
 		JLabel accountType = new JLabel(user.getAccountType());
+		System.out.println("Account type: " + user.getAccountType());
 		accountType.setBounds(221, 68, 156, 26);
 		panel.add(accountType);
 		
@@ -227,6 +228,10 @@ public class RegisterStudent extends AbstractPanel {
 				String pt = personalTutor.getText();
 				try {
 					registrar.addStudent(un, deg, creds, diff, start, end, pt);
+					user.setAccountType(UserTypes.STUDENT.toString());
+					accountType.setText(user.getAccountType());
+					panel.revalidate();
+					panel.repaint();
 					JOptionPane.showMessageDialog(mainFrame.getComponent(0), "Student Added.");
 					
 				} catch (SQLException e1) {
@@ -243,7 +248,12 @@ public class RegisterStudent extends AbstractPanel {
 			public void actionPerformed(ActionEvent e) {
 				
 				try {
-					Registrars.deleteStudent((String) username.getText());
+					Students student = getStudent((String) username.getText());
+					Registrars.deleteStudent((String) username.getText(), student.getEmail());
+					user.setAccountType(UserTypes.UNASSIGNED.toString());
+					accountType.setText(user.getAccountType());
+					panel.revalidate();
+					panel.repaint();
 					JOptionPane.showMessageDialog(mainFrame.getComponent(0), "Student Removed.");
 					
 				} catch (SQLException e1) {

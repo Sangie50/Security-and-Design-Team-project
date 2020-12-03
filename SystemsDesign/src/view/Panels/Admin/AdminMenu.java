@@ -35,7 +35,10 @@ public class AdminMenu extends JPanel {
 
 	private static JTable departTable;
 	private static JTable degreeTable;
+	private static JTable intDegreeTable;
 	private static JTable userTable;
+	private static JTable allModulesTable;
+	private static JTable coreModulesTable;
 	public static JComboBox<String> mainComboBox;
 	public static String[][] userContent;
 	
@@ -88,11 +91,11 @@ public class AdminMenu extends JPanel {
 	    contentPane.add(dept_sp);
 	    
 		
-		JScrollPane degree_sp = new JScrollPane(degreeTable());
+		JScrollPane degree_sp = new JScrollPane(allDegreesTable());
 	    degree_sp.setBounds(35, 134, 700, 500); 
 	    degree_sp.setBorder(BorderFactory.createEmptyBorder());
 	    
-	    JScrollPane module_sp = new JScrollPane(moduleTable());
+	    JScrollPane module_sp = new JScrollPane(allModulesTable());
 	    module_sp.setBounds(35, 134, 900, 500); 
 	    module_sp.setBorder(BorderFactory.createEmptyBorder());
 	    
@@ -260,8 +263,8 @@ public class AdminMenu extends JPanel {
 	    
 	}
 	
-	public static JTable degreeTable() throws SQLException {
-		List<Degrees> degreeList = Admins.viewDegree();
+	public static JTable allDegreesTable() throws SQLException {
+		List<Degrees> degreeList = Admins.viewAllDegrees();
 		int array_size = degreeList.size();
 		String[][] contentD = null; 
 		contentD = new String[array_size][6];
@@ -282,7 +285,7 @@ public class AdminMenu extends JPanel {
 			contentD[i][4] = entryLevel;
 			contentD[i][5] = lastLevel;
 		}
-		String[] header = {"Degree Id", "Department Id", "Degree Name", "Difficuly", "Entry Level", "Last Level"};
+		String[] header = {"Degree Id", "Lead Department Id", "Degree Name", "Difficuly", "Entry Level", "Last Level"};
 			 
 		degreeTable = new JTable(contentD, header);
 	    degreeTable.setEnabled(false);
@@ -298,7 +301,31 @@ public class AdminMenu extends JPanel {
 		return degreeTable;
 	}	
 	
-	public static JTable moduleTable() throws SQLException{
+	public static JTable intDegreesTable() throws SQLException {
+		List<Degrees> degreeList = Admins.viewAllDegrees();
+		int array_size = degreeList.size();
+		String[][] content = new String[array_size][3];
+		for (int i = 0; i<degreeList.size(); i++) {
+			String module = degreeList.get(i).toString();
+			String[] idkk = module.split(";");
+			for (int j = 0; j < idkk.length; j++) {
+				content[i][j] = idkk[j];
+			}
+		}	
+		String[] header = {"Index", "Degree Id", "Secondary Department Id"};
+			 
+		intDegreeTable = new JTable(content, header);
+		intDegreeTable.setEnabled(false);
+		intDegreeTable.getColumnModel().getColumn(0).setPreferredWidth(25);
+		intDegreeTable.getColumnModel().getColumn(1).setPreferredWidth(30);
+		intDegreeTable.getColumnModel().getColumn(2).setPreferredWidth(180);
+	    
+		intDegreeTable.getTableHeader().setReorderingAllowed(false);    	
+		intDegreeTable.setBackground(UIManager.getColor("Button.background"));
+		return intDegreeTable;
+	}	
+	
+	public static JTable allModulesTable() throws SQLException{
 		List<Modules> moduleList;
 		moduleList = Admins.viewAllModule();
 		int arraySize = moduleList.size();
@@ -313,21 +340,51 @@ public class AdminMenu extends JPanel {
 		
 		String[] header = {"Module ID", "Module Name", "isTaught", "Credits","Department Id", "Pass Grade"};
 	    
-	    userTable = new JTable(content, header);
-	    userTable.setEnabled(false);
+	    allModulesTable = new JTable(content, header);
+	    allModulesTable.setEnabled(false);
 	    
-	    userTable.getColumnModel().getColumn(0).setPreferredWidth(20);
-	    userTable.getColumnModel().getColumn(1).setPreferredWidth(200);
-	    userTable.getColumnModel().getColumn(2).setPreferredWidth(20);
-	    userTable.getColumnModel().getColumn(3).setPreferredWidth(20);
-	    userTable.getColumnModel().getColumn(4).setPreferredWidth(20);
-	    userTable.getColumnModel().getColumn(5).setPreferredWidth(20);
+	    allModulesTable.getColumnModel().getColumn(0).setPreferredWidth(20);
+	    allModulesTable.getColumnModel().getColumn(1).setPreferredWidth(200);
+	    allModulesTable.getColumnModel().getColumn(2).setPreferredWidth(20);
+	    allModulesTable.getColumnModel().getColumn(3).setPreferredWidth(20);
+	    allModulesTable.getColumnModel().getColumn(4).setPreferredWidth(20);
+	    allModulesTable.getColumnModel().getColumn(5).setPreferredWidth(20);
 	    
 	    
 	    
-	    userTable.getTableHeader().setReorderingAllowed(false);    	
-	    userTable.setBackground(UIManager.getColor("Button.background"));
-	    return userTable;
+	    allModulesTable.getTableHeader().setReorderingAllowed(false);    	
+	    allModulesTable.setBackground(UIManager.getColor("Button.background"));
+	    return allModulesTable;
+	}
+	
+	public static JTable coreModulesTable() throws SQLException{
+		List<Modules> moduleList;
+		moduleList = Admins.viewCoreModule();
+		int arraySize = moduleList.size();
+		String[][] content = new String[arraySize][4];
+		for (int i = 0; i<moduleList.size(); i++) {
+			String module = moduleList.get(i).toString();
+			String[] idkk = module.split(";");
+			for (int j = 0; j < idkk.length; j++) {
+				content[i][j] = idkk[j];
+			}
+		}	
+		
+		String[] header = {"Index", "Module ID", "Degree ID", "Level of Study"};
+	    
+	    coreModulesTable = new JTable(content, header);
+	    coreModulesTable.setEnabled(false);
+	    
+	    coreModulesTable.getColumnModel().getColumn(0).setPreferredWidth(30);
+	    coreModulesTable.getColumnModel().getColumn(1).setPreferredWidth(30);
+	    coreModulesTable.getColumnModel().getColumn(2).setPreferredWidth(30);
+	    coreModulesTable.getColumnModel().getColumn(3).setPreferredWidth(30);
+	    
+	    
+	    
+	    coreModulesTable.getTableHeader().setReorderingAllowed(false);    	
+	    coreModulesTable.setBackground(UIManager.getColor("Button.background"));
+	    return coreModulesTable;
 	}
 	
 	public static JTable userTable() throws SQLException{

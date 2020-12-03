@@ -483,13 +483,13 @@ public abstract class AbstractPanel extends JPanel{
             con.setAutoCommit(false);
             Statement stmt = null;
             
-            String usernames = "SELECT degree_id FROM degree";
-            try (PreparedStatement getUsernames = con.prepareStatement(usernames)){
-                ResultSet usernameList = getUsernames.executeQuery();
+            String degreeId = "SELECT degree_id FROM degree";
+            try (PreparedStatement getDegreeId = con.prepareStatement(degreeId)){
+                ResultSet degreeIdList = getDegreeId.executeQuery();
                 con.commit();
                 
-                while (usernameList.next()) {
-                	list.add(usernameList.getString("degree_id"));	
+                while (degreeIdList.next()) {
+                	list.add(degreeIdList.getString("degree_id"));	
                 }
                 
             }
@@ -507,9 +507,84 @@ public abstract class AbstractPanel extends JPanel{
             if (con != null) con.close();
         }
 
-        String[] degreeId = new String[list.size()];
-        degreeId = list.toArray(degreeId);
-        return degreeId;
+        String[] degreeIdArray = new String[list.size()];
+        degreeIdArray = list.toArray(degreeIdArray);
+        return degreeIdArray;
+	
+	}
+	
+	public String[] getDeptId() throws SQLException {
+		ArrayList<String> list = new ArrayList<String>();
+		Connection con = null;
+		
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            Statement stmt = null;
+            
+            String deptId = "SELECT department_id FROM department";
+            try (PreparedStatement getDeptId = con.prepareStatement(deptId)){
+                ResultSet deptIdList = getDeptId.executeQuery();
+                con.commit();
+                
+                while (deptIdList.next()) {
+                	list.add(deptIdList.getString("department_id"));	
+                }
+                
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+
+        String[] deptIdArray = new String[list.size()];
+        deptIdArray = list.toArray(deptIdArray);
+        return deptIdArray;
+	
+	}
+	
+	public String getLevelOFStudyFromModuleId(String moduleId) throws SQLException {
+		String levelOfStudy = null;
+		Connection con = null;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            Statement stmt = null;
+            String los = "SELECT level_of_study FROM module_grade WHERE module_id = ?";
+            try (PreparedStatement getLos = con.prepareStatement(los)){
+            	getLos.setString(1,  moduleId);
+                ResultSet rs = getLos.executeQuery();
+                con.commit();
+                
+                while (rs.next()) {
+                	levelOfStudy = rs.getString("level_of_study");	
+                }
+                
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+        
+        return levelOfStudy;
 	
 	}
 	

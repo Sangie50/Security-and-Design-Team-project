@@ -21,9 +21,9 @@ public class TestRun {
     public static void main(String[] args) throws SQLException {
 //    	Registrars reg = new Registrars("registrar", "ms", "balding", "senna", "password");
 //        Users nameless = new Users("name", "ms", "a", "a", "password"); // creates an unassigned user
-        Users name = new Users("nameless", "ms", "a", "a", "password");
+        //Users name = new Users("nameless", "ms", "a", "a", "password");
 
-
+        
         /*
         System.out.println("Hello");
         Date date = new Date(10/03/20);
@@ -97,13 +97,13 @@ public class TestRun {
         
         //Adding students to modules
         //Admins.viewAllModule();
-        String email = "SmithJohnny01"; //Software student 
+        //String email = "SmithJohnny01"; //Software student 
         //Registrars.linkModuleToStudent(email, "COM1001");
         // Teachers.deleteGrades();
         
         
         
-        Grades.degreeClassification(email);
+        //Grades.degreeClassification(email);
         /*Teachers.updateGrades("COM1001", email,75);
         Teachers.updateGrades("COM1002", email,75);
         Teachers.updateGrades("COM1003", email,75);
@@ -135,7 +135,36 @@ public class TestRun {
         o the MPsy student passes through three levels, but fails catastrophically at level 4, so
         is graduated with a BSc class 2/i instead.
          */
-        
+//        
+//        String currentLevelOfStudy = Grades.getCurrentLevelOfStudy("SmithJohnny01");
+//        System.out.println("current LOS (2)" + currentLevelOfStudy); 
+//        
+//        List<String> moduleList = Grades.getModuleList("SmithJohnny01", "1");
+//        System.out.println(moduleList);
+//        
+//        String moduleId = Grades.getModuleIdFromName("Business in a Global Context", "BUS");
+//        System.out.println(moduleId);
+//        
+//        HashMap<String, Integer> gradesEachModule = Grades.gradesForEachModule("SmithJohnny01", "1");
+//        System.out.println(gradesEachModule);
+//        
+//        HashMap<String, Boolean> passed = Grades.passModule("SmithJohnny01", "1");
+//        System.out.println(passed);
+//        
+//        String cpass = Grades.checkForConcededPass("SmithJohnny01", "1");
+//        System.out.println(cpass);
+//        
+//        Double cap = Grades.capResitGrade("SmithJon01");
+//        System.out.println(cap);
+//    	
+//    	Double average = Grades.getWeightedYearGrade("SmithJohnny01", "1");
+//    	System.out.println(average);
+//    	
+//    	Boolean pass = Grades.yearPassed("SmithJohnny01", "1");
+//    	System.out.println(pass);
+    	
+    	int entry = Grades.getResitYearGrade("SmithJohnny01", "1");
+    	System.out.println(entry);
         
         
         

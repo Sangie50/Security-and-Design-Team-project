@@ -410,17 +410,22 @@ public int getResitGrade() throws SQLException {
 		          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	 		      con.setAutoCommit(false);
 	 		      Statement stmt = null;
-	 		      String getCredits = String.format("SELECT credit_worth FROM module WHERE module_id = %s ", moduleList.get(i)) ;
+	 		      String getCredits = "SELECT credit_worth FROM module WHERE module_id = ? ";
 	 		      String creditsString;
 	 		      int credits;
 	 		      ResultSet rs;
 	 		      try (PreparedStatement pstmt = con.prepareStatement(getCredits)){
-	 				      rs = pstmt.executeQuery();        // Get the result table from the query  3 
-	 		      	 	  creditsString = rs.getString(4);        // Retrieve the fourth column value
-	 		      	 	  credits = Integer.parseInt(creditsString);
-	 			      	  creditsList.add(credits);
-	 				      	
-	 				      	rs.close();                       // Close the ResultSet                  5 
+	 		    	      pstmt.setString(1, moduleList.get(i));
+	 				      rs = pstmt.executeQuery(); 
+	 				      con.commit();
+	 				      
+	 				      while(rs.next()) {
+	 				    	 creditsString = rs.getString("credit_worth");        
+		 		      	 	 credits = Integer.parseInt(creditsString);
+		 			      	 creditsList.add(credits);
+	 				      }
+	 		      	 	 
+	 				      	rs.close();                       
 	 				      	pstmt.close();                    
 	 				          }
 	 		            catch (SQLException ex) {

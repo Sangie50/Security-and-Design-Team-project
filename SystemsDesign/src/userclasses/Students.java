@@ -174,7 +174,7 @@ public int getRegistrationId() throws SQLException {
 	  return registrationId;
 }
 
-public int getInitialGrade() throws SQLException {
+public int getInitialGrade(String module) throws SQLException {
 	Connection con = null;
     Statement stmt = null;
     int initialGrade = 0;
@@ -183,9 +183,10 @@ public int getInitialGrade() throws SQLException {
 	         con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	         con.setAutoCommit(false);
 
-	         String initGrade = "SELECT initial_grade FROM module_grade WHERE email = ?";
+	         String initGrade = "SELECT initial_grade FROM module_grade WHERE email = ? AND module_id = ?";
 	         try (PreparedStatement getInit = con.prepareStatement(initGrade)){
 	        	 getInit.setString(1, email);
+	        	 getInit.setString(2, module);
 	             ResultSet rs = getInit.executeQuery();
 	             con.commit();
 	              
@@ -210,7 +211,7 @@ public int getInitialGrade() throws SQLException {
 	  return initialGrade;
 }
 
-public int getResitGrade() throws SQLException {
+public int getResitGrade(String module) throws SQLException {
 	Connection con = null;
     Statement stmt = null;
     int resitGrade = 0;
@@ -219,9 +220,10 @@ public int getResitGrade() throws SQLException {
 	         con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	         con.setAutoCommit(false);
 
-	         String reGrade = "SELECT resit_grade FROM module_grade WHERE email = ?";
+	         String reGrade = "SELECT resit_grade FROM module_grade WHERE email = ? AND module_id = ?";
 	         try (PreparedStatement getRe = con.prepareStatement(reGrade)){
 	        	 getRe.setString(1, email);
+	        	 getRe.setString(2, module);
 	             ResultSet rs = getRe.executeQuery();
 	             con.commit();
 	              
@@ -519,13 +521,13 @@ public String generatePeriodOfStudy(String email) throws SQLException{
   
   
   public String[] getAllLevelsOfStudy(String email) throws SQLException {
-	  ArrayList<String> list = new ArrayList<String>();
+	  LinkedHashSet<String> list = new LinkedHashSet<String>();
 	  Connection con = null; 
 		 try {
 	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 		      con.setAutoCommit(false);
 		      Statement stmt = null;
-		      String levels ="SELECT level_of_study FROM year_grade WHERE email = ?";
+		      String levels ="SELECT level_of_study FROM module_grade WHERE email = ?";
 		      
 		      ResultSet rs;
 
@@ -549,11 +551,7 @@ public String generatePeriodOfStudy(String email) throws SQLException{
 		        finally {
 		            if (con != null) con.close();
 		        }		
-		 String[] arr = new String[list.size()];
-		 for (int i = 0; i < list.size(); i++) {
-			 arr[i] = list.get(i);
-		 }
-	 	System.out.println(list);
+		 String[] arr = list.toArray(new String[list.size()]);
 
 	  return arr;
   }
@@ -562,10 +560,11 @@ public String generatePeriodOfStudy(String email) throws SQLException{
   	List<Integer> creditsList = new ArrayList<>();
   	for(int i =0; i < moduleList.size(); i++) {
   		 Connection con = null; 
+	      Statement stmt = null;
+
 	 		 try {
 		          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	 		      con.setAutoCommit(false);
-	 		      Statement stmt = null;
 	 		      String getCredits = "SELECT credit_worth FROM module WHERE module_id = ? ";
 	 		      String creditsString;
 	 		      int credits;
@@ -722,6 +721,7 @@ public String generatePeriodOfStudy(String email) throws SQLException{
 		            if (con != null) con.close();
 		        }		 
 	 	}
+  
   public static Boolean getProgressToNextLevel(String email) throws SQLException {
 	  Boolean progress_to_next_level = null;
 	  Connection con = null; 
@@ -819,7 +819,7 @@ public String generatePeriodOfStudy(String email) throws SQLException{
 	  return update_pos;
   }
   
-  public void updatePeriodOfStudy(String email) throws SQLException {
+  public void updatePeriodOfStudy() throws SQLException {
 	  String update_pos = nextPeriodOfStudy(email);
 	  Connection con = null;
       //System.out.println(permission.get(newPermission));
@@ -848,5 +848,74 @@ public String generatePeriodOfStudy(String email) throws SQLException{
       finally {
           if (con != null) con.close();
       }
+  }
+      
+
+  public Double getYearResitGrade(String levelOfStudy) throws SQLException {
+	  Connection con = null;
+      Double resitGrade = 0.0;
+      try {
+          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+          con.setAutoCommit(false);
+          Statement stmt = null;
+          String preparedStmt = "SELECT resit_grade FROM year_grade WHERE email = ?";
+          try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
+              stmt = con.createStatement();
+              updateStmt.setString(1, email);
+              ResultSet rs = updateStmt.executeQuery();
+              con.commit();
+              while(rs.next()) {
+            	  resitGrade = rs.getDouble("resit_grade");
+              }
+          }
+          catch (SQLException ex) {
+              ex.printStackTrace();
+          }
+          finally {
+              if (stmt != null) stmt.close();
+          }
       }
+      catch (Exception ex) {
+          ex.printStackTrace();
+      }
+      finally {
+          if (con != null) con.close();
+      }
+      return resitGrade;
+  }
+  public void addYearGrade(Double yearGrade, String levelOfStudy, boolean progress, Double resitGrade) throws SQLException {
+	  Connection con = null;
+      //System.out.println(permission.get(newPermission));
+      try {
+          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+          con.setAutoCommit(false);
+          Statement stmt = null;
+          String preparedStmt = "INSERT INTO year_grade(email, level_of_study, current_level_of_study, "
+          		+ "period_of_study, overall_grade, progress_to_next_level, resit_grade VALUES (?,?,?,?,?,?,?)";
+          try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
+              stmt = con.createStatement();
+              updateStmt.setString(1, email);
+              updateStmt.setString(2, levelOfStudy);
+              updateStmt.setString(3, Grades.getCurrentLevelOfStudy(email));
+              updateStmt.setString(4, generatePeriodOfStudy(email));
+              updateStmt.setDouble(5, yearGrade);
+              updateStmt.setBoolean(6, progress);
+              updateStmt.setDouble(7, resitGrade);
+              updateStmt.executeUpdate();
+              con.commit();
+          }
+          catch (SQLException ex) {
+              ex.printStackTrace();
+          }
+          finally {
+              if (stmt != null) stmt.close();
+          }
+      }
+      catch (Exception ex) {
+          ex.printStackTrace();
+      }
+      finally {
+          if (con != null) con.close();
+      }
+  }
 }

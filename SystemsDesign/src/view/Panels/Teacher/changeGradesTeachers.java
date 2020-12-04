@@ -157,6 +157,23 @@ public class changeGradesTeachers extends AbstractPanel {
         //comboBox
         JComboBox<String> gradesBox = new JComboBox<>(teacher.getModules(student.getEmail(), teacher.getUsername()));
         gradesBox.setBounds(81, 400, 277, 45);
+        gradesBox.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+	            JComboBox<String> combo = (JComboBox<String>) e.getSource();
+	            String selectedOption = (String) gradesBox.getSelectedItem();
+	            int initialGrade = 0;
+	            int resitGrade = 0;
+	            try {
+					resitGrade = student.getResitGrade(selectedOption);
+		            initialGrade = student.getInitialGrade(selectedOption);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+	            initialGradeText.setText(Integer.toString(initialGrade));
+	            resitGradeText.setText(Integer.toString(resitGrade));
+        	}
+        });
         panel.add(gradesBox, BorderLayout.PAGE_START);
         //-----------------------
         

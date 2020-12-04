@@ -120,25 +120,24 @@ public class TeacherMenu extends AbstractPanel {
 
 	
         JButton logoutButton = new JButton("Logout");
+        contentPane.add(logoutButton);
         logoutButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-                EventQueue.invokeLater(new Runnable() {
-                    public void run() {
-                        try {
-                            String selectedUsername =  (String) usernameBox.getSelectedItem();
-                            JPanel progress = new WeightedMeanGrade(contentPane, selectedUsername, mainFrame, teacher);
-                            contentPane.add(progress);
-                        } catch (SQLException ex) {
-                            Logger.getLogger(TeacherMenu.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
-                });
-            }
-        });
-        logoutButton.setBounds(620, 576, 141, 35);
-        contentPane.add(logoutButton); 
-        
+	    	public void actionPerformed(ActionEvent e) {
+	    		setVisible(false);
+	    		EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							mainFrame.setVisible(false);
+							LoginFrame frame = new LoginFrame();
+							frame.setVisible(true);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+	    	}
+	    });
+	    		
         JButton progressStudent = new JButton("Progress Student");
         progressStudent.setBounds(608, 363, 307, 35);
         contentPane.add(progressStudent);

@@ -16,6 +16,8 @@ import userclasses.Teachers;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -62,6 +64,30 @@ public class WeightedMeanGrade extends AbstractPanel {
 				student.getAllLevelsOfStudy(student.getEmail()));
 		levelOfStudy.setBounds(885, 65, 119, 32);
 		contentPane.add(levelOfStudy);
+		levelOfStudy.addActionListener(new ActionListener() {
+			public void actionPerformed (ActionEvent e) {
+	            JComboBox<String> combo = (JComboBox<String>) e.getSource();
+	            String selection = (String) levelOfStudy.getSelectedItem();
+	          //table
+				table = new JTable(model);
+				table.setBounds(21, 112, 983, 228);
+				table.setBackground(UIManager.getColor("Button.background"));
+				table.setEnabled(false);
+				table.getTableHeader().setReorderingAllowed(false);
+				contentPane.add(table);
+	            try {
+					insert(student.getUsername(), selection, teacher, model);
+	            } catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+	            scroll = new JScrollPane(table);
+				scroll.setBounds(21, 112, 983, 228);
+				scroll.setBorder(BorderFactory.createEmptyBorder());
+				contentPane.repaint();
+				contentPane.add(scroll);
+			}
+		});
 		//--------------------------------
 
 				
@@ -131,25 +157,16 @@ public class WeightedMeanGrade extends AbstractPanel {
 		//----------------------------------
 		
 		
-		//table
-		table = new JTable(model);
-		table.setBounds(21, 112, 983, 228);
-		table.setBackground(UIManager.getColor("Button.background"));
-		table.setEnabled(false);
-		table.getTableHeader().setReorderingAllowed(false);
-		contentPane.add(table);
-		insert(student.getUsername(), (String) levelOfStudy.getSelectedItem(), teacher, model);
-		scroll = new JScrollPane(table);
-		scroll.setBounds(21, 112, 983, 228);
-		scroll.setBorder(BorderFactory.createEmptyBorder());
-		contentPane.add(scroll);
+		
 	}
 	
-	public void insert(String username, String levelOfStudy, Teachers teacher, DefaultTableModel model) throws SQLException {
+	public JTable insert(String username, String levelOfStudy, Teachers teacher, DefaultTableModel model) throws SQLException {
+		model.setRowCount(0);
 		String[] headers = { "Module ID", "Module Name", "Initial Grade", "Resit Grade", "Pass Grade"};
-
 		Students student = getStudent(username);
+	
 		model.setColumnIdentifiers(headers); 
+		
 		ArrayList<ArrayList<String>> ar = teacher.displayByLevelOfStudy(student.getEmail(), levelOfStudy);
 	    for (int i = 0; i < (ar.size()); i++) {
 	    	String moduleid = ar.get(i).get(0); //module id
@@ -161,5 +178,6 @@ public class WeightedMeanGrade extends AbstractPanel {
 	    	model.addRow(arr);
 
 	    }
+	    return table;
 	}
 }

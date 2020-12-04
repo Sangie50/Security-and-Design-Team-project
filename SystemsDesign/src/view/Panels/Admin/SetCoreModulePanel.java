@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import userclasses.Admins;
 import view.Panels.AbstractPanel;
@@ -26,10 +27,17 @@ public class SetCoreModulePanel extends AbstractPanel{
 		panel.revalidate();
 		panel.repaint();
 		setLayout(null);
+		setBounds(100, 100, 1035, 647);
+		
+		//DEFAULT
+		UIManager.put("Label.font", LABEL_FONT);
+		UIManager.put("Table.font", TABLE_FONT);
+		UIManager.put("TableHeader.font", HEADER_FONT);
+		UIManager.put("Button.font", TABLE_FONT);
+		UIManager.put("ComboBox.font", LABEL_FONT);
 		
 		JLabel heading = new JLabel("Set Core Module");
 		heading.setBounds(52, 58, 300, 20);
-		heading.setFont(new Font("Tahoma", Font.BOLD, 21));
 		add(heading);
 		panel.add(heading);
 		

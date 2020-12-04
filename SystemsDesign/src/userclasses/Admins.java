@@ -300,7 +300,6 @@ public class Admins extends Users{
                     con.commit();
                     CoreModules core = new CoreModules(moduleId, degreeId, levelOfStudy);
                     mod.add(core);
-                    System.out.println(core);
                 }
             }
             catch (SQLException ex) {

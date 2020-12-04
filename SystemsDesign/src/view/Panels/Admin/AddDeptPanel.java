@@ -4,10 +4,12 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 import userclasses.Admins;
 import view.Frames.AdminFrame;
 import view.Frames.LoginFrame;
+import view.Panels.AbstractPanel;
 
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -17,7 +19,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
-public class AddDeptPanel extends JPanel {
+public class AddDeptPanel extends AbstractPanel {
 	private JTextField idText;
 	private JTextField nameText;
 	private JTextField entryLevelText;
@@ -34,6 +36,13 @@ public class AddDeptPanel extends JPanel {
 		
 		setLayout(null);
 		setBounds(100, 100, 1035, 647);
+		
+		//DEFAULT
+		UIManager.put("Label.font", LABEL_FONT);
+		UIManager.put("Table.font", TABLE_FONT);
+		UIManager.put("TableHeader.font", HEADER_FONT);
+		UIManager.put("Button.font", TABLE_FONT);
+		UIManager.put("ComboBox.font", LABEL_FONT);
 		
 		JLabel heading = new JLabel("New Department");
 		heading.setBounds(48, 37, 300, 20);

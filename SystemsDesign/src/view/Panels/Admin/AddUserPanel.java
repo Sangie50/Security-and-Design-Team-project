@@ -5,8 +5,10 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 import userclasses.Admins;
+import view.Panels.AbstractPanel;
 
 import javax.swing.JComboBox;
 
@@ -19,7 +21,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 
 import javax.swing.JButton;
 
-public class AddUserPanel extends JPanel {
+public class AddUserPanel extends AbstractPanel {
 	private JTextField usernameText;
 	private JTextField forenameText;
 	private JTextField surnameText;
@@ -36,9 +38,15 @@ public class AddUserPanel extends JPanel {
 		setLayout(null);
 		setBounds(100, 100, 1035, 647);
 		
+		//DEFAULT
+		UIManager.put("Label.font", LABEL_FONT);
+		UIManager.put("Table.font", TABLE_FONT);
+		UIManager.put("TableHeader.font", HEADER_FONT);
+		UIManager.put("Button.font", TABLE_FONT);
+		UIManager.put("ComboBox.font", LABEL_FONT);
+		
 		JLabel heading = new JLabel("New User");
 		heading.setBounds(51, 60, 129, 20);
-		heading.setFont(new Font("Tahoma", Font.BOLD, 21));
 		add(heading);
 		panel.add(heading);
 		

@@ -3,6 +3,7 @@ package view.Panels.Admin;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
 import academics.CoreModules;
@@ -27,9 +29,10 @@ import academics.Departments;
 import academics.Modules;
 import userclasses.Admins;
 import view.Frames.LoginFrame;
+import view.Panels.AbstractPanel;
 import view.Panels.Admin.AddDeptPanel;
 
-public class AdminMenu extends JPanel {
+public class AdminMenu extends AbstractPanel {
 
 	/**
 	 * 
@@ -55,15 +58,25 @@ public class AdminMenu extends JPanel {
 		contentPane.revalidate();
 		contentPane.repaint();
 		
+		
+		//DEFAULT
+		UIManager.put("Label.font", LABEL_FONT);
+		UIManager.put("Table.font", TABLE_FONT);
+		UIManager.put("TableHeader.font", HEADER_FONT);
+		UIManager.put("Button.font", TABLE_FONT);
+		UIManager.put("ComboBox.font", LABEL_FONT);
+		
 		JLabel listOf = new JLabel("List of: ");
 		listOf.setBounds(35, 73, 54, 20);
 		contentPane.add(listOf);
 				
 		String[] options = {"Departments", "Degrees", "Modules", "Users"};
 		
-		JLabel welcomeLabel = new JLabel("Welcome Admin!");
-		welcomeLabel.setBounds(35, 17, 120, 20);
-		contentPane.add(welcomeLabel);
+		JLabel adminLabel = new JLabel("Admin Page");
+		adminLabel.setBounds(5, 5, 999, 26);
+		adminLabel.setFont(adminLabel.getFont().deriveFont(adminLabel.getFont().getStyle() | Font.BOLD));
+		adminLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		contentPane.add(adminLabel);
 		
 		JButton logoutButton = new JButton("Logout");
 		logoutButton.setBounds(1000, 69, 81, 29);
@@ -98,7 +111,7 @@ public class AdminMenu extends JPanel {
 	    degree_sp.setBorder(BorderFactory.createEmptyBorder());
 	    
 	    JScrollPane allModules_sp = new JScrollPane(allModulesTable());
-	    allModules_sp.setBounds(35, 134, 900, 500); 
+	    allModules_sp.setBounds(35, 134, 1100, 500); 
 	    allModules_sp.setBorder(BorderFactory.createEmptyBorder());
 	    
 	    JScrollPane coreModules_sp = new JScrollPane(coreModulesTable());
@@ -107,7 +120,7 @@ public class AdminMenu extends JPanel {
 
 	    
 	    JScrollPane user_sp = new JScrollPane(userTable());
-	    user_sp.setBounds(35, 134, 500, 500); 
+	    user_sp.setBounds(35, 134, 700, 500); 
 	    user_sp.setBorder(BorderFactory.createEmptyBorder());
 	    
 	    JButton addOtherDeptButton = new JButton("Add Secondary Department");
@@ -181,6 +194,7 @@ public class AdminMenu extends JPanel {
 	            	coreButton.setVisible(false);
 	            	coreModules_sp.setVisible(false);
 	            	allModules_sp.setVisible(false);
+	            	user_sp.setVisible(false);
 					
 	            } 
 	            else if (selectedOption.equals("Degrees")) {
@@ -270,7 +284,7 @@ public class AdminMenu extends JPanel {
 		
 		
 		JButton removeButton = new JButton("Remove");
-		removeButton.setBounds(585, 69, 80, 29);
+		removeButton.setBounds(580, 69, 90, 29);
 		removeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				String selectedOption = (String) mainComboBox.getSelectedItem();

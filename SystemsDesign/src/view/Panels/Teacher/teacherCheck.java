@@ -22,6 +22,7 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 
@@ -37,15 +38,15 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableModel;
 
 import userclasses.Students;
 import userclasses.Teachers;
 
 public class teacherCheck extends AbstractPanel {
-//    private JTable table;
-//    private JTextField degreeId;
-//    private JTextField personalTutor;
-//    private String username;
+    private JTable table;
+    private DefaultTableModel model = new DefaultTableModel();;
+	private static JScrollPane scroll;
 
     /**
      * Create the panel.
@@ -154,7 +155,39 @@ public class teacherCheck extends AbstractPanel {
         panel.add(logoutButton); 
         //--------------------------
 
-	}
+        
+        //table
+        table = new JTable(model);
+        table.setBounds(81, 285, 540, 200);
+        table.setBackground(UIManager.getColor("Button.background"));
+        table.setEnabled(false);
+        table.getTableHeader().setReorderingAllowed(false);
+        panel.add(table);
+        insert(student.getUsername(), model, teacher);
+        scroll = new JScrollPane(table);
+        scroll.setBounds(81, 320, 700, 400);
+        scroll.setBorder(BorderFactory.createEmptyBorder());
+		panel.add(scroll);
+    }
     
 
+    
+    public void insert(String username, DefaultTableModel model, Teachers teacher) throws SQLException {
+		String[] headers = {"Level of Study", "Current Level of Study", "Period of Study", "Overall Grade", "Progress to Next Level", "Resit Grade"};
+
+		Students student = getStudent(username);
+		model.setColumnIdentifiers(headers); 
+		ArrayList<ArrayList<String>> ar = teacher.displayYearGrades(student.getEmail());
+	    for (int i = 0; i < (ar.size()); i++) {
+	    	String los = ar.get(i).get(0); //module id
+	    	String clos = ar.get(i).get(1); //initial grade
+	    	String pos = ar.get(i).get(2); //resit grade
+	    	String og = ar.get(i).get(3); //module name
+	    	String ponl = ar.get(i).get(4); //credits worth
+	    	String rg = ar.get(i).get(5); //department id
+	    	String[] arr = {los, clos, pos, og, ponl, rg};
+	    	model.addRow(arr);
+
+	    }
+	}
 }

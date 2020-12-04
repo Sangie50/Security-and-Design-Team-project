@@ -663,4 +663,51 @@ public class Teachers extends Users{
 		 return nextLevel;		 
 		 
 	}
+	
+	public ArrayList<ArrayList<String>> displayYearGrades(String studentEmail) throws SQLException {
+		ArrayList<ArrayList<String>> list= new ArrayList<ArrayList<String>>();
+
+		  Connection con = null; 
+			 try {
+		          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+			      con.setAutoCommit(false);
+			      Statement stmt = null;
+			      String studentViewTable ="SELECT * FROM year_grade WHERE email = ?";
+			      
+			      ResultSet rs;
+
+			      try (PreparedStatement pstmt = con.prepareStatement(studentViewTable)){
+			    	  	pstmt.setString(1, studentEmail);
+					    rs = pstmt.executeQuery();  
+					    // Get the result table from the query  3 
+						
+			      	 	while (rs.next()) {
+			      		    ArrayList<String> row = new ArrayList<String>();
+			      	 		row.add(rs.getString("level_of_study"));					//module id
+			      	 		row.add(rs.getString("current_level_of_study"));	//initial grade		      	 		
+			      	 		row.add(rs.getString("period_of_study"));	//resit grade
+			      	 		row.add(Double.toString(rs.getDouble("overall_grade")));					//module name
+			      	 		row.add(Boolean.toString(rs.getBoolean("progress_to_next_level")));	//credits worth
+			      	 		row.add(Double.toString(rs.getDouble("resit_grade")));					//department id
+			      	 		row.add(Integer.toString(rs.getInt(7)));	//pass grade
+			      	 		list.add(row);
+			      	 		System.out.println("row: " + row);
+					    }
+			      }
+			            catch (SQLException ex) {
+			                ex.printStackTrace();
+			            }
+			            finally {
+			                if (stmt != null) stmt.close();
+			            }
+			        }
+			        catch (Exception ex) {
+			            ex.printStackTrace();
+			        }
+			        finally {
+			            if (con != null) con.close();
+			        }		
+			 System.out.println(list);
+		  return list;
+	}
 }

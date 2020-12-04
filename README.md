@@ -6,7 +6,7 @@ To launch software is in the root folder of the src, called _"launchSoftware.jav
 | User type | Username     | Password |
 |-----------|--------------|----------|
 | Student   | underbusiness| password | 
-| Teacher   | t            | password |
+| Teacher   | T            | password |
 | Admin     | admin        | password |
 | Registrar | registrar    | password | 
 

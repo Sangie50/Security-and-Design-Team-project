@@ -3,12 +3,12 @@ c# COM 2008 Systems Design and Security Assignment 1
 
 To launch software is in the root folder of the src, called _"launchSoftware.java"_. There are 4 types of premade user types to access the different functionalities of the software depending on the user.
 
-| User type | Username  | Password |
-|-----------|-----------|----------|
-| Student   | nameless  | password | 
-| Teacher   | ordinary  | password |
-| Admin     | normal    | password |
-| Registrar | registrar | password | 
+| User type | Username     | Password |
+|-----------|--------------|----------|
+| Student   | underbusiness| password | 
+| Teacher   | t            | password |
+| Admin     | admin        | password |
+| Registrar | registrar    | password | 
 
 ## Student
 The student account can only view their personal information, such as forename, surname, registration ID and degree ID.

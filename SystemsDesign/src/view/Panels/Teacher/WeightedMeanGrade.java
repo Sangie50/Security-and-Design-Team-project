@@ -131,12 +131,9 @@ public class WeightedMeanGrade extends AbstractPanel {
 			            try {
 			            	currLevelOfStudy = Grades.getCurrentLevelOfStudy(student.getEmail());
 							lastLevelOfStudy = Grades.getLastLevelOfStudy(student.getEmail());
-							System.out.println("curr level " + currLevelOfStudy);
-							System.out.println("last level " + lastLevelOfStudy);
 							if (lastLevelOfStudy.equals(currLevelOfStudy)) {
 								degreeClassLabel.setText("Degree class:");
 								degreeClass.setText(Grades.degreeClassification(student.getEmail()));
-								System.out.println("Classification : " + Grades.degreeClassification(student.getEmail()));
 							}
 							insert(student.getUsername(), selection, model);
 							nextLevel.setText(teacher.displayNextLevel(student.getEmail(),

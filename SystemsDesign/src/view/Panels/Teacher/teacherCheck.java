@@ -110,6 +110,21 @@ public class teacherCheck extends AbstractPanel {
         JLabel passYearText = new JLabel(String.valueOf(pass));
         passYearText.setBounds(81, 280, 277, 26);
         panel.add(passYearText);
+        
+        String currLevelOfStudy = Grades.getCurrentLevelOfStudy(student.getEmail());
+		String lastLevelOfStudy = Grades.getLastLevelOfStudy(student.getEmail());
+		
+		if(currLevelOfStudy.equals(lastLevelOfStudy));{
+			JLabel degreeClassLabel = new JLabel("Degree classification: ");
+	        degreeClassLabel.setBounds(481,180,277,26);
+	        panel.add(degreeClassLabel);
+	        
+	        JLabel degreeClass = new JLabel(Grades.degreeClassification(
+	        		student.getEmail()));
+	        degreeClass.setBounds(481,210,277,26);
+	        panel.add(degreeClass);
+		}
+        
         //----------------------------
         
         

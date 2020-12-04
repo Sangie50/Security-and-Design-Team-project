@@ -83,7 +83,7 @@ public class ChangeModules extends AbstractPanel{
 		contentPane.add(modulesLabel);
 		
 		JLabel optionalModulesLabel = new JLabel("Optional modules:");
-		optionalModulesLabel.setBounds(719, 201, 196, 26);
+		optionalModulesLabel.setBounds(10, 424, 196, 26);
 		contentPane.add(optionalModulesLabel);
 
 		JLabel creditsAvailable = new JLabel("Credits available:");
@@ -91,7 +91,6 @@ public class ChangeModules extends AbstractPanel{
 		contentPane.add(creditsAvailable);
 
 		int remainingCredits = student.getTotalCredits() - registrar.checkCredits(student.getEmail()); 
-		System.out.println(remainingCredits);
 		JLabel credits = new JLabel(Integer.toString(remainingCredits));
 		if (remainingCredits < 0) credits.setForeground(Color.red);
 		credits.setBounds(719, 154, 92, 26);
@@ -100,37 +99,41 @@ public class ChangeModules extends AbstractPanel{
 		JLabel removeModuleLabel = new JLabel("Remove module:");
 		removeModuleLabel.setBounds(719, 424, 176, 26);
 		contentPane.add(removeModuleLabel);
+		
+		JLabel addModuleLabel = new JLabel("Add module:");
+		addModuleLabel.setBounds(365, 424, 176, 26);
+		contentPane.add(addModuleLabel);
 		//-----------------------------
 		
 			
 		//Combo box
+		JComboBox<String> addModulesList = new JComboBox<>(
+				registrar.getAddModulesList(student.getDepartmentId()));
+		addModulesList.setBounds(365, 471, 247, 32);
+		contentPane.add(addModulesList);
+		
 		JComboBox<String> optionalModulesList = new JComboBox<>(
 				registrar.getOptionalModulesList(student.getEmail()));
-		optionalModulesList.setBounds(719, 248, 247, 32);
+		optionalModulesList.setBounds(10, 471, 247, 32);
 		contentPane.add(optionalModulesList);
 		
-		System.out.println("Student email: " + student.getEmail());
-		System.out.println(studentUsername);
 		JComboBox<String> existingModulesList = new JComboBox<>(
 				registrar.getModulesList(student.getEmail()));
 		existingModulesList.setBounds(719, 471, 247, 32);
 		contentPane.add(existingModulesList);
-		
 		//--------------
 		
 		//table	
 	
 
 		modulesTable = new JTable(model);
-//		modulesTable.setBounds(21, 127, 677, 499);
 		modulesTable.setBackground(UIManager.getColor("Button.background"));
 		modulesTable.setEnabled(false);
 		modulesTable.getTableHeader().setReorderingAllowed(false);
 		contentPane.add(modulesTable);
 		insertStudentsTable(studentUsername, student.getEmail(), model);
 		scroll = new JScrollPane(modulesTable);
-		scroll.setBounds(10, 120, 700, 600);
-//		scroll.setBounds(-20, 200, 800, 600);
+		scroll.setBounds(10, 120, 700, 300);
 		scroll.setBorder(BorderFactory.createEmptyBorder());
 		contentPane.add(scroll);
 		
@@ -145,9 +148,9 @@ public class ChangeModules extends AbstractPanel{
 	  //buttons
 
 
-	  		JButton addModuleButton = new JButton("Add module");
-	  		addModuleButton.setBounds(719, 301, 247, 35);
-	  		addModuleButton.addActionListener(new ActionListener() {
+	  		JButton addOptModuleButton = new JButton("Add module");
+	  		addOptModuleButton.setBounds(10, 524, 247, 35);
+	  		addOptModuleButton.addActionListener(new ActionListener() {
 	  			public void actionPerformed(ActionEvent e) {
 	  				try {
 	  					int moduleCredit = registrar.getModuleCredits((String) optionalModulesList.getSelectedItem());
@@ -159,26 +162,52 @@ public class ChangeModules extends AbstractPanel{
 							credits.setText(Integer.toString(student.getTotalCredits() - registrar.getModuleCredits((String) optionalModulesList.getSelectedItem()) - moduleCredit));
 							existingModulesList.removeAllItems();
 							existingModulesList.setModel(new DefaultComboBoxModel<>(registrar.getModulesList(student.getEmail())));
-							contentPane.revalidate();
-							contentPane.getIgnoreRepaint();
 							JOptionPane.showMessageDialog(mainFrame.getComponent(0), "Module Added.");
 	  				    }
 	  				    else {
 	  				    	JOptionPane.showMessageDialog(mainFrame.getComponent(0), "Student does not have enough available credits.");
 	  				    }
 
-						
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+	  			}
+	  		});
+	  		contentPane.add(addOptModuleButton);
+
+	  		
+	  		JButton addModuleButton = new JButton("Add module");
+	  		addModuleButton.setBounds(365, 524, 247, 35);
+	  		addModuleButton.addActionListener(new ActionListener() {
+	  			public void actionPerformed(ActionEvent e) {
+	  				try {
+	  					
+	  					int moduleCredit = registrar.getModuleCredits((String) addModulesList.getSelectedItem());
+	  				    int calculateCredit = student.getTotalCredits() - registrar.getModuleCredits((String) addModulesList.getSelectedItem()) - moduleCredit;
+	  				    if (calculateCredit >=  0) {
+	  				    	registrar.linkModuleToStudent(student.getEmail(), (String) addModulesList.getSelectedItem());
+							model.setRowCount(0);
+							insertStudentsTable(studentUsername, student.getEmail(), model);
+							credits.setText(Integer.toString(student.getTotalCredits() - registrar.getModuleCredits((String) addModulesList.getSelectedItem()) - moduleCredit));
+							addModulesList.removeAllItems();
+							addModulesList.setModel(new DefaultComboBoxModel<>(registrar.getAddModulesList(student.getDepartmentId())));
+							existingModulesList.removeAllItems();
+							existingModulesList.setModel(new DefaultComboBoxModel<>(registrar.getModulesList(student.getEmail())));
+							JOptionPane.showMessageDialog(mainFrame.getComponent(0), "Module Added.");
+	  				    }
+	  				    else {
+	  				    	JOptionPane.showMessageDialog(mainFrame.getComponent(0), "Student does not have enough available credits.");
+	  				    }
 
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-	  				
 	  			}
 	  		});
 	  		contentPane.add(addModuleButton);
 
-	  		
 
 	  		JButton backButton = new JButton("Back");
 	  		backButton.addActionListener(new ActionListener() {
@@ -215,7 +244,6 @@ public class ChangeModules extends AbstractPanel{
 						existingModulesList.removeAllItems();
 						existingModulesList.setModel(new DefaultComboBoxModel(registrar.getModulesList(student.getEmail())));
 						JOptionPane.showMessageDialog(mainFrame.getComponent(0), "Module Deleted.");
-						System.out.println("Deleting " + (String) existingModulesList.getSelectedItem());
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -225,7 +253,7 @@ public class ChangeModules extends AbstractPanel{
 	  		});
 	  		contentPane.add(removeModuleButton);
 
-	  		
+	  		contentPane.setVisible(true);
 	  		//-----------
 		
 	}
@@ -236,7 +264,6 @@ public class ChangeModules extends AbstractPanel{
 		Students student = getStudent(username);
 		model.setColumnIdentifiers(headers); 
 		ArrayList<ArrayList<String>> ar = student.displayStudentView(student.getEmail());
-		System.out.println("curr lev " + Grades.getCurrentLevelOfStudy(student.getEmail()));
 	    for (int i = 0; i < (ar.size()); i++) {
 	    	String moduleid = ar.get(i).get(0); //module id
 	    	String initGrade = ar.get(i).get(1); //initial grade

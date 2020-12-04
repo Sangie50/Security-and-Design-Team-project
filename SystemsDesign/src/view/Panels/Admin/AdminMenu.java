@@ -385,7 +385,7 @@ public class AdminMenu extends AbstractPanel {
 		List<Modules> moduleList;
 		moduleList = Admins.viewAllModule();
 		int arraySize = moduleList.size();
-		String[][] content = new String[arraySize][6];
+		String[][] content = new String[arraySize][7];
 		for (int i = 0; i<moduleList.size(); i++) {
 			String module = moduleList.get(i).toString();
 			String[] idkk = module.split(";");
@@ -394,7 +394,7 @@ public class AdminMenu extends AbstractPanel {
 			}
 		}	
 		
-		String[] header = {"Module ID", "Module Name", "isTaught", "Credits","Department Id", "Pass Grade"};
+		String[] header = {"Module ID", "Module Name", "isTaught", "Credits","Department Id", "Pass Grade", "Term"};
 	    
 	    allModulesTable = new JTable(content, header);
 	    allModulesTable.setEnabled(false);

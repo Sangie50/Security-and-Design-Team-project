@@ -1,6 +1,7 @@
 package userclasses;
 //Admin class
 
+import academics.CoreModules;
 import academics.Degrees;
 import academics.Departments;
 import academics.Modules;
@@ -279,32 +280,27 @@ public class Admins extends Users{
         }
     }
     
-    public static List<Modules> viewCoreModule() throws SQLException {
-        List<Modules> mod = new ArrayList<Modules>();
+    public static List<CoreModules> viewCoreModule() throws SQLException {
+        List<CoreModules> mod = new ArrayList<CoreModules>();
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "SELECT * FROM module INNER JOIN core_modules ON module.module_id = core_modules.module_id";
+            String preparedStmt = "SELECT * FROM core_modules";
             //System.out.println(preparedStmt);
             try (PreparedStatement selectStmt = con.prepareStatement(preparedStmt)){
                 ResultSet module = selectStmt.executeQuery();
                 while (module.next()) {
-                    String moduleID = module.getString("module_id");
-                    String moduleName = module.getString("module_name");
-                    Integer creditWorth = module.getInt("credit_worth");
-                    String departmentID = module.getString("department_id");
-                    Integer passGrade = module.getInt("pass_grade");
-                    Boolean isTaught = module.getBoolean("pass_grade");
-                    String degreeID = module.getString("degree_id");
-                    Boolean level_of_study = module.getBoolean("level_of_study");
+                	String index = module.getString("core_modules_id");
+                    String moduleId = module.getString("module_id");
+                    String degreeId = module.getString("degree_id");
+                    String levelOfStudy = module.getString("level_of_study");
                     
                     con.commit();
-                    Modules modules = new Modules(moduleID, moduleName, isTaught, creditWorth, departmentID, passGrade);
-                    mod.add(modules);
-                    modules.getModuleName();
-                    System.out.println(moduleID+":"+moduleName+":"+isTaught+":"+creditWorth+":"+departmentID+":"+passGrade+":"+degreeID+":"+level_of_study);
+                    CoreModules core = new CoreModules(moduleId, degreeId, levelOfStudy);
+                    mod.add(core);
+                    System.out.println(core);
                 }
             }
             catch (SQLException ex) {

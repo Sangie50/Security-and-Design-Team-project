@@ -10,15 +10,18 @@ import java.sql.SQLException;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
 
+import academics.CoreModules;
 import academics.Degrees;
 import academics.Departments;
 import academics.Modules;
@@ -35,7 +38,6 @@ public class AdminMenu extends JPanel {
 
 	private static JTable departTable;
 	private static JTable degreeTable;
-	private static JTable intDegreeTable;
 	private static JTable userTable;
 	private static JTable allModulesTable;
 	private static JTable coreModulesTable;
@@ -64,7 +66,7 @@ public class AdminMenu extends JPanel {
 		contentPane.add(welcomeLabel);
 		
 		JButton logoutButton = new JButton("Logout");
-		logoutButton.setBounds(654, 13, 81, 29);
+		logoutButton.setBounds(1000, 69, 81, 29);
 		logoutButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				setVisible(false);
@@ -95,9 +97,14 @@ public class AdminMenu extends JPanel {
 	    degree_sp.setBounds(35, 134, 1100, 500); 
 	    degree_sp.setBorder(BorderFactory.createEmptyBorder());
 	    
-	    JScrollPane module_sp = new JScrollPane(allModulesTable());
-	    module_sp.setBounds(35, 134, 900, 500); 
-	    module_sp.setBorder(BorderFactory.createEmptyBorder());
+	    JScrollPane allModules_sp = new JScrollPane(allModulesTable());
+	    allModules_sp.setBounds(35, 134, 900, 500); 
+	    allModules_sp.setBorder(BorderFactory.createEmptyBorder());
+	    
+	    JScrollPane coreModules_sp = new JScrollPane(coreModulesTable());
+	    coreModules_sp.setBounds(35, 134, 500, 500); 
+	    coreModules_sp.setBorder(BorderFactory.createEmptyBorder());
+
 	    
 	    JScrollPane user_sp = new JScrollPane(userTable());
 	    user_sp.setBounds(35, 134, 500, 500); 
@@ -110,7 +117,7 @@ public class AdminMenu extends JPanel {
 			}
 		});
 		addOtherDeptButton.setLayout(new FlowLayout(FlowLayout.LEFT));
-		addOtherDeptButton.setBounds(35, 495, 220, 29);
+		addOtherDeptButton.setBounds(730, 69, 220, 29);
 		contentPane.add(addOtherDeptButton, BorderLayout.SOUTH);
 		
 		JButton setCoreModuleButton = new JButton("Set Core Module");
@@ -120,7 +127,7 @@ public class AdminMenu extends JPanel {
 			}
 		});
 		setCoreModuleButton.setLayout(new FlowLayout(FlowLayout.LEFT));
-		setCoreModuleButton.setBounds(35, 495, 200, 29);
+		setCoreModuleButton.setBounds(730, 69, 200, 29);
 		contentPane.add(setCoreModuleButton, BorderLayout.SOUTH);
 		
 		JButton updatePermButton = new JButton("Change Account Type");
@@ -130,9 +137,24 @@ public class AdminMenu extends JPanel {
 			}
 		});
 		updatePermButton.setLayout(new FlowLayout(FlowLayout.LEFT));
-		updatePermButton.setBounds(35, 495, 220, 29);
+		updatePermButton.setBounds(730, 69, 220, 29);
 		contentPane.add(updatePermButton, BorderLayout.SOUTH);
 	    
+		JRadioButton allButton = new JRadioButton("All");
+		allButton.setBounds(270, 69, 50, 29);
+		contentPane.add(allButton);
+		allButton.setVisible(false);
+		
+		JRadioButton coreButton = new JRadioButton("Core");
+		coreButton.setBounds(320, 69, 60, 29);
+		contentPane.add(coreButton);
+		coreButton.setVisible(false);
+		
+		ButtonGroup typeGroup = new ButtonGroup();
+		typeGroup.add(allButton);
+		typeGroup.add(coreButton);
+	    
+			
 	    mainComboBox = new JComboBox<>(options);
 	    mainComboBox.setBounds(119, 70, 121, 26);
 	    mainComboBox.setSelectedIndex(0);
@@ -144,45 +166,63 @@ public class AdminMenu extends JPanel {
 	        public void actionPerformed(ActionEvent event) {
 	            JComboBox<String> combo = (JComboBox<String>) event.getSource();
 	            String selectedOption = (String) combo.getSelectedItem();
+	            
 	     
 	            if (selectedOption.equals("Departments")) {
 	            	degree_sp.setVisible(false);
-	            	module_sp.setVisible(false);
+	            	allModules_sp.setVisible(false);
 	            	dept_sp.setVisible(true);
 	            	dept_sp.setBorder(BorderFactory.createEmptyBorder());
 					contentPane.add(dept_sp);
+					setCoreModuleButton.setVisible(false);
+	            	updatePermButton.setVisible(false);
+	            	addOtherDeptButton.setVisible(false);
+	            	allButton.setVisible(false);
+	            	coreButton.setVisible(false);
+	            	coreModules_sp.setVisible(false);
+	            	allModules_sp.setVisible(false);
 					
 	            } 
 	            else if (selectedOption.equals("Degrees")) {
 	            	dept_sp.setVisible(false);
-	            	module_sp.setVisible(false);
+	            	allModules_sp.setVisible(false);
 	            	user_sp.setVisible(false);
 	            	contentPane.add(degree_sp);
 	            	degree_sp.setVisible(true);
 	            	setCoreModuleButton.setVisible(false);
 	            	updatePermButton.setVisible(false);
 	            	addOtherDeptButton.setVisible(true);
+	            	allButton.setVisible(false);
+	            	coreButton.setVisible(false);
+	            	coreModules_sp.setVisible(false);
+	            	allModules_sp.setVisible(false);
 	            	
 	        	}
 	            else if (selectedOption.equals("Modules")) {
 	            	dept_sp.setVisible(false);
 	            	degree_sp.setVisible(false);
 	            	user_sp.setVisible(false);
-	            	contentPane.add(module_sp);
-	            	module_sp.setVisible(true);
+	            	
 	            	addOtherDeptButton.setVisible(false);
 	            	updatePermButton.setVisible(false);
+	            	allButton.setVisible(true);
+	            	coreButton.setVisible(true);
 	            	setCoreModuleButton.setVisible(true);
+	            	
 				}
 	            else if (selectedOption.equals("Users")) {
 	            	dept_sp.setVisible(false);
 	            	degree_sp.setVisible(false);
-	            	module_sp.setVisible(false);
+	            	allModules_sp.setVisible(false);
 	            	contentPane.add(user_sp);
 	            	user_sp.setVisible(true);
 	            	addOtherDeptButton.setVisible(false);
 	            	setCoreModuleButton.setVisible(false);
 	            	updatePermButton.setVisible(true);
+	            	allButton.setVisible(false);
+	            	coreButton.setVisible(false);
+	            	coreModules_sp.setVisible(false);
+	            	allModules_sp.setVisible(false);
 	            	
 	            }
 	        }
@@ -190,8 +230,24 @@ public class AdminMenu extends JPanel {
 	    
 	    contentPane.add(mainComboBox);
 	    
+	    allButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				contentPane.add(allModules_sp);
+				allModules_sp.setVisible(true);
+				coreModules_sp.setVisible(false);
+			}
+		});
+			
+		coreButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				contentPane.add(coreModules_sp);
+				allModules_sp.setVisible(false);
+				coreModules_sp.setVisible(true);
+			}
+		});
+	    
 	    JButton newButton = new JButton("New");
-		newButton.setBounds(309, 69, 63, 29);
+		newButton.setBounds(450, 69, 63, 29);
 		newButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 		        String selectedOption = (String) mainComboBox.getSelectedItem();
@@ -214,7 +270,7 @@ public class AdminMenu extends JPanel {
 		
 		
 		JButton removeButton = new JButton("Remove");
-		removeButton.setBounds(500, 69, 80, 29);
+		removeButton.setBounds(585, 69, 80, 29);
 		removeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				String selectedOption = (String) mainComboBox.getSelectedItem();
@@ -274,10 +330,10 @@ public class AdminMenu extends JPanel {
 			String degreeId = degree.substring(0,6);
 			String departId = degree.substring(6,9);
 			String entryLevel = degree.substring(9,10);
-			String difficulty = degree.substring(10, degree.indexOf("name: "));
-			String name = degree.substring(degree.indexOf("name: ")+1, degree.indexOf("level: "));
-			String lastLevel = degree.substring(degree.indexOf("level: ")+1, degree.indexOf("otherDept") - 8 );
-			String otherDeptId = degree.substring( degree.indexOf("otherDept: "), degree.length());
+			String difficulty = degree.substring(10, degree.indexOf(" "));
+			String name = degree.substring(degree.indexOf(" ")+1, degree.indexOf(";"));
+			String lastLevel = degree.substring(degree.indexOf(";")+1, degree.indexOf(","));
+			String otherDeptId = degree.substring( degree.indexOf(",")+1, degree.length());
 			
 			System.out.println(name);
 			System.out.println(lastLevel);
@@ -306,30 +362,6 @@ public class AdminMenu extends JPanel {
 	    degreeTable.getTableHeader().setReorderingAllowed(false);    	
 	    degreeTable.setBackground(UIManager.getColor("Button.background"));
 		return degreeTable;
-	}	
-	
-	public static JTable intDegreesTable() throws SQLException {
-		List<Degrees> degreeList = Admins.viewAllDegrees();
-		int array_size = degreeList.size();
-		String[][] content = new String[array_size][3];
-		for (int i = 0; i<degreeList.size(); i++) {
-			String module = degreeList.get(i).toString();
-			String[] idkk = module.split(";");
-			for (int j = 0; j < idkk.length; j++) {
-				content[i][j] = idkk[j];
-			}
-		}	
-		String[] header = {"Index", "Degree Id", "Secondary Department Id"};
-			 
-		intDegreeTable = new JTable(content, header);
-		intDegreeTable.setEnabled(false);
-		intDegreeTable.getColumnModel().getColumn(0).setPreferredWidth(25);
-		intDegreeTable.getColumnModel().getColumn(1).setPreferredWidth(30);
-		intDegreeTable.getColumnModel().getColumn(2).setPreferredWidth(180);
-	    
-		intDegreeTable.getTableHeader().setReorderingAllowed(false);    	
-		intDegreeTable.setBackground(UIManager.getColor("Button.background"));
-		return intDegreeTable;
 	}	
 	
 	public static JTable allModulesTable() throws SQLException{
@@ -365,19 +397,18 @@ public class AdminMenu extends JPanel {
 	}
 	
 	public static JTable coreModulesTable() throws SQLException{
-		List<Modules> moduleList;
+		List<CoreModules> moduleList;
 		moduleList = Admins.viewCoreModule();
 		int arraySize = moduleList.size();
-		String[][] content = new String[arraySize][4];
+		String[][] content = new String[arraySize][3];
 		for (int i = 0; i<moduleList.size(); i++) {
 			String module = moduleList.get(i).toString();
-			String[] idkk = module.split(";");
-			for (int j = 0; j < idkk.length; j++) {
-				content[i][j] = idkk[j];
+			String[] coreMod = module.split(";");
+			for (int j = 0; j < coreMod.length; j++) {
+				content[i][j] = coreMod[j];
 			}
 		}	
-		
-		String[] header = {"Index", "Module ID", "Degree ID", "Level of Study"};
+		String[] header = {"Module ID", "Degree ID", "Level of Study"};
 	    
 	    coreModulesTable = new JTable(content, header);
 	    coreModulesTable.setEnabled(false);
@@ -385,9 +416,6 @@ public class AdminMenu extends JPanel {
 	    coreModulesTable.getColumnModel().getColumn(0).setPreferredWidth(30);
 	    coreModulesTable.getColumnModel().getColumn(1).setPreferredWidth(30);
 	    coreModulesTable.getColumnModel().getColumn(2).setPreferredWidth(30);
-	    coreModulesTable.getColumnModel().getColumn(3).setPreferredWidth(30);
-	    
-	    
 	    
 	    coreModulesTable.getTableHeader().setReorderingAllowed(false);    	
 	    coreModulesTable.setBackground(UIManager.getColor("Button.background"));
@@ -423,4 +451,6 @@ public class AdminMenu extends JPanel {
 	    userTable.setBackground(UIManager.getColor("Button.background"));
 	    return userTable;
 	}
+	
+	
 }

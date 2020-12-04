@@ -207,14 +207,14 @@ public class Admins extends Users{
         }
     }
     
-    public static void addModule(String moduleID, String moduleName, Integer creditWorth, String departmentID, Integer passMark, Boolean isTaught) throws SQLException {
+    public static void addModule(String moduleID, String moduleName, Integer creditWorth, String departmentID, Integer passMark, Boolean isTaught, String term) throws SQLException {
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
             String selectStmt = "SELECT COUNT(*) AS rowcount FROM module WHERE module_id = ?";
-            String preparedStmt = "INSERT INTO module VALUES (?,?,?,?,?,?)";
+            String preparedStmt = "INSERT INTO module VALUES (?,?,?,?,?,?,?)";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt);PreparedStatement selStmt = con.prepareStatement(selectStmt)){
                 selStmt.setString(1, moduleID);
                 ResultSet count = selStmt.executeQuery();
@@ -228,6 +228,7 @@ public class Admins extends Users{
                     updateStmt.setString(4, departmentID);
                     updateStmt.setInt(5, passMark);
                     updateStmt.setBoolean(6, isTaught);
+                    updateStmt.setString(7, term);
                     updateStmt.executeUpdate();
                     con.commit();
                 }
@@ -374,9 +375,10 @@ public class Admins extends Users{
                     String departmentID = module.getString("department_id");
                     Integer passGrade = module.getInt("pass_grade");
                     Boolean isTaught = module.getBoolean("pass_grade");
+                    String term = module.getString("term");
                     
                     con.commit();
-                    Modules modules = new Modules(moduleID, moduleName, isTaught, creditWorth, departmentID, passGrade);
+                    Modules modules = new Modules(moduleID, moduleName, isTaught, creditWorth, departmentID, passGrade, term);
                     mod.add(modules);
                     //System.out.println(moduleID+":"+moduleName+":"+isTaught+":"+creditWorth+":"+departmentID+":"+passGrade);
                 }

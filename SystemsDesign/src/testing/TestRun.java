@@ -184,34 +184,11 @@ public class TestRun {
 //        System.out.println(moduleList);
 //        
         
-        String entryLevel = "undergraduate";
-		String lastLevel = "3";
-		String currentLevelOfStudy = "3";
-		Boolean lastYearPassed = false;
-		Double year2Grade = 67.9;
-		Double year3Grade = 78.9;
-		Double year4Grade = 90.9;
-		Double finalGrade = null;
-		if (entryLevel == "undergraduate" && currentLevelOfStudy == lastLevel) {
-			if(currentLevelOfStudy == "4" && lastYearPassed) {
-				finalGrade = year2Grade * 0.2 + year3Grade * 0.4 * year4Grade * 0.4;
-			}
-			else if(currentLevelOfStudy == "4" && lastYearPassed == false) {
-				System.out.println("degrade degree");
-				finalGrade = (year2Grade + year3Grade * 2)/3;
-			}
-			else if(currentLevelOfStudy == "3" && lastYearPassed) {
-				finalGrade = (year2Grade + year3Grade * 2)/3;
-			}
-			else if(currentLevelOfStudy == "3" && lastYearPassed == false) {
-				finalGrade = 100.0;
-				}
-			}
-		else if ((entryLevel == "postgraduate" && currentLevelOfStudy == lastLevel)) {
-			finalGrade = 67.0;
-		}
-		System.out.println(finalGrade);
-        
+          double finalg = Grades.getFinalDegreeGrade("JPixel01@sheff.ac.uk");
+          System.out.println(finalg);
+          
+          String classify = Grades.degreeClassification("JPixel01@sheff.ac.uk");
+          System.out.println(classify);
         
     }
 }

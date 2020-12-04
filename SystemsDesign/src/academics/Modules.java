@@ -19,6 +19,7 @@ public class Modules{
     Integer creditWorth;
     String departmentID;
     Integer passGrade;
+    String term;
     
     public String getModuleID() {
         return moduleID;
@@ -41,13 +42,15 @@ public class Modules{
     
  
     
-    public Modules(String moduleID,String moduleName,Boolean isTaught, Integer creditWorth, String departmentID, Integer passGrade) throws SQLException {
+    public Modules(String moduleID,String moduleName,Boolean isTaught, Integer creditWorth, 
+    		String departmentID, Integer passGrade, String term) throws SQLException {
         this.moduleID = moduleID;
         this.moduleName = moduleName;
         this.isTaught = isTaught;
         this.creditWorth = creditWorth;
         this.departmentID = departmentID;
         this.passGrade = passGrade;
+        this.term = term;
     }
     
     public void addTeacherModule (Integer employeeNo, String departmentID, String moduleID) throws SQLException {
@@ -84,6 +87,6 @@ public class Modules{
 
     public String toString() {
     	return String.format(this.moduleID + ";"+ this.moduleName + ";"+ this.isTaught +";"+ this.creditWorth + ";"+
-    			this.departmentID +";"+ this.passGrade);
+    			this.departmentID +";"+ this.passGrade+";"+this.term);
     }
 }

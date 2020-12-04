@@ -685,6 +685,7 @@ public class Teachers extends Users{
 
 	public String displayNextLevel(String email, String levelOfStudy) throws SQLException {
 		 String level = Grades.getCurrentLevelOfStudy(email);
+		 System.out.println("current level of study: " + level);
 		 String nextLevel = "";
 		 Boolean yearPassed = Grades.yearPassed(email, levelOfStudy);
 		 Boolean isPostGrad = isPostGrad(email);
@@ -701,7 +702,7 @@ public class Teachers extends Users{
 				 nextLevel = "Graduate";
 			 }
 			 else {
-				 nextLevel = Integer.toString(currLevel++);
+				 nextLevel = Integer.toString(currLevel + 1);
 			 }
 		 }
 		 

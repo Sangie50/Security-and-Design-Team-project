@@ -901,4 +901,47 @@ public class Grades { //create a constructor
         }
         return difficulty.substring(0,1);
 	}
+
+	public static boolean checkRepeatYear(String email, String levelOfStudy) throws SQLException {
+		Connection con = null;
+		boolean hasRepeated = false;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            Statement stmt = null;
+            String resit = "SELECT resit_year FROM year_grade WHERE email =? AND"
+            		+ " level_of_study = ?";
+            try (PreparedStatement getResit = con.prepareStatement(resit)){
+            	getResit.setString(1, email);
+            	getResit.setString(2, levelOfStudy);
+                ResultSet grade = getResit.executeQuery();
+                con.commit();
+                
+                while(grade.next()) {
+                	try {
+                		grade.getString("difficulty");
+                		hasRepeated = true;
+                	}
+                	catch (SQLException e) {
+                		System.err.println("No value in resit_grade of year_grade");
+                	}
+                    
+                }
+          
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+        return hasRepeated;
+	}
 }

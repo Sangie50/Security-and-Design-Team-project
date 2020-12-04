@@ -494,7 +494,6 @@ public class Admins extends Users{
                     con.commit();
                     Departments depart = new Departments(departmentID, departmentName, entryLevel);
                     departs.add(depart);
-                    //System.out.println(departmentID+"; "+departmentName+", Entry level; "+entryLevel);
                     
                 }
             }
@@ -656,7 +655,6 @@ public class Admins extends Users{
                     Degrees degree = new Degrees(degreeID, departmentID, entryLevel, difficulty, degreeName, lastLevel, partner);
                     System.out.println(degree);
                     deg.add(degree); 
-                    //System.out.println(degreeID+":"+departmentID+":"+entryLevel+":"+difficulty+":"+degreeName+":"+lastLevel+":"+partner);
                 }
             }
             catch (SQLException ex) {

@@ -39,6 +39,7 @@ public class AddDegreePanel extends AbstractPanel {
 		
 		JLabel heading = new JLabel("New Degree");
 		heading.setBounds(31, 56, 146, 26);
+		heading.setFont(TITLE_FONT);
 		add(heading);
 		panel.add(heading);
 		

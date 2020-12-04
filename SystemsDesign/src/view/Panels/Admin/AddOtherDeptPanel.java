@@ -1,5 +1,6 @@
 package view.Panels.Admin;
 
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,6 +39,7 @@ public class AddOtherDeptPanel extends AbstractPanel {
 		
 		JLabel heading = new JLabel("Add Secondary Department");
 		heading.setBounds(52, 58, 300, 20);
+		heading.setFont(TITLE_FONT);
 		add(heading);
 		panel.add(heading);
 		
@@ -52,7 +54,7 @@ public class AddOtherDeptPanel extends AbstractPanel {
 		panel.add(deptId);
 		
 		JLabel instruction = new JLabel("Select the department and degree you wish to link");
-		instruction.setBounds(52, 105, 326, 20);
+		instruction.setBounds(52, 105, 500, 20);
 		add(instruction);
 		panel.add(instruction);
 		
@@ -115,10 +117,26 @@ public class AddOtherDeptPanel extends AbstractPanel {
 		add(linkButton);
 		panel.add(linkButton);
 		
-		JButton cancelButton = new JButton("Cancel");
+		JButton cancelButton = new JButton("Back");
 		cancelButton.setBounds(52, 377, 115, 29);
 		add(cancelButton);
 		panel.add(cancelButton);
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+	    		EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							JPanel menu = new AdminMenu(panel, mainFrame);
+							panel.add(menu);
+							AdminMenu.mainComboBox.setSelectedIndex(1);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+			}
+		});
 
 	}
 	

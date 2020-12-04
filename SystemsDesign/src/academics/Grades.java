@@ -28,6 +28,7 @@ public class Grades { //create a constructor
 		DIPLOMA("2"), 
 		BACHELORS("3"), 
 		MASTERS("4"),
+		PLACEMENT("P"),
 		PG("PG");
 		private String action; 
 	  

@@ -46,6 +46,7 @@ public class AddDeptPanel extends AbstractPanel {
 		
 		JLabel heading = new JLabel("New Department");
 		heading.setBounds(48, 37, 300, 20);
+		heading.setFont(TITLE_FONT);
 		heading.setFont(new Font("Tahoma", Font.BOLD, 21));
 		panel.add(heading);
 		

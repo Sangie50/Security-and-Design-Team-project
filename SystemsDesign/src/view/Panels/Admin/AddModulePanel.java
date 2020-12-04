@@ -45,6 +45,7 @@ public class AddModulePanel extends AbstractPanel {
 		
 		JLabel heading = new JLabel("New Module");
 		heading.setBounds(59, 44, 183, 20);
+		heading.setFont(TITLE_FONT);
 		add(heading);
 		panel.add(heading);
 		
@@ -136,7 +137,7 @@ public class AddModulePanel extends AbstractPanel {
 						try {
 							JPanel menu = new AdminMenu(panel, mainFrame);
 							panel.add(menu);
-							AdminMenu.mainComboBox.setSelectedIndex(1);
+							AdminMenu.mainComboBox.setSelectedIndex(2);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}

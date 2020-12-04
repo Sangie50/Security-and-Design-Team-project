@@ -1,5 +1,6 @@
 package view.Panels.Admin;
 
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,6 +43,7 @@ public class RemoveDeptPanel extends AbstractPanel {
 		
 		JLabel heading = new JLabel("Remove Department");
 		heading.setBounds(52, 58, 300, 20);
+		heading.setFont(TITLE_FONT);
 		add(heading);
 		panel.add(heading);
 		
@@ -116,6 +118,21 @@ public class RemoveDeptPanel extends AbstractPanel {
 		cancelButton.setBounds(52, 377, 115, 29);
 		add(cancelButton);
 		panel.add(cancelButton);
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+	    		EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							JPanel menu = new AdminMenu(panel, mainFrame);
+							panel.add(menu);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+			}
+		});
 	}
 	
 	public static Boolean checkDeptLinkedToDegree(String deptId) throws SQLException {

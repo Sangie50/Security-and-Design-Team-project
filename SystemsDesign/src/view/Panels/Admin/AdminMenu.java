@@ -131,7 +131,7 @@ public class AdminMenu extends AbstractPanel {
 		});
 		addOtherDeptButton.setLayout(new FlowLayout(FlowLayout.LEFT));
 		addOtherDeptButton.setBounds(730, 69, 220, 29);
-		contentPane.add(addOtherDeptButton, BorderLayout.SOUTH);
+		
 		
 		JButton setCoreModuleButton = new JButton("Set Core Module");
 		setCoreModuleButton.addActionListener(new ActionListener() {
@@ -141,7 +141,7 @@ public class AdminMenu extends AbstractPanel {
 		});
 		setCoreModuleButton.setLayout(new FlowLayout(FlowLayout.LEFT));
 		setCoreModuleButton.setBounds(730, 69, 200, 29);
-		contentPane.add(setCoreModuleButton, BorderLayout.SOUTH);
+		
 		
 		JButton updatePermButton = new JButton("Change Account Type");
 		updatePermButton.addActionListener(new ActionListener() {
@@ -151,7 +151,7 @@ public class AdminMenu extends AbstractPanel {
 		});
 		updatePermButton.setLayout(new FlowLayout(FlowLayout.LEFT));
 		updatePermButton.setBounds(730, 69, 220, 29);
-		contentPane.add(updatePermButton, BorderLayout.SOUTH);
+		
 	    
 		JRadioButton allButton = new JRadioButton("All");
 		allButton.setBounds(270, 69, 50, 29);
@@ -205,6 +205,7 @@ public class AdminMenu extends AbstractPanel {
 	            	degree_sp.setVisible(true);
 	            	setCoreModuleButton.setVisible(false);
 	            	updatePermButton.setVisible(false);
+	            	contentPane.add(addOtherDeptButton, BorderLayout.SOUTH);
 	            	addOtherDeptButton.setVisible(true);
 	            	allButton.setVisible(false);
 	            	coreButton.setVisible(false);
@@ -216,7 +217,7 @@ public class AdminMenu extends AbstractPanel {
 	            	dept_sp.setVisible(false);
 	            	degree_sp.setVisible(false);
 	            	user_sp.setVisible(false);
-	            	
+	            	contentPane.add(setCoreModuleButton, BorderLayout.SOUTH);
 	            	addOtherDeptButton.setVisible(false);
 	            	updatePermButton.setVisible(false);
 	            	allButton.setVisible(true);
@@ -232,11 +233,13 @@ public class AdminMenu extends AbstractPanel {
 	            	user_sp.setVisible(true);
 	            	addOtherDeptButton.setVisible(false);
 	            	setCoreModuleButton.setVisible(false);
+	            	contentPane.add(updatePermButton, BorderLayout.SOUTH);
 	            	updatePermButton.setVisible(true);
 	            	allButton.setVisible(false);
 	            	coreButton.setVisible(false);
 	            	coreModules_sp.setVisible(false);
 	            	allModules_sp.setVisible(false);
+	            	
 	            	
 	            }
 	        }

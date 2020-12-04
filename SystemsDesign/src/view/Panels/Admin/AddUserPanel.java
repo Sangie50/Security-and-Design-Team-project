@@ -47,6 +47,7 @@ public class AddUserPanel extends AbstractPanel {
 		
 		JLabel heading = new JLabel("New User");
 		heading.setBounds(51, 60, 129, 20);
+		heading.setFont(TITLE_FONT);
 		add(heading);
 		panel.add(heading);
 		

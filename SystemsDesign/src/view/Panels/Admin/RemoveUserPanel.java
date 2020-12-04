@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import view.Panels.AbstractPanel;
@@ -38,6 +39,7 @@ public class RemoveUserPanel extends AbstractPanel {
 		
 		JLabel heading = new JLabel("Remove User");
 		heading.setBounds(52, 58, 300, 20);
+		heading.setFont(TITLE_FONT);
 		add(heading);
 		panel.add(heading);
 		
@@ -101,6 +103,22 @@ public class RemoveUserPanel extends AbstractPanel {
 		cancelButton.setBounds(52, 377, 115, 29);
 		add(cancelButton);
 		panel.add(cancelButton);
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+	    		EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							JPanel menu = new AdminMenu(panel, mainFrame);
+							panel.add(menu);
+							AdminMenu.mainComboBox.setSelectedIndex(3);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+			}
+		});
 
 	}
 }

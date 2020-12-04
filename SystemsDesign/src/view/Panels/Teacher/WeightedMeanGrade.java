@@ -108,6 +108,15 @@ public class WeightedMeanGrade extends AbstractPanel {
 		JLabel nextLevel = new JLabel();
 		nextLevel.setBounds(252, 408, 92, 26);
 		contentPane.add(nextLevel);
+		
+		JLabel degreeClassLabel = new JLabel();
+		degreeClassLabel.setBounds(21, 455, 152, 26);
+		contentPane.add(degreeClassLabel);
+		
+		JLabel degreeClass = new JLabel();
+		degreeClass.setBounds(252, 455, 92, 26);
+		contentPane.add(degreeClass);	
+		
 		//combo box				
 				JComboBox<String> levelOfStudy = new JComboBox<>(
 						student.getAllLevelsOfStudy(student.getEmail()));
@@ -117,9 +126,19 @@ public class WeightedMeanGrade extends AbstractPanel {
 					public void actionPerformed (ActionEvent e) {
 			            JComboBox<String> combo = (JComboBox<String>) e.getSource();
 			            String selection = (String) levelOfStudy.getSelectedItem();
-						
+			            String lastLevelOfStudy = "";
+						String currLevelOfStudy = "";
 			            try {
-							insert(student.getUsername(), selection, teacher, model);
+			            	currLevelOfStudy = Grades.getCurrentLevelOfStudy(student.getEmail());
+							lastLevelOfStudy = Grades.getLastLevelOfStudy(student.getEmail());
+							System.out.println("curr level " + currLevelOfStudy);
+							System.out.println("last level " + lastLevelOfStudy);
+							if (lastLevelOfStudy.equals(currLevelOfStudy)) {
+								degreeClassLabel.setText("Degree class:");
+								degreeClass.setText(Grades.degreeClassification(student.getEmail()));
+								System.out.println("Classification : " + Grades.degreeClassification(student.getEmail()));
+							}
+							insert(student.getUsername(), selection, model);
 							nextLevel.setText(teacher.displayNextLevel(student.getEmail(),
 									(String) levelOfStudy.getSelectedItem()));
 							weightedMeanGradeDisplay.setText(String.valueOf(
@@ -131,19 +150,14 @@ public class WeightedMeanGrade extends AbstractPanel {
 
 					}
 				});
-				insert(student.getUsername(), (String) levelOfStudy.getSelectedItem(), teacher, model);
+				insert(student.getUsername(), (String) levelOfStudy.getSelectedItem(), model);
 				nextLevel.setText(teacher.displayNextLevel(student.getEmail(),
 				(String) levelOfStudy.getSelectedItem()));
+				weightedMeanGradeDisplay.setText(String.valueOf(
+						Grades.getWeightedYearGrade(student.getEmail(), (String) levelOfStudy.getSelectedItem())));
 		//--------------------------------
 
 		
-		JLabel degreeClassLabel = new JLabel("Degree class:");
-		degreeClassLabel.setBounds(21, 455, 152, 26);
-		contentPane.add(degreeClassLabel);
-		
-		JLabel degreeClass = new JLabel(Grades.degreeClassification(student.getEmail()));
-		degreeClass.setBounds(252, 455, 92, 26);
-		contentPane.add(degreeClass);	
 		
 		JLabel passYearLabel = new JLabel("Pass year:");
 		passYearLabel.setBounds(504, 408, 141, 26);
@@ -172,7 +186,6 @@ public class WeightedMeanGrade extends AbstractPanel {
 			resitGrade.setBounds(648, 361, 92 ,26);
 			contentPane.add(resitGrade);
 		}
-
 		//------------------------------
 		
 		
@@ -187,9 +200,13 @@ public class WeightedMeanGrade extends AbstractPanel {
 				Double weightedMeanGrade = 0.0;
 				Double resitGradeValue = null;
 				boolean hasRepeatedYear = false;
+				
 				try {
 					hasRepeatedYear = Grades.checkRepeatYear(student.getEmail(),
 							level);
+					nextLevel.setText(teacher.displayNextLevel(student.getEmail(),
+							(String) levelOfStudy.getSelectedItem()));
+					
 				} catch (SQLException e2) {
 					// TODO Auto-generated catch block
 					e2.printStackTrace();
@@ -202,6 +219,9 @@ public class WeightedMeanGrade extends AbstractPanel {
 							"Student cannot proceed to next year. Student has already"
 							+ " repeated a year.");
 				}
+				
+				
+				
 				try {
 					weightedMeanGrade = Grades.getWeightedYearGrade(
 							student.getEmail(), level);
@@ -243,20 +263,20 @@ public class WeightedMeanGrade extends AbstractPanel {
 			
 	}
 	
-	public JTable insert(String username, String levelOfStudy, Teachers teacher, DefaultTableModel model) throws SQLException {
+	public JTable insert(String username, String levelOfStudy, DefaultTableModel model) throws SQLException {
 		model.setRowCount(0);
 		String[] headers = { "Module ID", "Module Name", "Initial Grade", "Resit Grade", "Pass Grade"};
 		Students student = getStudent(username);
 	
 		model.setColumnIdentifiers(headers); 
 		
-		ArrayList<ArrayList<String>> ar = teacher.displayByLevelOfStudy(student.getEmail(), levelOfStudy);
+		ArrayList<ArrayList<String>> ar = student.displayByLevelOfStudy(student.getEmail(), levelOfStudy);
 	    for (int i = 0; i < (ar.size()); i++) {
 	    	String moduleid = ar.get(i).get(0); //module id
-	    	String modName = ar.get(i).get(1); //module name
-	    	String initGrade = ar.get(i).get(2); //initial grade
-	    	String reGrade = ar.get(i).get(3); //resit grade
-	    	String pass = ar.get(i).get(4); //pass grade
+	    	String modName = ar.get(i).get(3); //module name
+	    	String initGrade = ar.get(i).get(1); //initial grade
+	    	String reGrade = ar.get(i).get(2); //resit grade
+	    	String pass = ar.get(i).get(6); //pass grade
 	    	String[] arr = {moduleid, modName, initGrade, reGrade, pass};
 	    	model.addRow(arr);
 

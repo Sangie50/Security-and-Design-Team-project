@@ -7,6 +7,7 @@ import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import academics.Grades;
 import userclasses.Users.UserTypes;
 
 public class Registrars extends Users {
@@ -418,7 +419,7 @@ public class Registrars extends Users {
 	 }
 	 
 
-	 public String[] getModulesList(String email) throws SQLException {
+	 public String[] getModulesList(String studentEmail) throws SQLException {
 		 Connection con = null; 
 		 ArrayList<String> m = new ArrayList<String>();
 		 try {
@@ -427,7 +428,7 @@ public class Registrars extends Users {
 	            Statement stmt = null;
 	            String modules = "SELECT module_id FROM module_grade WHERE email = ?";
 	            try (PreparedStatement modulesList = con.prepareStatement(modules)){
-	                modulesList.setString(1, email);
+	                modulesList.setString(1, studentEmail);
 	                ResultSet modulesSet = modulesList.executeQuery();
                 	while (modulesSet.next()) {
                 		m.add(modulesSet.getString("module_id"));
@@ -462,9 +463,13 @@ public class Registrars extends Users {
 	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 	            con.setAutoCommit(false);
 	            Statement stmt = null;
-	            String modules = "SELECT core_modules.module_id FROM core_modules INNER JOIN module_grade ON core_modules.module_id != module_grade.module_id WHERE email = ?";
+	            String modules = "SELECT core_modules.module_id FROM core_modules "
+	            		+ "INNER JOIN module_grade ON (module_grade.module_id != core_modules.module_id AND "
+	            		+ "module_grade.level_of_study = core_modules.level_of_study) "
+	            		+ "WHERE module_grade.email = ? AND module_grade.level_of_study = ?";
 	            try (PreparedStatement modulesList = con.prepareStatement(modules)){
 	                modulesList.setString(1, email);
+	                modulesList.setString(2, Grades.getCurrentLevelOfStudy(email));
 	                ResultSet modulesSet = modulesList.executeQuery();
                 	while (modulesSet.next()) {
                 		m.add(modulesSet.getString("module_id"));

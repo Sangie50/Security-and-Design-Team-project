@@ -180,9 +180,6 @@ public class WeightedMeanGrade extends AbstractPanel {
 		JLabel resitGradeLabel = new JLabel("Resit grade:");
 		if (!yearPassed) {
 			resitGradeLabel.setBounds(504, 350, 92, 26);
-			contentPane.add(resitGradeLabel);
-			
-			
 			resitGrade.setBounds(648, 361, 92 ,26);
 			contentPane.add(resitGrade);
 		}
@@ -200,8 +197,20 @@ public class WeightedMeanGrade extends AbstractPanel {
 				Double weightedMeanGrade = 0.0;
 				Double resitGradeValue = null;
 				boolean hasRepeatedYear = false;
-				
+				 String lastLevelOfStudy = "";
+				 String currLevelOfStudy = "";
+		         
+		        
 				try {
+					 currLevelOfStudy = Grades.getCurrentLevelOfStudy(student.getEmail());
+					 lastLevelOfStudy = Grades.getLastLevelOfStudy(student.getEmail());
+					 System.out.println("curr level " + currLevelOfStudy);
+					 System.out.println("last level " + lastLevelOfStudy);
+					 if (lastLevelOfStudy.equals(currLevelOfStudy)) {
+						 degreeClassLabel.setText("Degree class:");
+						 degreeClass.setText(Grades.degreeClassification(student.getEmail()));
+						 System.out.println("Classification : " + Grades.degreeClassification(student.getEmail()));
+						}
 					hasRepeatedYear = Grades.checkRepeatYear(student.getEmail(),
 							level);
 					nextLevel.setText(teacher.displayNextLevel(student.getEmail(),

@@ -20,14 +20,15 @@ import userclasses.Users;
 
 public class Students extends Users{
 	String email;
-	Integer registrationId;
-	Integer resit_year;
+	int registrationId;
+	int resit_year;
 	String degreeId;
-	Integer totalCredits;
+	int totalCredits;
 	String difficulty;
 	Date startDate;
 	Date endDate;
-        String personalTutor;
+    String personalTutor;
+
   
   public Students (String username, String title, String surname, String forename, String password, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor) throws SQLException {
   	super(username, title, surname, forename, password);
@@ -46,6 +47,7 @@ public class Students extends Users{
   public void addStudent(String username, String degreeId, int totalCredits, String difficulty, Date startDate, Date endDate, String personalTutor ) throws SQLException {
 	     System.out.println("This is add STUDENT");
 	  	 Connection con = null;
+	  	 int registrationId = 0;
 	  	 boolean preExisting = false;
 	     try {
 	         con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
@@ -57,9 +59,11 @@ public class Students extends Users{
 	         String preparedStmt = "INSERT INTO student(email, username, resit_year, degree_id, "
 	         		+ "total_credits, difficulty, start_date, end_date, personal_tutor)"
 	         		+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	         String regId = "SELECT registration_id, start_date, end_date, "
+	         		+ "year_grade.period_of_study FROM student LEFT JOIN year_grade ON "
+	         		+ "student.email = year_grade.email WHERE username = ?";
 	         try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt);
-	        		 PreparedStatement checkStmt = con.prepareStatement(checkExisting);
-	        		 PreparedStatement update = con.prepareStatement(gradeTable)){
+	        		 PreparedStatement checkStmt = con.prepareStatement(checkExisting);){
 	        	 checkStmt.setString(1, username);
 	        	 ResultSet existingUsers = checkStmt.executeQuery();
 	        	 con.commit();
@@ -73,7 +77,7 @@ public class Students extends Users{
 	        		 }
 	        		 
 	        	 }
-	        	 if (preExisting == false) {
+	        	 if (!preExisting) {
 	        		 System.out.println("inside not preexisting");
 	        		 email = emailGen(surname, forename);
 	    			 updateStmt.setString(1, email);
@@ -88,12 +92,7 @@ public class Students extends Users{
 	                 
 	                 updateStmt.executeUpdate();
 	                 
-	                 update.setString(1, email);
-	                 update.setString(2, "1");
-	                 update.setString(3, "A");
-	                 update.setString(4, "1");
-	                 update.executeUpdate();
-	                 System.out.println("Hello");
+	                
 	                 con.commit();
 	        	 }
 	        	 
@@ -101,6 +100,34 @@ public class Students extends Users{
 	         }
 	         catch (SQLException ex) {
 	             ex.printStackTrace();
+	         }
+	         try (PreparedStatement update = con.prepareStatement(gradeTable);
+	             PreparedStatement getRegId = con.prepareStatement(regId)) {
+	        	 String periodStudy = "";
+                 
+                 getRegId.setString(1, username);
+                 ResultSet regIdSet = getRegId.executeQuery();
+                 while(regIdSet.next()) {
+                	 registrationId = regIdSet.getInt("registration_id");
+                	 startDate = regIdSet.getDate("start_date");
+                	 endDate = regIdSet.getDate("end_date");
+                	 periodStudy = regIdSet.getString("period_of_study");
+                	 this.registrationId = registrationId;
+                	 this.startDate = startDate;
+                	 this.endDate = endDate;
+                 }
+                 
+            	
+                 if (!preExisting) {
+                	 update.setString(1, email);
+                     update.setString(2, "1");
+                     update.setString(3, generatePeriodOfStudy(registrationId));
+                     update.setString(4, "1");
+                     update.executeUpdate();
+                     con.commit();
+                 }
+
+                 System.out.println("Hello");
 	         }
 	         finally {
 	             if (stmt != null) stmt.close();
@@ -284,49 +311,29 @@ public boolean getResitYear() throws SQLException {
 	  return resitYear;
 }
 
-public java.util.Date convertFromSQLDateToJAVADate(java.sql.Date sqlDate) {
-    java.util.Date javaDate = null;
-    if (sqlDate != null) {
-        javaDate = new Date(sqlDate.getTime());
-    }
-    return javaDate;
-}
 
-public String generatePeriodOfStudy(String email) throws SQLException{
+public String generatePeriodOfStudy(int registrationId) throws SQLException{
     String periodOfStudy = "";
-    java.util.Date startDate;
-    java.util.Date endDate;
-    Date start;
-    Date end;
-    int registrationID; 
-    String levelOfStudy;
+    char label = 'A';
         Connection con = null;
         try {
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "SELECT registration_id, start_date, end_date, level_of_study FROM year_grade INNER JOIN student ON year_grade.email = student.email WHERE year_grade.email = ?";
-            try (PreparedStatement selstmt = con.prepareStatement(preparedStmt)){
-                selstmt.setString(1, email);
-                ResultSet another = selstmt.executeQuery();
+            String checkExisting = "SELECT period_of_study FROM year_grade WHERE email = ?";
+            try (PreparedStatement getExisting = con.prepareStatement(checkExisting)){
+                getExisting.setString(1, email);
+                ResultSet existing = getExisting.executeQuery();
                 con.commit();
-                if (another.next()){
-                    registrationID = another.getInt("registration_id");
-                    start = another.getDate("start_date");
-                    end = another.getDate("end_date");
-                    levelOfStudy = another.getString("level_of_study");
-
-                    System.out.println("Dates are: " + start+" " +end);
-                    startDate = convertFromSQLDateToJAVADate(start);
-                    endDate = convertFromSQLDateToJAVADate(end);
-
-                    String pattern = "ddMMyyyy";
-                    DateFormat df = new SimpleDateFormat(pattern);
-                    String sDate = df.format(startDate);
-                    String eDate = df.format(endDate);
-                    System.out.println("Dates are: " + sDate+" " +eDate);
-                    
-                    periodOfStudy = "A"+sDate+eDate+levelOfStudy+registrationID;
+                
+                SimpleDateFormat format = new SimpleDateFormat("ddMMyyyy");
+                
+                periodOfStudy = label + format.format(startDate) + format.format(endDate) + registrationId;
+                while (existing.next()) {
+                	while(periodOfStudy.equals(existing.getString("period_of_study"))) {
+                		label++;
+                		periodOfStudy = label + format.format(startDate) + format.format(endDate) + registrationId;
+                	}
                 }
             }
             catch (SQLException ex) {
@@ -341,6 +348,7 @@ public String generatePeriodOfStudy(String email) throws SQLException{
         finally {
             if (con != null) con.close();
         }
+        System.out.println("period of study: " + periodOfStudy);
     return periodOfStudy;
 }
 
@@ -407,16 +415,6 @@ public String generatePeriodOfStudy(String email) throws SQLException{
     return email;
   }
   
-
-  
-
-  public List<String> displayAllModules(String email, String levelOfStudy) throws SQLException {
-		 List<String> moduleList = Grades.getModuleList(email, levelOfStudy);
-		 for (int i = 0; i < moduleList.size(); i++) {
-			 System.out.println("Module Id = "+ moduleList.get(i));
-		 }
-		 return moduleList;
-  }
   
   public ArrayList<ArrayList<String>> displayStudentView(String email) throws SQLException {
 	  ArrayList<ArrayList<String>> list= new ArrayList<ArrayList<String>>();
@@ -427,13 +425,15 @@ public String generatePeriodOfStudy(String email) throws SQLException{
 		      con.setAutoCommit(false);
 		      Statement stmt = null;
 		      String studentViewTable ="SELECT module_grade.module_id, initial_grade, resit_grade, module.module_name, "
-		      		+ "module.credit_worth, module.department_id, module.pass_grade FROM module_grade LEFT JOIN module "
-		      		+ "ON module_grade.module_id = module.module_id WHERE email = ?";
+		      		+ "module.credit_worth, module.department_id, module.pass_grade FROM module_grade JOIN "
+		      		+ "module ON module_grade.module_id = module.module_id WHERE module_grade.level_of_study = ? AND "
+		      		+ "module_grade.email = ?";
 		      
 		      ResultSet rs;
 
 		      try (PreparedStatement pstmt = con.prepareStatement(studentViewTable)){
-		    	  	pstmt.setString(1, email);
+		    	  	pstmt.setString(1, Grades.getCurrentLevelOfStudy(email));
+		    	  	pstmt.setString(2, email);
 				    rs = pstmt.executeQuery();  
 				    // Get the result table from the query  3 
 					
@@ -447,7 +447,7 @@ public String generatePeriodOfStudy(String email) throws SQLException{
 		      	 		row.add(rs.getString(6));					//department id
 		      	 		row.add(Integer.toString(rs.getInt(7)));	//pass grade
 		      	 		list.add(row);
-		 
+		      	 		System.out.println("row: " + row);
 				    }
 		      }
 		            catch (SQLException ex) {
@@ -885,23 +885,39 @@ public String generatePeriodOfStudy(String email) throws SQLException{
   }
   public void addYearGrade(Double yearGrade, String levelOfStudy, boolean progress, Double resitGrade) throws SQLException {
 	  Connection con = null;
+	  int currLev = Integer.parseInt(Grades.getCurrentLevelOfStudy(email));
+	  int levStudy = Integer.parseInt(levelOfStudy);
       //System.out.println(permission.get(newPermission));
+	  if (progress) {
+		  currLev += 1;
+		  levStudy += 1;
+	  }
       try {
           con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
           con.setAutoCommit(false);
           Statement stmt = null;
           String preparedStmt = "INSERT INTO year_grade(email, level_of_study, current_level_of_study, "
-          		+ "period_of_study, overall_grade, progress_to_next_level, resit_grade VALUES (?,?,?,?,?,?,?)";
-          try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
+          		+ "period_of_study, overall_grade, progress_to_next_level, resit_grade) VALUES(?,?,?,?,?,?,?)";
+          String curr = "UPDATE year_grade SET current_level_of_study = ? WHERE email = ?";
+          try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt);
+        		  PreparedStatement currStmt = con.prepareStatement(curr)){
               stmt = con.createStatement();
               updateStmt.setString(1, email);
-              updateStmt.setString(2, levelOfStudy);
-              updateStmt.setString(3, Grades.getCurrentLevelOfStudy(email));
-              updateStmt.setString(4, generatePeriodOfStudy(email));
+              updateStmt.setString(2, Integer.toString(levStudy));
+              updateStmt.setString(3,  Integer.toString(currLev));
+              updateStmt.setString(4, generatePeriodOfStudy(registrationId));
               updateStmt.setDouble(5, yearGrade);
               updateStmt.setBoolean(6, progress);
-              updateStmt.setDouble(7, resitGrade);
+              if (resitGrade != null) {
+                  updateStmt.setDouble(7, resitGrade);
+              }
+              else {
+            	  updateStmt.setDouble(7, java.sql.Types.NULL);
+              }
               updateStmt.executeUpdate();
+              currStmt.setString(1,Integer.toString(currLev));
+              currStmt.setString(2, email);
+              currStmt.executeUpdate();
               con.commit();
           }
           catch (SQLException ex) {
@@ -918,4 +934,53 @@ public String generatePeriodOfStudy(String email) throws SQLException{
           if (con != null) con.close();
       }
   }
+  
+  public ArrayList<ArrayList<String>> displayByLevelOfStudy(String email, String levelOfStudy) throws SQLException {
+	   	 ArrayList<ArrayList<String>> list= new ArrayList<ArrayList<String>>();
+
+	  	  Connection con = null; 
+	  		 try {
+	  	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+	  		      con.setAutoCommit(false);
+	  		      Statement stmt = null;
+	  		      String studentViewTable ="SELECT module.credit_worth, module.department_id, module.module_id, module_name, initial_grade, resit_grade,"
+	  		      		+ " module.pass_grade FROM module_grade LEFT JOIN module "
+	  		      		+ "ON module_grade.module_id = module.module_id WHERE email = ? AND level_of_study = ? ";
+	  		      
+	  		      ResultSet rs;
+
+	  		      try (PreparedStatement pstmt = con.prepareStatement(studentViewTable)){
+	  		    	  	pstmt.setString(1, email);
+	  		    	  	pstmt.setString(2, levelOfStudy);
+	  				    rs = pstmt.executeQuery();  
+	  				    // Get the result table from the query  3 
+	  					
+	  		      	 	while (rs.next()) {
+	  		      		    ArrayList<String> row = new ArrayList<String>();
+	  		      	 		row.add(rs.getString("module_id"));				
+	  		      	 		row.add(rs.getString("initial_grade"));	
+	  		      	 		row.add(rs.getString("resit_grade"));
+	  		      	 		row.add(rs.getString("module_name"));
+	  		      	 		row.add(rs.getString("credit_worth"));	   		
+	  		      	 		row.add(rs.getString("department_id"));	   		
+	  		      	 		row.add(rs.getString("pass_grade"));
+	  		      	 		list.add(row);
+	  				    }
+	  		      }
+	  		            catch (SQLException ex) {
+	  		                ex.printStackTrace();
+	  		            }
+	  		            finally {
+	  		                if (stmt != null) stmt.close();
+	  		            }
+	  		        }
+	  		        catch (Exception ex) {
+	  		            ex.printStackTrace();
+	  		        }
+	  		        finally {
+	  		            if (con != null) con.close();
+	  		        }		
+	  		 System.out.println(list);
+	  	  return list;
+	   }
 }

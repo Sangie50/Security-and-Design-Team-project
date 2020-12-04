@@ -464,52 +464,7 @@ public class Teachers extends Users{
    	  return list;
     }
     
-    public ArrayList<ArrayList<String>> displayByLevelOfStudy(String email, String levelOfStudy) throws SQLException {
-   	 ArrayList<ArrayList<String>> list= new ArrayList<ArrayList<String>>();
-
-  	  Connection con = null; 
-  		 try {
-  	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
-  		      con.setAutoCommit(false);
-  		      Statement stmt = null;
-  		      String studentViewTable ="SELECT module.module_id, module_name, initial_grade, resit_grade,"
-  		      		+ " module.pass_grade FROM module_grade LEFT JOIN module "
-  		      		+ "ON module_grade.module_id = module.module_id WHERE email = ? AND level_of_study = ? ";
-  		      
-  		      ResultSet rs;
-
-  		      try (PreparedStatement pstmt = con.prepareStatement(studentViewTable)){
-  		    	  	pstmt.setString(1, email);
-  		    	  	pstmt.setString(2, levelOfStudy);
-  				    rs = pstmt.executeQuery();  
-  				    // Get the result table from the query  3 
-  					
-  		      	 	while (rs.next()) {
-  		      		    ArrayList<String> row = new ArrayList<String>();
-  		      	 		row.add(rs.getString("module_id"));				
-  		      	 		row.add(rs.getString("module_name"));	   		
-  		      	 		row.add(rs.getString("initial_grade"));	
-  		      	 		row.add(rs.getString("resit_grade"));
-  		      	 		row.add(rs.getString("pass_grade"));
-  		      	 		list.add(row);
-  				    }
-  		      }
-  		            catch (SQLException ex) {
-  		                ex.printStackTrace();
-  		            }
-  		            finally {
-  		                if (stmt != null) stmt.close();
-  		            }
-  		        }
-  		        catch (Exception ex) {
-  		            ex.printStackTrace();
-  		        }
-  		        finally {
-  		            if (con != null) con.close();
-  		        }		
-  		 System.out.println(list);
-  	  return list;
-   }
+    
 
  // Gets emails of students that this teacher teaches only
     public String[] getEmails(String username) throws SQLException{
@@ -680,8 +635,7 @@ public class Teachers extends Users{
         Boolean passYear = Grades.yearPassed(studentEmail, level);
         return passYear;
     }
-    
-   
+      
 
 	public String displayNextLevel(String email, String levelOfStudy) throws SQLException {
 		 String level = Grades.getCurrentLevelOfStudy(email);
@@ -692,10 +646,10 @@ public class Teachers extends Users{
 		 if (yearPassed) {
 			 int currLevel = Integer.parseInt(level);
 			 String difficulty = Grades.getStudentDifficulty(email);
-			 if (difficulty.equals("M") && currLevel == 4 && !isPostGrad) {
+			 if (difficulty.equals("M") && currLevel == 3 && !isPostGrad) {
 				 nextLevel = "Graduate";
 			 }
-			 else if (difficulty.equals("B") && currLevel == 3 && !isPostGrad) {
+			 else if (difficulty.equals("B") && currLevel == 2 && !isPostGrad) {
 				 nextLevel = "Graduate";
 			 }
 			 else if (isPostGrad) {

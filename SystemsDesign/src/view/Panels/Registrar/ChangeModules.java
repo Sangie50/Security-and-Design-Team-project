@@ -12,6 +12,7 @@ import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 
+import academics.Grades;
 import userclasses.Admins;
 import userclasses.Registrars;
 import userclasses.Students;
@@ -103,13 +104,15 @@ public class ChangeModules extends AbstractPanel{
 		
 			
 		//Combo box
-		JComboBox<String> optionalModulesList = new JComboBox<>(registrar.getOptionalModulesList(student.getEmail()));
+		JComboBox<String> optionalModulesList = new JComboBox<>(
+				registrar.getOptionalModulesList(student.getEmail()));
 		optionalModulesList.setBounds(719, 248, 247, 32);
 		contentPane.add(optionalModulesList);
 		
 		System.out.println("Student email: " + student.getEmail());
 		System.out.println(studentUsername);
-		JComboBox<String> existingModulesList = new JComboBox<>(registrar.getModulesList(student.getEmail()));
+		JComboBox<String> existingModulesList = new JComboBox<>(
+				registrar.getModulesList(student.getEmail()));
 		existingModulesList.setBounds(719, 471, 247, 32);
 		contentPane.add(existingModulesList);
 		
@@ -225,6 +228,27 @@ public class ChangeModules extends AbstractPanel{
 	  		
 	  		//-----------
 		
+	}
+	
+	public void insertStudentsTable(String username, String email, DefaultTableModel model) throws SQLException {
+		String[] headers = { "Module ID", "Initial Grade", "Resit Grade", "Module Name", "Credits Worth", "Department ID" , "Pass Grade"};
+
+		Students student = getStudent(username);
+		model.setColumnIdentifiers(headers); 
+		ArrayList<ArrayList<String>> ar = student.displayStudentView(student.getEmail());
+		System.out.println("curr lev " + Grades.getCurrentLevelOfStudy(student.getEmail()));
+	    for (int i = 0; i < (ar.size()); i++) {
+	    	String moduleid = ar.get(i).get(0); //module id
+	    	String initGrade = ar.get(i).get(1); //initial grade
+	    	String reGrade = ar.get(i).get(2); //resit grade
+	    	String modName = ar.get(i).get(3); //module name
+	    	String creds = ar.get(i).get(4); //credits worth
+	    	String depId = ar.get(i).get(5); //department id
+	    	String pass = ar.get(i).get(6); //pass grade
+	    	String[] arr = {moduleid, modName, initGrade, reGrade, creds, depId, pass};
+	    	model.addRow(arr);
+
+	    }
 	}
 	
 	

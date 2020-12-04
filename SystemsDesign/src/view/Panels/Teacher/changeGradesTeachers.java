@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -22,6 +23,7 @@ import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 
+import academics.Grades;
 import view.Frames.LoginFrame;
 
 import javax.swing.JRadioButton;
@@ -123,13 +125,14 @@ public class changeGradesTeachers extends AbstractPanel {
         tutorText.setBounds(221, 200, 156, 26);
         panel.add(tutorText);
         
-        JLabel initialGradeText = new JLabel("");
+        JLabel initialGradeText = new JLabel();
         initialGradeText.setBounds(221, 240, 156, 26);
         panel.add(initialGradeText);
         
-        JLabel resitGradeText = new JLabel("");
+        JLabel resitGradeText = new JLabel();
         resitGradeText.setBounds(221, 280, 156, 26);
         panel.add(resitGradeText);
+        
         
         JLabel moduleNameText = new JLabel(degreeCode.get(student.getDegreeId()));
         moduleNameText.setBounds(221, 320, 450, 26);
@@ -139,6 +142,7 @@ public class changeGradesTeachers extends AbstractPanel {
         user.setBounds(81, 360, 277, 26);
         panel.add(user);
         //---------------------------------
+        
         
         
         //text field
@@ -152,6 +156,9 @@ public class changeGradesTeachers extends AbstractPanel {
         panel.add(reGrade);
         reGrade.setColumns(10);
         //----------------------
+        
+        
+        
         
         
         //comboBox
@@ -212,9 +219,23 @@ public class changeGradesTeachers extends AbstractPanel {
             public void actionPerformed(ActionEvent e) {
                 EventQueue.invokeLater(new Runnable() {
                     public void run() {
+                    	//calculations
+                       
                     	String selectedModule = (String) gradesBox.getSelectedItem();
                     	try {
-							teacher.addResitGrades(selectedModule, student.getEmail(), Integer.parseInt(reGrade.getText()));
+                    		 Double resitGrade = Double.parseDouble(reGrade.getText());
+                             Double cap = Grades.capResitGrade(student.getEmail());
+                             
+                            if(resitGrade >= cap) {
+                            	teacher.addResitGrades(selectedModule, student.getEmail(), (int) Math.round(cap));
+                            	JOptionPane.showMessageDialog(mainFrame.getComponent(0),
+            							"Grade capped at: " + cap);
+                            }
+                            else {
+                            	teacher.addResitGrades(selectedModule, student.getEmail(), (int) Math.round(resitGrade));
+                            	JOptionPane.showMessageDialog(mainFrame.getComponent(0),
+            							"Module failed.");
+                            }
 							ArrayList<String> list = new ArrayList<String>();
 							list = teacher.getGrades(student.getEmail(), selectedModule);
 							initialGradeText.setText(list.get(0));

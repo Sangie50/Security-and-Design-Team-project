@@ -11,9 +11,11 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import academics.Grades;
 import userclasses.Admins;
 import userclasses.Registrars;
 import userclasses.Students;
+import userclasses.Teachers;
 import userclasses.Users.UserTypes;
 import view.Frames.LoginFrame;
 import view.Panels.AbstractPanel;
@@ -126,15 +128,55 @@ public class StudentMenu extends AbstractPanel{
 		modulesTable.getTableHeader().setReorderingAllowed(false);
 		contentPane.add(modulesTable);
 
-	    insertStudentsTable(username, student.getEmail(), model);
+	   
 	    scroll = new JScrollPane(modulesTable);
 		scroll.setBounds(75,265,861,290);
 		scroll.setBorder(BorderFactory.createEmptyBorder());
 		contentPane.add(scroll);
 
 	    contentPane.setVisible(true);
+	    
+	    //combobox
+	    JComboBox<String> levelOfStudy = new JComboBox<>(
+				student.getAllLevelsOfStudy(student.getEmail()));
+		levelOfStudy.setBounds(795, 225, 141, 32);
+		contentPane.add(levelOfStudy);
+		levelOfStudy.addActionListener(new ActionListener() {
+			public void actionPerformed (ActionEvent e) {
+	            JComboBox<String> combo = (JComboBox<String>) e.getSource();
+	            String selection = (String) levelOfStudy.getSelectedItem();
+				
+	            try {
+					insert(student.getUsername(), selection, model);
+	            } catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+		});
+		 insert(username, (String) levelOfStudy.getSelectedItem(), model);
 	
 	}
 	
-	
+	public void insert(String username, String levelOfStudy, DefaultTableModel model) throws SQLException {
+		model.setRowCount(0);
+    	String[] headers = {"Module ID", "Module Name", "Initial Grade", "Resit Grade", "Credits Worth", "Department ID" , "Pass Grade"};
+		Students student = getStudent(username);
+		model.setColumnIdentifiers(headers);
+		
+		ArrayList<ArrayList<String>> ar = student.displayByLevelOfStudy(student.getEmail(), levelOfStudy);
+
+		for (int i = 0; i < (ar.size()); i++) {
+		    	String moduleid = ar.get(i).get(0); //module id
+		    	String initGrade = ar.get(i).get(1); //initial grade
+		    	String reGrade = ar.get(i).get(2); //resit grade
+		    	String modName = ar.get(i).get(3); //module name
+		    	String creds = ar.get(i).get(4); //credits worth
+		    	String depId = ar.get(i).get(5); //department id
+		    	String pass = ar.get(i).get(6); //pass grade
+		    	String[] arr = {moduleid, modName, initGrade, reGrade, creds, depId, pass};
+		    	model.addRow(arr);
+	    }
+	}	
 }

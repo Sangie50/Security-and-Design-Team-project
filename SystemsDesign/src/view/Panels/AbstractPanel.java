@@ -315,25 +315,7 @@ public abstract class AbstractPanel extends JPanel{
 		}
 	
 	
-	public void insertStudentsTable(String username, String email, DefaultTableModel model) throws SQLException {
-		String[] headers = { "Module ID", "Initial Grade", "Resit Grade", "Module Name", "Credits Worth", "Department ID" , "Pass Grade"};
-
-		Students student = getStudent(username);
-		model.setColumnIdentifiers(headers); 
-		ArrayList<ArrayList<String>> ar = student.displayStudentView(email);
-	    for (int i = 0; i < (ar.size()); i++) {
-	    	String moduleid = ar.get(i).get(0); //module id
-	    	String initGrade = ar.get(i).get(1); //initial grade
-	    	String reGrade = ar.get(i).get(2); //resit grade
-	    	String modName = ar.get(i).get(3); //module name
-	    	String creds = ar.get(i).get(4); //credits worth
-	    	String depId = ar.get(i).get(5); //department id
-	    	String pass = ar.get(i).get(6); //pass grade
-	    	String[] arr = {moduleid, initGrade, reGrade, modName, creds, depId, pass};
-	    	model.addRow(arr);
-
-	    }
-	}
+	
 	
 	public String[] getUsernames(String type) throws SQLException{
 		ArrayList<String> list = new ArrayList<String>();

@@ -73,7 +73,7 @@ public class RegistrarMenu extends AbstractPanel {
 		contentPane.add(descLabel);
 		
 		JLabel error = new JLabel("");
-		error.setBounds(81, 100, 277, 26);
+		error.setBounds(81, 100, 450, 26);
 		error.setForeground(Color.RED);
 		contentPane.add(error);
 
@@ -114,14 +114,27 @@ public class RegistrarMenu extends AbstractPanel {
 			public void actionPerformed(ActionEvent e) {
 				JPanel registerPanel = null;
 				try {
-					System.out.println("Selected User: " + (String) usernameBox.getSelectedItem());
-					registerPanel = new RegisterStudent(contentPane, (String) usernameBox.getSelectedItem(), mainFrame, registrar);
-					registerPanel.setVisible(true);
+					if (isType((String) usernameBox.getSelectedItem(), UserTypes.STUDENT.toString()) 
+							|| isType((String) usernameBox.getSelectedItem(), UserTypes.UNASSIGNED.toString())) {
+						System.out.println("Username: " + (String) usernameBox.getSelectedItem() +  "of type: " + UserTypes.STUDENT.toString());
+						try {
+							System.out.println("Selected User: " + (String) usernameBox.getSelectedItem());
+							registerPanel = new RegisterStudent(contentPane, (String) usernameBox.getSelectedItem(), mainFrame, registrar);
+							registerPanel.setVisible(true);
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						contentPane.add(registerPanel);	
+					}
+					else {
+					error.setText("*Cannot register a non-student or pre-assigned account.");
+					}
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				contentPane.add(registerPanel);
+				
 			}
 		});
 		
@@ -147,7 +160,7 @@ public class RegistrarMenu extends AbstractPanel {
 					contentPane.add(modules);
 					}
 				else {
-					error.setText("Cannot add/ remove modules from a non-student account.");
+					error.setText("*Cannot add/ remove modules from a non-student account.");
 				}
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block

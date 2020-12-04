@@ -45,15 +45,15 @@ public class TeacherMenu extends AbstractPanel {
 	/**
      * Create the panel.
      * @param contentPane
-     * @param username
+     * @param teacherUsername
      * @throws SQLException 
      */
-    public TeacherMenu(JPanel contentPane, String username, JFrame mainFrame) throws SQLException {
+    public TeacherMenu(JPanel contentPane, String teacherUsername, JFrame mainFrame) throws SQLException {
         contentPane.removeAll();
         contentPane.revalidate();
         contentPane.repaint();
         
-        Teachers teacher = getTeacher(username);
+        Teachers teacher = getTeacher(teacherUsername);
 
         //DEFAULT
 		UIManager.put("Label.font", LABEL_FONT);
@@ -90,7 +90,7 @@ public class TeacherMenu extends AbstractPanel {
                 JPanel menu = null;
                 try {
                     String selectedUsername =  (String) usernameBox.getSelectedItem();
-                    menu = new changeGradesTeachers(contentPane, username, selectedUsername, mainFrame, teacher);
+                    menu = new changeGradesTeachers(contentPane, teacherUsername, selectedUsername, mainFrame, teacher);
                     contentPane.add(menu);
                 } catch (SQLException ex) {
                     Logger.getLogger(TeacherMenu.class.getName()).log(Level.SEVERE, null, ex);
@@ -107,7 +107,7 @@ public class TeacherMenu extends AbstractPanel {
                 JPanel menu = null;
                 try {
                     String selectedUsername =  (String) usernameBox.getSelectedItem();
-                    menu = new teacherCheck(contentPane, username, selectedUsername, mainFrame, teacher);
+                    menu = new teacherCheck(contentPane, teacherUsername, selectedUsername, mainFrame, teacher);
                     contentPane.add(menu);
                 } catch (SQLException ex) {
                     Logger.getLogger(TeacherMenu.class.getName()).log(Level.SEVERE, null, ex);
@@ -121,6 +121,7 @@ public class TeacherMenu extends AbstractPanel {
 	
         JButton logoutButton = new JButton("Logout");
         contentPane.add(logoutButton);
+        logoutButton.setBounds(608, 406, 307, 35);
         logoutButton.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 	    		setVisible(false);

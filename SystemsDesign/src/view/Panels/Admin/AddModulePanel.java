@@ -5,8 +5,10 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 import userclasses.Admins;
+import view.Panels.AbstractPanel;
 
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
@@ -16,12 +18,13 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 
-public class AddModulePanel extends JPanel {
+public class AddModulePanel extends AbstractPanel {
 	private JTextField moduleIdText;
 	private JTextField moduleNameText;
 	private JTextField deptIdText;
 	private JTextField creditsWorthText;
 	private Boolean isTaught;
+	private String termSelected;
 	private int passMark;
 
 	/**
@@ -32,15 +35,23 @@ public class AddModulePanel extends JPanel {
 		panel.revalidate();
 		panel.repaint();
 		setLayout(null);
+		setBounds(100, 100, 1035, 647);
+		
+		//DEFAULT
+		UIManager.put("Label.font", LABEL_FONT);
+		UIManager.put("Table.font", TABLE_FONT);
+		UIManager.put("TableHeader.font", HEADER_FONT);
+		UIManager.put("Button.font", TABLE_FONT);
+		UIManager.put("ComboBox.font", LABEL_FONT);
 		
 		JLabel heading = new JLabel("New Module");
 		heading.setBounds(59, 44, 183, 20);
-		heading.setFont(new Font("Tahoma", Font.BOLD, 21));
+		heading.setFont(TITLE_FONT);
 		add(heading);
 		panel.add(heading);
 		
 		JLabel moduleId = new JLabel("Module Id");
-		moduleId.setBounds(59, 114, 95, 20);
+		moduleId.setBounds(59, 111, 95, 20);
 		add(moduleId);
 		panel.add(moduleId);
 		
@@ -56,13 +67,13 @@ public class AddModulePanel extends JPanel {
 		panel.add(moduleName);
 		
 		moduleNameText = new JTextField();
-		moduleNameText.setBounds(202, 166, 146, 26);
+		moduleNameText.setBounds(202, 169, 146, 26);
 		add(moduleNameText);
 		panel.add(moduleNameText);
 		moduleNameText.setColumns(10);
 		
 		JLabel deptId = new JLabel("Department ID");
-		deptId.setBounds(59, 220, 124, 20);
+		deptId.setBounds(59, 217, 124, 20);
 		add(deptId);
 		panel.add(deptId);
 		
@@ -78,13 +89,13 @@ public class AddModulePanel extends JPanel {
 		panel.add(creditsWorth);
 		
 		creditsWorthText = new JTextField();
-		creditsWorthText.setBounds(202, 265, 146, 26);
+		creditsWorthText.setBounds(202, 268, 146, 26);
 		add(creditsWorthText);
 		panel.add(creditsWorthText);
 		creditsWorthText.setColumns(10);
 		
 		JLabel passMarkLabel = new JLabel("Pass Mark");
-		passMarkLabel.setBounds(59, 315, 95, 20);
+		passMarkLabel.setBounds(59, 311, 95, 20);
 		panel.add(passMarkLabel);
 		
 		JRadioButton ugRadioButton = new JRadioButton("40 (for level 1-3)");
@@ -100,7 +111,7 @@ public class AddModulePanel extends JPanel {
 		passGroup.add(pgRadioButton);
 		
 		JLabel type = new JLabel("Type");
-		type.setBounds(59, 364, 69, 20);
+		type.setBounds(59, 360, 69, 20);
 		panel.add(type);
 		
 		JRadioButton taughtRadioButton = new JRadioButton("Taught");
@@ -115,6 +126,27 @@ public class AddModulePanel extends JPanel {
 		typeGroup.add(taughtRadioButton);
 		typeGroup.add(researchRadioButton);
 		
+		JLabel term = new JLabel("Term");
+		term.setBounds(59, 404, 69, 20);
+		panel.add(term);
+		
+		JRadioButton springButton = new JRadioButton("Spring");
+		springButton.setBounds(202, 404, 155, 29);
+		panel.add(springButton);
+		
+		JRadioButton autumnButton = new JRadioButton("Autumn");
+		autumnButton.setBounds(411, 404, 155, 29);
+		panel.add(autumnButton);
+		
+		JRadioButton acYearButton = new JRadioButton("Academic Year");
+		acYearButton.setBounds(611, 404, 155, 29);
+		panel.add(acYearButton);
+		
+		ButtonGroup termGroup = new ButtonGroup();
+		termGroup.add(springButton);
+		termGroup.add(acYearButton);
+		termGroup.add(acYearButton);
+		
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.setBounds(59, 447, 115, 29);
 		add(cancelButton);
@@ -127,7 +159,7 @@ public class AddModulePanel extends JPanel {
 						try {
 							JPanel menu = new AdminMenu(panel, mainFrame);
 							panel.add(menu);
-							AdminMenu.mainComboBox.setSelectedIndex(1);
+							AdminMenu.mainComboBox.setSelectedIndex(2);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -161,10 +193,19 @@ public class AddModulePanel extends JPanel {
 							else if (pgRadioButton.isSelected()){
 								passMark = 50;
 							}
+							if(springButton.isSelected()) {
+								termSelected = springButton.getText();
+							}
+							else if(autumnButton.isSelected()) {
+								termSelected = autumnButton.getText();
+							}	
+							else if(acYearButton.isSelected()) {
+								termSelected = acYearButton.getText();
+							}
 							
 							System.out.println(passMark);
 							Admins.addModule(moduleIdText.getText(), moduleNameText.getText(), Integer.parseInt(creditsWorthText.getText()),
-									deptIdText.getText(), passMark, isTaught);
+									deptIdText.getText(), passMark, isTaught, termSelected);
 							JOptionPane.showMessageDialog(mainFrame.getComponent(0), "Module Added");
 							JPanel menu = new AdminMenu(panel, mainFrame);
 							AdminMenu.mainComboBox.setSelectedIndex(2);

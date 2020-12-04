@@ -28,6 +28,7 @@ public class Grades { //create a constructor
 		DIPLOMA("2"), 
 		BACHELORS("3"), 
 		MASTERS("4"),
+		PLACEMENT("P"),
 		PG("PG");
 		private String action; 
 	  
@@ -687,7 +688,7 @@ public class Grades { //create a constructor
 			Integer dissertationMarks = getDissertationMarks(email);
 			
 			String lastLevel = getLastLevelOfStudy(email);
-			if (lastLevel == String.valueOf(LevelsOfStudy.BACHELORS)) {
+			if (lastLevel.equals(String.valueOf(LevelsOfStudy.BACHELORS))) {
 				if (degreeGrade >= 69.5) {
 					classification = "first class";
 				}
@@ -707,7 +708,7 @@ public class Grades { //create a constructor
 					classification = "fail";
 				}
 			}
-			else if (lastLevel == String.valueOf(LevelsOfStudy.MASTERS)) {
+			else if (lastLevel.equals(String.valueOf(LevelsOfStudy.MASTERS))) {
 				if (degreeGrade >= 69.5) {
 					classification = "first class";
 				}
@@ -721,7 +722,7 @@ public class Grades { //create a constructor
 					classification = "fail";
 				}
 			}
-			else if (lastLevel == String.valueOf(LevelsOfStudy.PG) && dissertationMarks >= 49.5) {
+			else if (lastLevel.equals(String.valueOf(LevelsOfStudy.PG)) && dissertationMarks >= 49.5) {
 				if (degreeGrade >= 69.5) {
 					classification = "distinction";
 				}
@@ -735,7 +736,7 @@ public class Grades { //create a constructor
 					classification = "fail";
 				}
 			}
-			else if (lastLevel == String.valueOf(LevelsOfStudy.PG) && dissertationMarks < 49.5) {
+			else if (lastLevel.equals(String.valueOf(LevelsOfStudy.PG)) && dissertationMarks < 49.5) {
 				if (degreeGrade >= 49.5) {
 					String degradedDegreeId = degradeDegreeId(email);
 					updateDegree(email, degradedDegreeId);
@@ -756,7 +757,7 @@ public class Grades { //create a constructor
 	}
 	
 	public static Integer getDissertationMarks(String email) throws SQLException {
-		String dissertation_module_id = getModuleIdFromName("dissertation", getDeptId(email));
+		String dissertation_module_id = getModuleIdFromName("Dissertation", getDeptId(email));
 		HashMap<String, Integer> gradeForDissertation = gradesForEachModule(email, getCurrentLevelOfStudy(email));
 		Integer marks = null;
 		for (Map.Entry<String, Integer> entry : gradeForDissertation.entrySet()) {
@@ -900,5 +901,48 @@ public class Grades { //create a constructor
             if (con != null) con.close();
         }
         return difficulty.substring(0,1);
+	}
+
+	public static boolean checkRepeatYear(String email, String levelOfStudy) throws SQLException {
+		Connection con = null;
+		boolean hasRepeated = false;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+            con.setAutoCommit(false);
+            Statement stmt = null;
+            String resit = "SELECT resit_grade FROM year_grade WHERE email =? AND"
+            		+ " level_of_study = ?";
+            try (PreparedStatement getResit = con.prepareStatement(resit)){
+            	getResit.setString(1, email);
+            	getResit.setString(2, levelOfStudy);
+                ResultSet grade = getResit.executeQuery();
+                con.commit();
+                
+                while(grade.next()) {
+                	try {
+                		grade.getString("resit_grade");
+                		hasRepeated = true;
+                	}
+                	catch (SQLException e) {
+                		System.err.println("No value in resit_grade of year_grade");
+                	}
+                    
+                }
+          
+            }
+            catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (stmt != null) stmt.close();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (con != null) con.close();
+        }
+        return hasRepeated;
 	}
 }

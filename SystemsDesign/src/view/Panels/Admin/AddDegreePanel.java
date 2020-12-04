@@ -6,10 +6,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.*;
+
+import view.Panels.AbstractPanel;
 import view.Panels.Admin.*;
 import userclasses.Admins;
 
-public class AddDegreePanel extends JPanel {
+public class AddDegreePanel extends AbstractPanel {
 	private JTextField deptIdText;
 	private JTextField degreeIdText;
 	private JTextField degreeNameText;
@@ -28,9 +30,16 @@ public class AddDegreePanel extends JPanel {
 		setLayout(null);
 		setBounds(100, 100, 1035, 647);
 		
+		//DEFAULT
+		UIManager.put("Label.font", LABEL_FONT);
+		UIManager.put("Table.font", TABLE_FONT);
+		UIManager.put("TableHeader.font", HEADER_FONT);
+		UIManager.put("Button.font", TABLE_FONT);
+		UIManager.put("ComboBox.font", LABEL_FONT);
+		
 		JLabel heading = new JLabel("New Degree");
 		heading.setBounds(31, 56, 146, 26);
-		heading.setFont(new Font("Tahoma", Font.BOLD, 21));
+		heading.setFont(TITLE_FONT);
 		add(heading);
 		panel.add(heading);
 		

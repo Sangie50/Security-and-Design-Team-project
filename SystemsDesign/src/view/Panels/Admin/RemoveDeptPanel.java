@@ -1,5 +1,6 @@
 package view.Panels.Admin;
 
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import userclasses.Admins;
 import view.Panels.AbstractPanel;
@@ -30,10 +32,18 @@ public class RemoveDeptPanel extends AbstractPanel {
 		panel.revalidate();
 		panel.repaint();
 		setLayout(null);
+		setBounds(100, 100, 1035, 647);
+		
+		//DEFAULT
+		UIManager.put("Label.font", LABEL_FONT);
+		UIManager.put("Table.font", TABLE_FONT);
+		UIManager.put("TableHeader.font", HEADER_FONT);
+		UIManager.put("Button.font", TABLE_FONT);
+		UIManager.put("ComboBox.font", LABEL_FONT);
 		
 		JLabel heading = new JLabel("Remove Department");
 		heading.setBounds(52, 58, 300, 20);
-		heading.setFont(new Font("Tahoma", Font.BOLD, 21));
+		heading.setFont(TITLE_FONT);
 		add(heading);
 		panel.add(heading);
 		
@@ -108,6 +118,21 @@ public class RemoveDeptPanel extends AbstractPanel {
 		cancelButton.setBounds(52, 377, 115, 29);
 		add(cancelButton);
 		panel.add(cancelButton);
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+	    		EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							JPanel menu = new AdminMenu(panel, mainFrame);
+							panel.add(menu);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+			}
+		});
 	}
 	
 	public static Boolean checkDeptLinkedToDegree(String deptId) throws SQLException {

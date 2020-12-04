@@ -2,6 +2,7 @@
 package testing;
 import academics.Grades;
 import academics.Modules;
+
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -183,6 +184,11 @@ public class TestRun {
 //        System.out.println(moduleList);
 //        
         
+          double finalg = Grades.getFinalDegreeGrade("JPixel01@sheff.ac.uk");
+          System.out.println(finalg);
+          
+          String classify = Grades.degreeClassification("JPixel01@sheff.ac.uk");
+          System.out.println(classify);
         
     }
 }

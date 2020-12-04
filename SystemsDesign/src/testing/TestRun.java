@@ -170,6 +170,10 @@ public class TestRun {
     	//System.out.println(entry);
         
         
+        Double finalGrade = Grades.getFinalDegreeGrade("JSmith01@sheff.ac.uk");
+        System.out.println(finalGrade);
+        
+        
         
     }
 }

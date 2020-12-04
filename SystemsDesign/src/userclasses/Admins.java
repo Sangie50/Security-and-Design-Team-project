@@ -658,7 +658,8 @@ public class Admins extends Users{
                     String partner = department.getString("other_department");
                     
                     con.commit();
-                    Degrees degree = new Degrees(degreeID, departmentID, entryLevel, difficulty, degreeName, lastLevel);
+                    Degrees degree = new Degrees(degreeID, departmentID, entryLevel, difficulty, degreeName, lastLevel, partner);
+                    System.out.println(degree);
                     deg.add(degree); 
                     //System.out.println(degreeID+":"+departmentID+":"+entryLevel+":"+difficulty+":"+degreeName+":"+lastLevel+":"+partner);
                 }

@@ -577,7 +577,7 @@ public class Grades { //create a constructor
 		Double year2Grade = getWeightedYearGrade(email, String.valueOf(LevelsOfStudy.DIPLOMA));
 		Double year3Grade = getWeightedYearGrade(email, String.valueOf(LevelsOfStudy.BACHELORS));
 		Double year4Grade = getWeightedYearGrade(email, String.valueOf(LevelsOfStudy.MASTERS));
-		Double finalGrade = null;
+		Double finalGrade = 78.0;
 		if (entryLevel == "undergraduate" && currentLevelOfStudy == lastLevel) {
 			if(currentLevelOfStudy == String.valueOf(LevelsOfStudy.MASTERS) && lastYearPassed) {
 				finalGrade = year2Grade * 0.2 + year3Grade * 0.4 * year4Grade * 0.4;

@@ -92,7 +92,7 @@ public class AdminMenu extends JPanel {
 	    
 		
 		JScrollPane degree_sp = new JScrollPane(allDegreesTable());
-	    degree_sp.setBounds(35, 134, 700, 500); 
+	    degree_sp.setBounds(35, 134, 1100, 500); 
 	    degree_sp.setBorder(BorderFactory.createEmptyBorder());
 	    
 	    JScrollPane module_sp = new JScrollPane(allModulesTable());
@@ -267,16 +267,21 @@ public class AdminMenu extends JPanel {
 		List<Degrees> degreeList = Admins.viewAllDegrees();
 		int array_size = degreeList.size();
 		String[][] contentD = null; 
-		contentD = new String[array_size][6];
+		contentD = new String[array_size][7];
 		for (int i = 0; i<degreeList.size(); i++) {
 			String degree = degreeList.get(i).toString();
 			
 			String degreeId = degree.substring(0,6);
 			String departId = degree.substring(6,9);
 			String entryLevel = degree.substring(9,10);
-			String difficulty = degree.substring(10, degree.indexOf(" "));
-			String name = degree.substring(degree.indexOf(" ")+1, degree.length()-1);
-			String lastLevel = degree.substring(degree.length()-1);
+			String difficulty = degree.substring(10, degree.indexOf("name: "));
+			String name = degree.substring(degree.indexOf("name: ")+1, degree.indexOf("level: "));
+			String lastLevel = degree.substring(degree.indexOf("level: ")+1, degree.indexOf("otherDept") - 8 );
+			String otherDeptId = degree.substring( degree.indexOf("otherDept: "), degree.length());
+			
+			System.out.println(name);
+			System.out.println(lastLevel);
+			System.out.println(otherDeptId);
 			
 			contentD[i][0] = degreeId;
 			contentD[i][1] = departId;
@@ -284,17 +289,19 @@ public class AdminMenu extends JPanel {
 			contentD[i][3] = difficulty;
 			contentD[i][4] = entryLevel;
 			contentD[i][5] = lastLevel;
+			contentD[i][6] = otherDeptId;
 		}
-		String[] header = {"Degree Id", "Lead Department Id", "Degree Name", "Difficuly", "Entry Level", "Last Level"};
+		String[] header = {"Degree Id", "Lead Department Id", "Degree Name", "Difficuly", "Entry Level", "Last Level", "Secondary Department ID"};
 			 
 		degreeTable = new JTable(contentD, header);
 	    degreeTable.setEnabled(false);
 	    degreeTable.getColumnModel().getColumn(0).setPreferredWidth(25);
-	    degreeTable.getColumnModel().getColumn(1).setPreferredWidth(30);
-	    degreeTable.getColumnModel().getColumn(2).setPreferredWidth(180);
-	    degreeTable.getColumnModel().getColumn(3).setPreferredWidth(20);
-	    degreeTable.getColumnModel().getColumn(4).setPreferredWidth(15);
-	    degreeTable.getColumnModel().getColumn(5).setPreferredWidth(12);
+	    degreeTable.getColumnModel().getColumn(1).setPreferredWidth(70);
+	    degreeTable.getColumnModel().getColumn(2).setPreferredWidth(230);
+	    degreeTable.getColumnModel().getColumn(3).setPreferredWidth(50);
+	    degreeTable.getColumnModel().getColumn(4).setPreferredWidth(50);
+	    degreeTable.getColumnModel().getColumn(5).setPreferredWidth(30);
+	    degreeTable.getColumnModel().getColumn(6).setPreferredWidth(110);
 	    
 	    degreeTable.getTableHeader().setReorderingAllowed(false);    	
 	    degreeTable.setBackground(UIManager.getColor("Button.background"));

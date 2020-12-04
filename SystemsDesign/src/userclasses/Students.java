@@ -165,6 +165,38 @@ public String getPersonalTutor() {
 	return personalTutor;
 }
 
+public String getDifficulty() throws SQLException {
+	Connection con = null;
+	String difficulty = "";
+    try {
+        con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+        con.setAutoCommit(false);
+        Statement stmt = null;
+        String diff = "SELECT difficulty FROM student WHERE email = ?";
+        try (PreparedStatement preparedStmt = con.prepareStatement(diff)){
+            preparedStmt.setString(1, email);
+            ResultSet rs = preparedStmt.executeQuery();
+            while (rs.next()) {
+            	difficulty = rs.getString("difficulty");
+                }
+            }
+        catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (stmt != null) stmt.close();
+        }
+    }
+    catch (Exception ex) {
+        ex.printStackTrace();
+    }
+    finally {
+        if (con != null) con.close();
+    }
+	return difficulty;
+}
+
+
 public int getRegistrationId() throws SQLException {
 	  Connection con = null;
     Statement stmt = null;
@@ -383,7 +415,7 @@ public String generatePeriodOfStudy(int registrationId) throws SQLException{
             ResultSet rs = preparedStmt.executeQuery();
             System.out.println(email);
             System.out.println(a);
-            while (rs.next() == true) {
+            while (rs.next()) {
                 String retrievedEmail = rs.getString("email");
                 while (retrievedEmail.toLowerCase().equals(email.toLowerCase())){
                     a++;

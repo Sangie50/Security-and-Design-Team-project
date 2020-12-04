@@ -127,7 +127,6 @@ public class ChangeModules extends AbstractPanel{
 	
 
 		modulesTable = new JTable(model);
-//		modulesTable.setBounds(21, 127, 677, 499);
 		modulesTable.setBackground(UIManager.getColor("Button.background"));
 		modulesTable.setEnabled(false);
 		modulesTable.getTableHeader().setReorderingAllowed(false);
@@ -135,7 +134,6 @@ public class ChangeModules extends AbstractPanel{
 		insertStudentsTable(studentUsername, student.getEmail(), model);
 		scroll = new JScrollPane(modulesTable);
 		scroll.setBounds(10, 120, 700, 300);
-//		scroll.setBounds(-20, 200, 800, 600);
 		scroll.setBorder(BorderFactory.createEmptyBorder());
 		contentPane.add(scroll);
 		
@@ -246,7 +244,6 @@ public class ChangeModules extends AbstractPanel{
 						existingModulesList.removeAllItems();
 						existingModulesList.setModel(new DefaultComboBoxModel(registrar.getModulesList(student.getEmail())));
 						JOptionPane.showMessageDialog(mainFrame.getComponent(0), "Module Deleted.");
-						System.out.println("Deleting " + (String) existingModulesList.getSelectedItem());
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -267,7 +264,6 @@ public class ChangeModules extends AbstractPanel{
 		Students student = getStudent(username);
 		model.setColumnIdentifiers(headers); 
 		ArrayList<ArrayList<String>> ar = student.displayStudentView(student.getEmail());
-		System.out.println("curr lev " + Grades.getCurrentLevelOfStudy(student.getEmail()));
 	    for (int i = 0; i < (ar.size()); i++) {
 	    	String moduleid = ar.get(i).get(0); //module id
 	    	String initGrade = ar.get(i).get(1); //initial grade

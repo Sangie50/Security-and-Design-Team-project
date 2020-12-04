@@ -688,7 +688,7 @@ public class Grades { //create a constructor
 			Integer dissertationMarks = getDissertationMarks(email);
 			
 			String lastLevel = getLastLevelOfStudy(email);
-			if (lastLevel == String.valueOf(LevelsOfStudy.BACHELORS)) {
+			if (lastLevel.equals(String.valueOf(LevelsOfStudy.BACHELORS))) {
 				if (degreeGrade >= 69.5) {
 					classification = "first class";
 				}
@@ -708,7 +708,7 @@ public class Grades { //create a constructor
 					classification = "fail";
 				}
 			}
-			else if (lastLevel == String.valueOf(LevelsOfStudy.MASTERS)) {
+			else if (lastLevel.equals(String.valueOf(LevelsOfStudy.MASTERS))) {
 				if (degreeGrade >= 69.5) {
 					classification = "first class";
 				}
@@ -722,7 +722,7 @@ public class Grades { //create a constructor
 					classification = "fail";
 				}
 			}
-			else if (lastLevel == String.valueOf(LevelsOfStudy.PG) && dissertationMarks >= 49.5) {
+			else if (lastLevel.equals(String.valueOf(LevelsOfStudy.PG)) && dissertationMarks >= 49.5) {
 				if (degreeGrade >= 69.5) {
 					classification = "distinction";
 				}
@@ -736,7 +736,7 @@ public class Grades { //create a constructor
 					classification = "fail";
 				}
 			}
-			else if (lastLevel == String.valueOf(LevelsOfStudy.PG) && dissertationMarks < 49.5) {
+			else if (lastLevel.equals(String.valueOf(LevelsOfStudy.PG)) && dissertationMarks < 49.5) {
 				if (degreeGrade >= 49.5) {
 					String degradedDegreeId = degradeDegreeId(email);
 					updateDegree(email, degradedDegreeId);
@@ -757,7 +757,7 @@ public class Grades { //create a constructor
 	}
 	
 	public static Integer getDissertationMarks(String email) throws SQLException {
-		String dissertation_module_id = getModuleIdFromName("dissertation", getDeptId(email));
+		String dissertation_module_id = getModuleIdFromName("Dissertation", getDeptId(email));
 		HashMap<String, Integer> gradeForDissertation = gradesForEachModule(email, getCurrentLevelOfStudy(email));
 		Integer marks = null;
 		for (Map.Entry<String, Integer> entry : gradeForDissertation.entrySet()) {

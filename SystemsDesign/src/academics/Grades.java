@@ -909,7 +909,7 @@ public class Grades { //create a constructor
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String resit = "SELECT resit_year FROM year_grade WHERE email =? AND"
+            String resit = "SELECT resit_grade FROM year_grade WHERE email =? AND"
             		+ " level_of_study = ?";
             try (PreparedStatement getResit = con.prepareStatement(resit)){
             	getResit.setString(1, email);
@@ -919,7 +919,7 @@ public class Grades { //create a constructor
                 
                 while(grade.next()) {
                 	try {
-                		grade.getString("difficulty");
+                		grade.getString("resit_grade");
                 		hasRepeated = true;
                 	}
                 	catch (SQLException e) {

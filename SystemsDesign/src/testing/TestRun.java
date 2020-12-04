@@ -12,6 +12,8 @@ import userclasses.Admins;
 import userclasses.Students;
 import userclasses.Users;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import userclasses.Registrars;
 import userclasses.Teachers;
@@ -169,10 +171,17 @@ public class TestRun {
     	//int entry = Grades.getResitYearGrade("SmithJohnny01", "1");
     	//System.out.println(entry);
         
-        
-        Double finalGrade = Grades.getFinalDegreeGrade("JSmith01@sheff.ac.uk");
-        System.out.println(finalGrade);
-        
+//        
+//        Double finalGrade = Grades.getFinalDegreeGrade("JSmith01@sheff.ac.uk");
+//        System.out.println(finalGrade);
+//        
+//        List<String> moduleList = new ArrayList<String>();
+//        String[] list = {"g", "s", "k", "l"};
+//        String[] list2 = {"gf", "s", "k", "l"};
+//        moduleList.addAll(Arrays.asList(list));
+//        moduleList.add(Arrays.asList(list2));
+//        System.out.println(moduleList);
+//        
         
         
     }

@@ -52,9 +52,11 @@ public class Registrars extends Users {
 	            String preparedStmt = "SELECT account_type FROM user WHERE username = ?";
 	            String deleteStmt = "DELETE FROM student WHERE username = ?";
 	            String delYearGrade = "DELETE FROM year_grade WHERE email = ?";
+	            String delModGrade = "DELETE FROM module_grade WHERE email = ?";
 	            try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt);
 	            		PreparedStatement delStmt = con.prepareStatement(deleteStmt);
-	            		PreparedStatement ygStmt = con.prepareStatement(delYearGrade)){
+	            		PreparedStatement ygStmt = con.prepareStatement(delYearGrade);
+	            		PreparedStatement mgStmt = con.prepareStatement(delModGrade)){
 	                updateStmt.setString(1, username);
 	                ResultSet type = updateStmt.executeQuery();
 	                while (type.next()) {
@@ -63,6 +65,8 @@ public class Registrars extends Users {
 	 	                	delStmt.executeUpdate();
 	 	                	ygStmt.setString(1, email);
 	 	                	ygStmt.executeUpdate();
+	 	                	mgStmt.setString(1, email);
+	 	                	mgStmt.executeUpdate();
 	 	                	Admins.updatePermission(username, UserTypes.UNASSIGNED.toString());
 	 						System.out.println("Student deleted");
 	 	                }
@@ -473,6 +477,42 @@ public class Registrars extends Users {
 	                ResultSet modulesSet = modulesList.executeQuery();
                 	while (modulesSet.next()) {
                 		m.add(modulesSet.getString("module_id"));
+                	}
+           		 System.out.println(m);
+	            }
+	            catch (SQLException ex) {
+	                ex.printStackTrace();
+	            }
+	            finally {
+	                if (stmt != null) stmt.close();
+	            }
+	        }
+	        catch (Exception ex) {
+	            ex.printStackTrace();
+	        }
+	        finally {
+	            if (con != null) con.close();
+	        }		
+		 String[] ar = m.toArray(new String[m.size()]);
+//		 }
+		 return ar;
+	 }
+	 
+	 public String[] getAddModulesList(String departmentId) throws SQLException {
+		 Connection con = null; 
+		 LinkedHashSet<String> m = new LinkedHashSet<String>();
+		 try {
+			 System.out.println(departmentId);
+			 
+	          con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
+	            con.setAutoCommit(false);
+	            Statement stmt = null;
+	            String dept = "SELECT module_id FROM module WHERE department_id = ?";
+	            try (PreparedStatement pstmt = con.prepareStatement(dept)){
+	            	pstmt.setString(1, departmentId);
+	                ResultSet deptSet = pstmt.executeQuery();
+                	while (deptSet.next()) {
+                		m.add(deptSet.getString("module_id"));
                 	}
            		 System.out.println(m);
 	            }

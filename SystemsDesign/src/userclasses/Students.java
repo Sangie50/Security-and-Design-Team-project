@@ -608,10 +608,13 @@ public String generatePeriodOfStudy(int registrationId) throws SQLException{
   	}
 	 }
   
- 
+ public String getDepartmentId() throws SQLException {
+	 String deptId = getDegreeId(email).substring(0,3);
+	 return deptId;
+ }
 	 
   
-  public static String getDegreeId(String email) throws SQLException {
+   public static String getDegreeId(String email) throws SQLException {
   	 String degreeId = null;
 		 Connection con = null; 
 		 try {

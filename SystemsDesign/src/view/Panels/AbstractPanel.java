@@ -51,10 +51,10 @@ public abstract class AbstractPanel extends JPanel{
 	protected static final Font BORDER_FONT = new Font("Yu Gothic", Font.BOLD, 13);
 	protected static final Font LABEL_FONT = new Font("Yu Gothic", Font.PLAIN, 15);
 	protected static final Font ERROR_FONT = new Font("Yu Gothic", Font.PLAIN, 13);
-	protected static final Font COMBO_FONT = new Font("Yu Gothic", Font.PLAIN, 13);
+	protected static final Font COMBO_FONT = new Font("Yu Gothic", Font.PLAIN, 12);
 	protected static final Font TITLE_FONT = new Font("Yu Gothic", Font.BOLD, 18);
-	protected static final Font HEADER_FONT = new Font("Yu Gothic", Font.BOLD, 10);
-	protected static final Font TABLE_FONT = new Font("Yu Gothic", Font.PLAIN, 10);
+	protected static final Font HEADER_FONT = new Font("Yu Gothic", Font.BOLD, 13);
+	protected static final Font TABLE_FONT = new Font("Yu Gothic", Font.PLAIN, 12);
 	protected static final Font BUTTON_FONT = new Font("Yu Gothic", Font.BOLD, 13);
 
 //	private static final Font LABEL_FONT = new Font("Yu Gothic", Font.PLAIN, 18);

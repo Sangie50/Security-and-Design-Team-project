@@ -93,10 +93,10 @@ public class RegisterStudent extends AbstractPanel {
 		username.setBounds(221, 115, 156, 26);
 		panel.add(username);
 		
-		degreeId = new JTextField();
+		String[] degreeIdList = getDegreeId();
+		JComboBox<String> degreeId = new JComboBox<>(degreeIdList);
 		degreeId.setBounds(221, 248, 186, 32);
 		panel.add(degreeId);
-		degreeId.setColumns(10);
 		
 		JLabel degreeLabel = new JLabel("Degree ID:");
 		degreeLabel.setBounds(21, 251, 179, 26);
@@ -217,7 +217,7 @@ public class RegisterStudent extends AbstractPanel {
 		addStudent.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String un = username.getText();
-				String deg = degreeId.getText();
+				String deg = degreeId.getSelectedItem().toString();
 				int creds = Integer.parseInt(credits.getSelection().getActionCommand());
 				String diff = (String) difficulty.getSelectedItem();
 				String sd = (String) startDay.getSelectedItem();

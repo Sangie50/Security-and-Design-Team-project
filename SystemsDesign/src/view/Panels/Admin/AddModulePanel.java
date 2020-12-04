@@ -5,8 +5,10 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 import userclasses.Admins;
+import view.Panels.AbstractPanel;
 
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
@@ -16,7 +18,7 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 
-public class AddModulePanel extends JPanel {
+public class AddModulePanel extends AbstractPanel {
 	private JTextField moduleIdText;
 	private JTextField moduleNameText;
 	private JTextField deptIdText;
@@ -32,10 +34,18 @@ public class AddModulePanel extends JPanel {
 		panel.revalidate();
 		panel.repaint();
 		setLayout(null);
+		setBounds(100, 100, 1035, 647);
+		
+		//DEFAULT
+		UIManager.put("Label.font", LABEL_FONT);
+		UIManager.put("Table.font", TABLE_FONT);
+		UIManager.put("TableHeader.font", HEADER_FONT);
+		UIManager.put("Button.font", TABLE_FONT);
+		UIManager.put("ComboBox.font", LABEL_FONT);
 		
 		JLabel heading = new JLabel("New Module");
 		heading.setBounds(59, 44, 183, 20);
-		heading.setFont(new Font("Tahoma", Font.BOLD, 21));
+		heading.setFont(TITLE_FONT);
 		add(heading);
 		panel.add(heading);
 		
@@ -127,7 +137,7 @@ public class AddModulePanel extends JPanel {
 						try {
 							JPanel menu = new AdminMenu(panel, mainFrame);
 							panel.add(menu);
-							AdminMenu.mainComboBox.setSelectedIndex(1);
+							AdminMenu.mainComboBox.setSelectedIndex(2);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}

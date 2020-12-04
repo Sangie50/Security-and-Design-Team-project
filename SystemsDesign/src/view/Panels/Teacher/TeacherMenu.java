@@ -121,6 +121,7 @@ public class TeacherMenu extends AbstractPanel {
 	
         JButton logoutButton = new JButton("Logout");
         contentPane.add(logoutButton);
+        logoutButton.setBounds(608, 406, 307, 35);
         logoutButton.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 	    		setVisible(false);

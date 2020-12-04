@@ -304,13 +304,18 @@ public class Grades { //create a constructor
 			    		  initialGrade = rs.getInt("initial_grade");        
 					      resitGrade = rs.getInt("resit_grade");
 			    	  }
-			    	  
-				      if (initialGrade >= 40) {
-			      		gradeForModule.put(moduleCode, initialGrade);
-				      }
-				      else {
-			      		gradeForModule.put(moduleCode, resitGrade);
-				      }
+			    	  if (!moduleCode.equals(getModuleIdFromName("Dissertation", getDeptId(email)))) {
+			    		  if (initialGrade >= 40) {
+					      		gradeForModule.put(moduleCode, initialGrade);
+						      }
+						      else {
+						    	  gradeForModule.put(moduleCode, resitGrade);
+						      }
+			    	  }
+			    	  else {
+			    		  gradeForModule.put(moduleCode, initialGrade);
+			    	  }
+				      
 				      rs.close();                       
 				      gradesInfo.close();                    
 				   }
@@ -572,54 +577,65 @@ public class Grades { //create a constructor
         
 	public static Double getFinalDegreeGrade(String email) throws SQLException{
 		String entryLevel = getEntryLevel(email);
+		System.out.println("entry: " + entryLevel);
 		String lastLevel = getLastLevelOfStudy(email);
+		System.out.println("lastLevel: " + lastLevel);
 		String currentLevelOfStudy = getCurrentLevelOfStudy(email);
+		System.out.println("currentLevelOfStudy: " +currentLevelOfStudy);
 		Boolean lastYearPassed = yearPassed(email, currentLevelOfStudy);
+		System.out.println("weighted yer grade: "+ getWeightedYearGrade(email, currentLevelOfStudy)); 
+		
 		Double year2Grade = getWeightedYearGrade(email, String.valueOf(LevelsOfStudy.DIPLOMA));
 		Double year3Grade = getWeightedYearGrade(email, String.valueOf(LevelsOfStudy.BACHELORS));
 		Double year4Grade = getWeightedYearGrade(email, String.valueOf(LevelsOfStudy.MASTERS));
-		Double finalGrade = 78.0;
-		if (entryLevel == "undergraduate" && currentLevelOfStudy == lastLevel) {
+		Double finalGrade = null;
+		if (entryLevel.equals("undergraduate") && currentLevelOfStudy.equals(lastLevel)) {
 			if(currentLevelOfStudy == String.valueOf(LevelsOfStudy.MASTERS) && lastYearPassed) {
 				finalGrade = year2Grade * 0.2 + year3Grade * 0.4 * year4Grade * 0.4;
 			}
-			else if(currentLevelOfStudy == String.valueOf(LevelsOfStudy.MASTERS) && lastYearPassed == false) {
+			else if(currentLevelOfStudy.equals(LevelsOfStudy.MASTERS) && lastYearPassed == false) {
 				String degreeDegradedId = degradeDegreeId(email);
 				updateDegree(email, degreeDegradedId);
 				finalGrade = (year2Grade + year3Grade * 2)/3;
 			}
-			else if(currentLevelOfStudy == String.valueOf(LevelsOfStudy.BACHELORS) && lastYearPassed) {
+			else if(currentLevelOfStudy.equals(LevelsOfStudy.BACHELORS) && lastYearPassed) {
 				finalGrade = (year2Grade + year3Grade * 2)/3;
 			}
-			else if(currentLevelOfStudy == String.valueOf(LevelsOfStudy.BACHELORS) && lastYearPassed == false) {
+			else if(currentLevelOfStudy.equals(LevelsOfStudy.BACHELORS) && lastYearPassed == false) {
 				int resitGrade = getResitYearGrade(email, currentLevelOfStudy);
 				if (resitGrade >= capResitGrade(email)) {
 					finalGrade = capResitGrade(email);
 				}
 			}
 		}
-		else if ((entryLevel == "postgraduate" && currentLevelOfStudy == lastLevel)) {
+		else if ((entryLevel.equals("postgraduate") && currentLevelOfStudy.equals(lastLevel))) {
+			System.out.println("i am here");
 			finalGrade = getWeightedYearGrade(email, currentLevelOfStudy);
 		}
+		System.out.println("finalGrade" +finalGrade + "--------------");
 		return finalGrade;
+		
 	}
         
 	//when a student fails in their last year and they are awarded the same degree with lower difficulty  --need enough data to test this!!!
 	public static String degradeDegreeId(String email) throws SQLException {
 		String currentDegree = Students.getDegreeName(email);
+		System.out.println("cd: "+currentDegree);
 		String degreeName = currentDegree.substring(currentDegree.indexOf(' ') + 1);
-		String lastLevel = LevelsOfStudy.BACHELORS.toString();
+		System.out.println(degreeName);
+		String lastLevel = getLastLevelOfStudy(email);
+		System.out.println("lll: " + lastLevel);
 		String degreeId = null;
 		Connection con = null; 
 		 try {
-			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "714e454e");
+			  con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
 		      con.setAutoCommit(false);
 		      Statement stmt = null;
-		      String getdegree = "SELECT degree_id FROM degree WHERE degree_name like ? AND (last_level = ? OR last_level = PG)";
+		      String getdegree = "SELECT degree_id FROM degree WHERE degree_name = ? AND last_level = ?";
 		      
 		      try (PreparedStatement pstmt = con.prepareStatement(getdegree)){
-		    	    pstmt.setString(1, degreeName);
-		    	    pstmt.setString(2, email);
+		    	    pstmt.setString(1, currentDegree);
+		    	    pstmt.setString(2, lastLevel);
 		    	    ResultSet rs = pstmt.executeQuery();   
 		    	    con.commit();
 		    	    
@@ -643,6 +659,7 @@ public class Grades { //create a constructor
 		        finally {
 		            if (con != null) con.close();
 		        }
+		 System.out.println("degr: " + degreeId);
 		 return degreeId;
 	}
 	
@@ -653,7 +670,7 @@ public class Grades { //create a constructor
             con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team028", "team028", "7f4e454e");
             con.setAutoCommit(false);
             Statement stmt = null;
-            String preparedStmt = "UPDATE student SET degreeId = ? WHERE email = ?";
+            String preparedStmt = "UPDATE student SET degree_id = ? WHERE email = ?";
             try (PreparedStatement updateStmt = con.prepareStatement(preparedStmt)){
                 stmt = con.createStatement();
                 updateStmt.setString(1, degreeId);
@@ -685,9 +702,12 @@ public class Grades { //create a constructor
 			String degreeName = Students.getDegreeName(email);
 			String degreeTitle = degreeName.substring(0, degreeName.indexOf(' '));
 			double degreeGrade = getFinalDegreeGrade(email);
+			System.out.println("degree grade: " + degreeGrade);
 			Integer dissertationMarks = getDissertationMarks(email);
+			System.out.println("diss: " + dissertationMarks);
 			
 			String lastLevel = getLastLevelOfStudy(email);
+			System.out.println("ll: " + lastLevel);
 			if (lastLevel.equals(String.valueOf(LevelsOfStudy.BACHELORS))) {
 				if (degreeGrade >= 69.5) {
 					classification = "first class";
@@ -740,11 +760,13 @@ public class Grades { //create a constructor
 				if (degreeGrade >= 49.5) {
 					String degradedDegreeId = degradeDegreeId(email);
 					updateDegree(email, degradedDegreeId);
+					System.out.println("degreded: "+degradedDegreeId);
 					classification = "pass";
 				}
 			}
 			else if (degreeTitle == "PGCert") {
 				if (degreeGrade >= 49.5) {
+					System.out.println("degreeTitle: " + degreeTitle);
 					classification = "pass";
 				}
 			}
@@ -758,15 +780,19 @@ public class Grades { //create a constructor
 	
 	public static Integer getDissertationMarks(String email) throws SQLException {
 		String dissertation_module_id = getModuleIdFromName("Dissertation", getDeptId(email));
+		System.out.println("dissertation_module_id" + dissertation_module_id);
 		HashMap<String, Integer> gradeForDissertation = gradesForEachModule(email, getCurrentLevelOfStudy(email));
 		Integer marks = null;
 		for (Map.Entry<String, Integer> entry : gradeForDissertation.entrySet()) {
 	      String moduleId = entry.getKey();
 	      Integer grade = entry.getValue();
-	      if (moduleId == dissertation_module_id) {
+	     
+	      if (moduleId.equals(dissertation_module_id)) {
+	    	System.out.println("g: " +grade);
 	  		marks = grade;
 	      }
 		}
+		System.out.println("diss" + marks);
 		return marks;
 	}
 	

@@ -184,10 +184,10 @@ public class TestRun {
 //        System.out.println(moduleList);
 //        
         
-          double finalg = Grades.getFinalDegreeGrade("JPixel01@sheff.ac.uk");
+          double finalg = Grades.getFinalDegreeGrade("BBond01@sheff.ac.uk");
           System.out.println(finalg);
           
-          String classify = Grades.degreeClassification("JPixel01@sheff.ac.uk");
+          String classify = Grades.degreeClassification("BBond01@sheff.ac.uk");
           System.out.println(classify);
         
     }

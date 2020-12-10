@@ -346,8 +346,8 @@ public class AdminMenu extends AbstractPanel {
 			
 			String degreeId = degree.substring(0,6);
 			String departId = degree.substring(6,9);
-			String entryLevel = degree.substring(9,10);
-			String difficulty = degree.substring(10, degree.indexOf(" "));
+			String entryLevel = degree.substring(9,degree.indexOf("."));
+			String difficulty = degree.substring(degree.indexOf(".")+1, degree.indexOf(" "));
 			String name = degree.substring(degree.indexOf(" ")+1, degree.indexOf(";"));
 			String lastLevel = degree.substring(degree.indexOf(";")+1, degree.indexOf(","));
 			String otherDeptId = degree.substring( degree.indexOf(",")+1, degree.length());

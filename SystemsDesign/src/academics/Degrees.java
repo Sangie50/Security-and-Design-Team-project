@@ -45,7 +45,7 @@ public class Degrees{
     }
     
     public String toString() {
-    	return String.format(this.degreeID + this.departmentID + this.entryLevel + 
+    	return String.format(this.degreeID + this.departmentID + this.entryLevel + "."+
     			this.difficulty+ " " + this.degreeName + ";" +this.lastLevel+","+ this.otherDept);
     }
     
